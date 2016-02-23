@@ -1,0 +1,61 @@
+h1. oui_instagram
+
+*IN PROCESS: This plugin is not released yet.*
+
+Easily display recent images from an Instagram account.
+
+h2. Table of contents
+
+* "Plugin requirements":#requirements
+* "Installation":#installation
+* "Tags":#tags
+* "Exemples":#exemples
+* "Author":#author
+* "Licence":#licence
+
+h2(#requirements). Plugin requirements
+
+oui_disclaimer’s minimum requirements:
+
+* Textpattern 4.5+
+
+h2(#installation). Installation
+
+Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+
+h2(#tags). Tags
+
+h3. <txp:oui_instagram />
+
+Displays a conditional warning message.
+Should be placed in your each page, or in a form, depending on how it is used.
+
+bc. <txp:oui_instagram />
+
+h4. Attributes
+
+If used as a single tag, @<txp:oui_disclaimer />@ should contains at least a @message@ attribute. 
+
+* @username="…"@ - _Default: unset - The username of the Instagram account.
+
+* @wraptag="…"@ - _Default: ul_ - The HTML tag used around the generated content.
+* @class="…"@ – _Default: oui_instagram_ - The css class to apply to the HTML tag assigned to @wraptag@. 
+
+* @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
+
+* @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
+* @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+
+h2(#exemples). Exemples
+
+h3. Exemple 1:
+
+bc. <txp:oui_instagram username="fubiz" />
+
+h2(#author). Author
+
+"Nicolas Morand":http://www.nicolasmorand.com, from a "NOE interactive":http://noe-interactive.com "tip":http://noe-interactive.com/comment-integrer-ses-photos-instagram-sur-son-site.
+
+h2(#licence). Licence
+
+This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.html.
