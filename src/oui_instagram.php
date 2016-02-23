@@ -220,7 +220,7 @@ function oui_instagram($atts, $thing=null) {
 	$isg = new instagramPhp($username,$access_token); //instanciates the class with the parameters
 	$shots = $isg->getUserMedia(array('count'=>$count)); //Get the shots from instagram
 
-    $out =  '<'.$wraptag. 'class="'.$class.'">';
+    $out =  '<'.$wraptag.' class="'.$class.'">';
     
                 foreach($shots->data as $istg){
                     //The image
