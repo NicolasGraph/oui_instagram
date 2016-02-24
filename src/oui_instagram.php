@@ -4,14 +4,14 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.1.0';
+$plugin['version'] = '0.1.1';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
 
 $plugin['order'] = 5;
 
-$plugin['type'] = 0;
+$plugin['type'] = 1;
 
 // Plugin 'flags' signal the presence of optional capabilities to the core plugin loader.
 // Use an appropriately OR-ed combination of these flags.
@@ -20,7 +20,7 @@ if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001); // This pl
 if (!defined('PLUGIN_LIFECYCLE_NOTIFY')) define('PLUGIN_LIFECYCLE_NOTIFY', 0x0002); // This plugin wants to receive "plugin_lifecycle.{$plugin['name']}" events
 
 // $plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
-$plugin['flags'] = '0';
+$plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
 
 if (!defined('txpinterface'))
     @include_once('zem_tpl.php');
@@ -95,6 +95,7 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 }
 
 # --- BEGIN PLUGIN CODE ---
+//From instagramPhp by NO
 class instagramPhp{
     /*
      * Attributes
@@ -193,32 +194,76 @@ class instagramPhp{
 
 
 
+if (txpinterface === 'admin') {
+	add_privs('prefs.oui_instagram', '1');
+	add_privs('plugin_prefs.oui_instagram', '1');
+	register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
+	register_callback('oui_instagram_install', 'prefs', null, 1);
+}
 
+/**
+ * Handler for plugin lifecycle events.
+ *
+ * @param string $evt Textpattern action event
+ * @param string $stp Textpattern action step
+ */
+function oui_instagram_welcome($evt, $stp)
+{
+	switch ($stp) {
+		case 'installed':
+		case 'enabled':
+			oui_instagram_install();
+			break;
+		case 'deleted':
+			if (function_exists('remove_pref')) {
+				// 4.6 API
+				remove_pref(null, 'oui_instagram');
+			} else {
+				safe_delete('txp_prefs', "event='oui_instagram'");
+			}
+			safe_delete('txp_lang', "name LIKE 'oui\_instagram%'");
+			break;
+	}
+}
 
+function oui_instagram_install()
+{
+	if (get_pref('oui_instagram_access_token', false) === false) {
+		set_pref('oui_instagram_access_token', '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
+	}
+
+}
 
 function oui_instagram($atts, $thing=null) {
     global $oui_disclaimer_urlvar, $oui_disclaimer_cookie, $oui_disclaimer_expires;
 
     extract(lAtts(array(
         'username'    => '',
-        'count'  => '10',
+        'limit'  => '10',
         'size'    => 'thumbnail',
+        'link' => '1',
         'wraptag'     => 'ul',
-        'class'       => 'oui_instagram',
+        'class'       => 'oui_instagram_wrapper',
         'break'       => 'li',
+        'breakclass'       => 'oui_instagram_break',
         'label'       => '',
         'labeltag'    => '',
     ),$atts));
 
-    $access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca';
+    $access_token = get_pref('oui_instagram_access_token');
 
     if (!isset($atts['username'])) {
-        trigger_error("oui_instagram requires a username attribute");
+        trigger_error("missing attribute; oui_instagram requires a username attribute");
         return;
     }
+
+    if (!in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
+        trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution");
+        return;
+    }   
     
 	$isg = new instagramPhp($username,$access_token); //instanciates the class with the parameters
-	$shots = $isg->getUserMedia(array('count'=>$count)); //Get the shots from instagram
+	$shots = $isg->getUserMedia(array('count'=>$limit)); //Get the shots from instagram
 
     $out =  '<'.$wraptag.' class="'.$class.'">';
     
@@ -231,7 +276,7 @@ function oui_instagram($atts, $thing=null) {
                     //The caption
                     $istg_caption = $istg->{'caption'}->{'text'};
                     //The markup
-                    $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_thumbnail.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
+                    $out.='<'.$break.' class="'.$breakclass.'">(<a rel="external" href="'.$istg_link.'"><img src="'.$istg_thumbnail.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
                 }    
     
     
