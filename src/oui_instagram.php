@@ -45,7 +45,7 @@ h2. Table of contents
 
 h2(#requirements). Plugin requirements
 
-oui_disclaimer’s minimum requirements:
+oui_instagram’s minimum requirements:
 
 * Textpattern 4.6+
 
@@ -58,14 +58,13 @@ h2(#tags). Tags
 
 h3. <txp:oui_instagram />
 
-Displays a conditional warning message.
-Should be placed in your each page, or in a form, depending on how it is used.
+Displays a recent images list.
 
 bc. <txp:oui_instagram />
 
 h4. Attributes
 
-If used as a single tag, @<txp:oui_disclaimer />@ should contains at least a @message@ attribute. 
+@<txp:oui_instagram />@ should contains at least a @username@ attribute. 
 
 * @username="…"@ - _Default: unset_ - The username of the Instagram account.
 * @size="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
