@@ -17,11 +17,12 @@ h2(#requirements). Plugin requirements
 
 oui_disclaimer’s minimum requirements:
 
-* Textpattern 4.5+
+* Textpattern 4.6+
 
 h2(#installation). Installation
 
-Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+# Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+# Visit the plugin preferences under *Admin > Preferences* and change the default access_token to yours.
 
 h2(#tags). Tags
 
