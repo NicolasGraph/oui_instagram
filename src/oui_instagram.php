@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.2.0';
+$plugin['version'] = '0.3.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
@@ -251,21 +251,6 @@ function oui_instagram($atts, $thing=null) {
     ),$atts));
 
     $access_token = get_pref('oui_instagram_access_token');
-
-    if (!isset($atts['username'])) {
-        trigger_error("missing attribute; oui_instagram requires a username attribute.");
-        return;
-    }
-
-    if (!in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
-        trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
-        return;
-    }
- 
-    if (isset($atts['link']) && !in_array($link, array('instagram', 'raw'))) {
-        trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
-        return;    
-    }
 	   
 	$isg = new instagramPhp($username,$access_token); // instanciates the class with the parameters
 	$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
@@ -274,23 +259,30 @@ function oui_instagram($atts, $thing=null) {
     
     foreach($shots->data as $istg){
         // Image
-        $istg_image = $istg->{'images'}->{$size}->{'url'}; 
-        // Link
-        if ($link === 'instagram') {
-         $istg_link = $istg->{'link'}; // Link to the picture's instagram page, to link to the picture image only, use $istg->{'images'}->{'standard_resolution'}->{'url'}
-        }
-        elseif ($link === 'raw') {
-        	$istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
+        if (in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
+            $istg_image = $istg->{'images'}->{$size}->{'url'};
+        } else {
+            trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
+            return;
         }
         // Caption
         $istg_caption = $istg->{'caption'}->{'text'};
-        // Markup
         if (isset($atts['link'])) {
-        	$out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
-        }
-        else {
+            // Link
+            if ($link === 'instagram') {
+                $istg_link = $istg->{'link'}; // Link to the picture's instagram page, to link to the picture image only, use $istg->{'images'}->{'standard_resolution'}->{'url'}
+            } elseif ($link === 'raw') {
+        	    $istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
+            } else {
+                trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
+                return;
+            }
+            $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
+        } else {             
+            // Markup
         	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
-        }	
+                	   
+        }
     } 
                 
     $out.= '</'.$wraptag.'>';  
