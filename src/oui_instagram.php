@@ -111,7 +111,8 @@ class instagramPhp{
      */
     function __construct($username='',$access_token='') {
         if(empty($username) || empty($access_token)){
-            $this->error('empty username or access token');
+            trigger_error("empty username or access token.");
+            return;
         } else {
             $this->username=$username;
             $this->access_token = $access_token;
@@ -130,10 +131,12 @@ class instagramPhp{
                 $this->userid=$useridquery->data[0]->id;
             } else {
                 //Not found
-                $this->error('getUserIDFromUserName');
-            }
+        	  trigger_error("unknown username and/or access token; oui_instagram is unable to find the related user_id.");
+              return;            
+        	}
         } else {
-            $this->error('empty username or access token');
+          trigger_error("empty username or access token.");
+          return; 
         }
     }
     /*
@@ -155,7 +158,8 @@ class instagramPhp{
                 $this->error('getUserMedia');
             }
         } else {
-            $this->error('empty username or access token');
+          trigger_error("empty username or access token.");
+          return;         
         }
     }
     /*
@@ -187,12 +191,7 @@ class instagramPhp{
         $query = json_decode(file_get_contents($cachefile));
         return $query;
     }
-    /*
-     * Error
-     */
-    public function error($src=''){
-        echo '/!\ error '.$src.'. ';
-    }
+
 }
 
 
