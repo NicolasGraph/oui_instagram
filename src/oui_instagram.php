@@ -66,7 +66,10 @@ h4. Attributes
 
 If used as a single tag, @<txp:oui_disclaimer />@ should contains at least a @message@ attribute. 
 
-* @username="…"@ - _Default: unset - The username of the Instagram account.
+* @username="…"@ - _Default: unset_ - The username of the Instagram account.
+* @size="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
+* @link="…"@ — _Default: unset_ - Images as links to either the image on Instagram or the standard_resolution image. Valid values are instagram and raw.
+* @limit="…"@ — _Default: 10_ - The number of images to display
 
 * @wraptag="…"@ - _Default: ul_ - The HTML tag used around the generated content.
 * @class="…"@ – _Default: oui_instagram_ - The css class to apply to the HTML tag assigned to @wraptag@. 
@@ -244,7 +247,6 @@ function oui_instagram($atts, $thing=null) {
         'wraptag'     => 'ul',
         'class'       => 'oui_instagram_wrapper',
         'break'       => 'li',
-        'breakclass'       => 'oui_instagram_break',
         'label'       => '',
         'labeltag'    => '',
     ),$atts));
@@ -285,10 +287,10 @@ function oui_instagram($atts, $thing=null) {
         $istg_caption = $istg->{'caption'}->{'text'};
         // Markup
         if (isset($atts['link'])) {
-        	$out.='<'.$break.' class="'.$breakclass.'"><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
+        	$out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
         }
         else {
-        	$out.='<'.$break.' class="'.$breakclass.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
+        	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
         }	
     } 
                 

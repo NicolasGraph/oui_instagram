@@ -36,7 +36,10 @@ h4. Attributes
 
 If used as a single tag, @<txp:oui_disclaimer />@ should contains at least a @message@ attribute. 
 
-* @username="…"@ - _Default: unset - The username of the Instagram account.
+* @username="…"@ - _Default: unset_ - The username of the Instagram account.
+* @size="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
+* @link="…"@ — _Default: unset_ - Images as links to either the image on Instagram or the standard_resolution image. Valid values are instagram and raw.
+* @limit="…"@ — _Default: 10_ - The number of images to display
 
 * @wraptag="…"@ - _Default: ul_ - The HTML tag used around the generated content.
 * @class="…"@ – _Default: oui_instagram_ - The css class to apply to the HTML tag assigned to @wraptag@. 
