@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.1.1';
+$plugin['version'] = '0.2.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
@@ -235,13 +235,12 @@ function oui_instagram_install()
 }
 
 function oui_instagram($atts, $thing=null) {
-    global $oui_disclaimer_urlvar, $oui_disclaimer_cookie, $oui_disclaimer_expires;
 
     extract(lAtts(array(
         'username'    => '',
         'limit'  => '10',
         'size'    => 'thumbnail',
-        'link' => '1',
+        'link' => '',
         'wraptag'     => 'ul',
         'class'       => 'oui_instagram_wrapper',
         'break'       => 'li',
@@ -253,33 +252,48 @@ function oui_instagram($atts, $thing=null) {
     $access_token = get_pref('oui_instagram_access_token');
 
     if (!isset($atts['username'])) {
-        trigger_error("missing attribute; oui_instagram requires a username attribute");
+        trigger_error("missing attribute; oui_instagram requires a username attribute.");
         return;
     }
 
     if (!in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
-        trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution");
+        trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
         return;
-    }   
-    
-	$isg = new instagramPhp($username,$access_token); //instanciates the class with the parameters
-	$shots = $isg->getUserMedia(array('count'=>$limit)); //Get the shots from instagram
+    }
+ 
+    if (isset($atts['link']) && !in_array($link, array('instagram', 'raw'))) {
+        trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
+        return;    
+    }
+	   
+	$isg = new instagramPhp($username,$access_token); // instanciates the class with the parameters
+	$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
 
-    $out =  '<'.$wraptag.' class="'.$class.'">';
+    $out =  ($label ? doLabel($label, $labeltag) : '').'<'.$wraptag.' class="'.$class.'">';
     
-                foreach($shots->data as $istg){
-                    //The image
-                    $istg_thumbnail = $istg->{'images'}->{$size}->{'url'}; //Thumbnail
-                    //If you want to display another size, you can use 'low_resolution', or 'standard_resolution' in place of 'thumbnail'
-                    //The link
-                    $istg_link = $istg->{'link'}; //Link to the picture's instagram page, to link to the picture image only, use $istg->{'images'}->{'standard_resolution'}->{'url'}
-                    //The caption
-                    $istg_caption = $istg->{'caption'}->{'text'};
-                    //The markup
-                    $out.='<'.$break.' class="'.$breakclass.'">(<a rel="external" href="'.$istg_link.'"><img src="'.$istg_thumbnail.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
-                }    
-    
-    
+    foreach($shots->data as $istg){
+        // Image
+        $istg_image = $istg->{'images'}->{$size}->{'url'}; 
+        // Link
+        if ($link === 'instagram') {
+         $istg_link = $istg->{'link'}; // Link to the picture's instagram page, to link to the picture image only, use $istg->{'images'}->{'standard_resolution'}->{'url'}
+        }
+        elseif ($link === 'raw') {
+        	$istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
+        }
+        // Caption
+        $istg_caption = $istg->{'caption'}->{'text'};
+        // Markup
+        if (isset($atts['link'])) {
+        	$out.='<'.$break.' class="'.$breakclass.'"><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
+        }
+        else {
+        	$out.='<'.$break.' class="'.$breakclass.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
+        }	
+    } 
+                
+    $out.= '</'.$wraptag.'>';  
+       
     return $out;
 
 }
