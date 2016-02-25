@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.3.0';
+$plugin['version'] = '0.3.2';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
@@ -98,7 +98,14 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 }
 
 # --- BEGIN PLUGIN CODE ---
-//From instagramPhp by NO
+
+if (class_exists('\Textpattern\Tag\Registry')) {
+    // Register Textpattern tags for TXP 4.6+.
+    Txp::get('\Textpattern\Tag\Registry')
+        ->register('oui_instagram');
+}
+
+//From instagramPhp by NOE interactive
 class instagramPhp{
     /*
      * Attributes
@@ -167,7 +174,7 @@ class instagramPhp{
      */
     public function queryInstagram($url){
         //prepare caching
-        $cachefolder = __DIR__.'/';
+        $cachefolder = find_temp_dir().DS;
         $cachekey = md5($url);
         $cachefile = $cachefolder.$cachekey.'_'.date('i').'.txt'; //cached for one minute
         //If not cached, -> instagram request
@@ -243,6 +250,7 @@ function oui_instagram($atts, $thing=null) {
         'limit'  => '10',
         'size'    => 'thumbnail',
         'link' => '',
+        'cache_time' => '0',
         'wraptag'     => 'ul',
         'class'       => 'oui_instagram_wrapper',
         'break'       => 'li',
@@ -270,7 +278,7 @@ function oui_instagram($atts, $thing=null) {
         if (isset($atts['link'])) {
             // Link
             if ($link === 'instagram') {
-                $istg_link = $istg->{'link'}; // Link to the picture's instagram page, to link to the picture image only, use $istg->{'images'}->{'standard_resolution'}->{'url'}
+                $istg_link = $istg->{'link'};
             } elseif ($link === 'raw') {
         	    $istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
             } else {
@@ -279,7 +287,6 @@ function oui_instagram($atts, $thing=null) {
             }
             $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
         } else {             
-            // Markup
         	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
                 	   
         }
