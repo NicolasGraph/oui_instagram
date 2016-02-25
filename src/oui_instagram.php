@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.3.2';
+$plugin['version'] = '0.4.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
@@ -69,7 +69,8 @@ h4. Attributes
 * @username="…"@ - _Default: unset_ - The username of the Instagram account.
 * @size="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
 * @link="…"@ — _Default: unset_ - Images as links to either the image on Instagram or the standard_resolution image. Valid values are instagram and raw.
-* @limit="…"@ — _Default: 10_ - The number of images to display
+* @limit="…"@ — _Default: 10_ - The number of images to display.
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
 
 * @wraptag="…"@ - _Default: ul_ - The HTML tag used around the generated content.
 * @class="…"@ – _Default: oui_instagram_ - The css class to apply to the HTML tag assigned to @wraptag@. 
@@ -105,107 +106,9 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_instagram');
 }
 
-//From instagramPhp by NOE interactive
-class instagramPhp{
-    /*
-     * Attributes
-     */
-    private $username, //Instagram username
-            $access_token, //Your access token
-            $userid; //Instagram userid
-    /*
-     * Constructor
-     */
-    function __construct($username='',$access_token='') {
-        if(empty($username) || empty($access_token)){
-            trigger_error("empty username or access token.");
-            return;
-        } else {
-            $this->username=$username;
-            $this->access_token = $access_token;
-        }
-    }
-    /*
-     * The api works mostly with user ids, but it's easier for users to use their username.
-     * This function gets the userid corresponding to the username
-     */
-    public function getUserIDFromUserName(){
-        if(strlen($this->username)>0 && strlen($this->access_token)>0){
-            //Search for the username
-            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.$this->access_token);
-            if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
-                //Found
-                $this->userid=$useridquery->data[0]->id;
-            } else {
-                //Not found
-        	  trigger_error("unknown username and/or access token; oui_instagram is unable to find the related user_id.");
-              return;            
-        	}
-        } else {
-          trigger_error("empty username or access token.");
-          return; 
-        }
-    }
-    /*
-     * Get the most recent media published by a user.
-     * you can use the $args array to pass the attributes that are used by the GET/users/user-id/media/recent method
-     */
-    public function getUserMedia($args=array()){
-        if($this->userid<=0){
-            //If no user id, get user id
-            $this->getUserIDFromUserName();
-        }
-        if($this->userid>0 && strlen($this->access_token)>0){
-            $qs='';
-            if(!empty($args)){ $qs = '&'.http_build_query($args); } //Adds query string if any args are specified
-            $shots = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.$this->access_token.$qs); //Get shots
-            if($shots->meta->code=='200'){
-                return $shots;
-            } else {
-                $this->error('getUserMedia');
-            }
-        } else {
-          trigger_error("empty username or access token.");
-          return;         
-        }
-    }
-    /*
-     * Common mechanism to query the instagram api
-     */
-    public function queryInstagram($url){
-        //prepare caching
-        $cachefolder = find_temp_dir().DS;
-        $cachekey = md5($url);
-        $cachefile = $cachefolder.$cachekey.'_'.date('i').'.txt'; //cached for one minute
-        //If not cached, -> instagram request
-        if(!file_exists($cachefile)){
-            //Request
-            $request='error';
-            if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
-            else { $request = file_get_contents($url); }
-            //remove old caches
-            $oldcaches = glob($cachefolder.$cachekey."*.txt");
-            if(!empty($oldcaches)){foreach($oldcaches as $todel){
-              unlink($todel);
-            }}
-            
-            //Cache result
-            $rh = fopen($cachefile,'w+');
-            fwrite($rh,$request);
-            fclose($rh);
-        }
-        //Execute and return query
-        $query = json_decode(file_get_contents($cachefile));
-        return $query;
-    }
-
-}
-
-
-
 if (txpinterface === 'admin') {
-	add_privs('prefs.oui_instagram', '1');
-	add_privs('plugin_prefs.oui_instagram', '1');
+	add_privs('prefs.oui_instagram', '1,2');
+	add_privs('plugin_prefs.oui_instagram', '1,2');
 	register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
 	register_callback('oui_instagram_install', 'prefs', null, 1);
 }
@@ -235,11 +138,111 @@ function oui_instagram_welcome($evt, $stp)
 	}
 }
 
-function oui_instagram_install()
-{
+function oui_instagram_install() {
 	if (get_pref('oui_instagram_access_token', false) === false) {
 		set_pref('oui_instagram_access_token', '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
 	}
+}
+
+//From instagramPhp by NOE interactive
+class instagramPhp{
+    /*
+     * Attributes
+     */
+    private $username, //Instagram username
+            $access_token, //Your access token
+            $userid; //Instagram userid
+    
+    /*
+     * Constructor
+     */
+    function __construct($username='',$access_token='',$cache_time='') {
+        if(empty($username) || empty($access_token)){
+            trigger_error("empty username or access token.");
+            return;
+        } else {
+            $this->username=$username;
+            $this->access_token = $access_token;
+            $this->cache_time = $cache_time;
+        }
+    }
+    /*
+     * The api works mostly with user ids, but it's easier for users to use their username.
+     * This function gets the userid corresponding to the username
+     */
+    public function getUserIDFromUserName(){
+        if(strlen($this->username)>0 && strlen($this->access_token)>0){
+            //Search for the username
+            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.$this->access_token);
+            if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
+                //Found
+                $this->userid=$useridquery->data[0]->id;
+            } else {
+                //Not found
+        	  trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
+              return;            
+        	}
+        } else {
+          trigger_error("empty username or access token.");
+          return; 
+        }
+    }
+    /*
+     * Get the most recent media published by a user.
+     * you can use the $args array to pass the attributes that are used by the GET/users/user-id/media/recent method
+     */
+    public function getUserMedia($args=array()){
+        if($this->userid<=0){
+            //If no user id, get user id
+            $this->getUserIDFromUserName();
+        }
+        if($this->userid>0 && strlen($this->access_token)>0){
+            $qs='';
+            if(!empty($args)){ $qs = '&'.http_build_query($args); } //Adds query string if any args are specified
+            $shots = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.$this->access_token.$qs); //Get shots
+            if($shots->meta->code=='200'){
+                return $shots;
+            } else {
+                $this->error('getUserMedia');
+            }
+        } else {
+          trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
+          return;         
+        }
+    }
+    /*
+     * Common mechanism to query the instagram api
+     */
+    public function queryInstagram($url){
+        //prepare caching
+        $cachefolder = find_temp_dir().DS;
+        $cachekey = md5($url);
+        $cachedate = get_pref('cachedate');
+        $cacheoutdate = (time() - $cachedate);
+        $cachefile = $cachefolder.'oui_instagram_data_'.$cachekey.'.txt'; //cached for one minute
+        //If not cached, -> instagram request
+        if(!file_exists($cachefile) || $cacheoutdate > $this->cache_time){
+            //Request
+            $request='error';
+            if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
+            else { $request = file_get_contents($url); }
+            //remove old caches
+            $oldcaches = glob($cachefolder.$cachekey."*.txt");
+            if(!empty($oldcaches)) {
+            	foreach($oldcaches as $todel) {
+                    unlink($todel);
+                }
+            }      
+            //Cache result
+            set_pref('cachedate', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
+            $rh = fopen($cachefile,'w+');
+            fwrite($rh,$request);
+            fclose($rh);
+        }
+        //Execute and return query
+        $query = json_decode(file_get_contents($cachefile));
+        return $query;
+    }
 
 }
 
@@ -259,43 +262,49 @@ function oui_instagram($atts, $thing=null) {
     ),$atts));
 
     $access_token = get_pref('oui_instagram_access_token');
-	   
-	$isg = new instagramPhp($username,$access_token); // instanciates the class with the parameters
-	$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
 
-    $out =  ($label ? doLabel($label, $labeltag) : '').'<'.$wraptag.' class="'.$class.'">';
-    
-    foreach($shots->data as $istg){
-        // Image
-        if (in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
-            $istg_image = $istg->{'images'}->{$size}->{'url'};
-        } else {
-            trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
-            return;
-        }
-        // Caption
-        $istg_caption = $istg->{'caption'}->{'text'};
-        if (isset($atts['link'])) {
-            // Link
-            if ($link === 'instagram') {
-                $istg_link = $istg->{'link'};
-            } elseif ($link === 'raw') {
-        	    $istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
-            } else {
-                trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
-                return;
-            }
-            $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
-        } else {             
-        	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';
-                	   
-        }
-    } 
-                
-    $out.= '</'.$wraptag.'>';  
-       
-    return $out;
-
+	if(!empty($username) && !empty($access_token)){	
+		$isg = new instagramPhp($username,$access_token,$cache_time); // instanciates the class with the parameters
+		$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
+	
+	    if(!empty($shots->data)){
+		    $out =  ($label ? doLabel($label, $labeltag) : '').'<'.$wraptag.' class="'.$class.'">';
+		    foreach($shots->data as $istg){
+		        // Image
+		        if (in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
+		            $istg_image = $istg->{'images'}->{$size}->{'url'};
+		        } else {
+		            trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
+		            return;
+		        }
+		        // Caption
+		        $istg_caption = $istg->{'caption'}->{'text'};
+		        if (isset($atts['link'])) {
+		            // Link
+		            if ($link === 'instagram') {
+		                $istg_link = $istg->{'link'};
+		            } elseif ($link === 'raw') {
+		        	    $istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
+		            } else {
+		                trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
+		                return;
+		            }
+		            $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
+		        } else {             
+		        	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';         	   
+		        }
+		    }               
+	    	$out.= '</'.$wraptag.'>';         
+	    	return $out;
+	    	
+	    } else { 
+	    	trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
+	        return;         
+	    } 
+	    trigger_error("Missing required value(s); oui_instagram requires a username attribute and an access_token preference.");
+	    return; 	   
+	}
+ 	
 }
 # --- END PLUGIN CODE ---
 
