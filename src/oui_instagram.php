@@ -6,7 +6,7 @@ $plugin['allow_html_help'] = 0;
 
 $plugin['version'] = '0.5.0';
 $plugin['author'] = 'Nicolas Morand';
-$plugin['author_uri'] = 'http://www.nicolasmorand.com';
+$plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
 
 $plugin['order'] = 5;
@@ -40,7 +40,7 @@ h2. Table of contents
 * "Plugin requirements":#requirements
 * "Installation":#installation
 * "Tags":#tags
-* "Exemples":#exemples
+* "Examples":#examples
 * "Author":#author
 * "Licence":#licence
 
@@ -53,7 +53,6 @@ oui_instagram’s minimum requirements:
 h2(#installation). Installation
 
 # Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
-# Visit the plugin preferences under *Admin > Preferences* and change the default access_token to yours.
 
 h2(#tags). Tags
 
@@ -81,9 +80,9 @@ h4. Attributes
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
 
-h2(#exemples). Exemples
+h2(#examples). Examples
 
-h3. Exemple 1:
+h3. Example 1:
 
 bc. <txp:oui_instagram username="fubiz" />
 
