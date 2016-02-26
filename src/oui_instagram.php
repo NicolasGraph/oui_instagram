@@ -56,7 +56,7 @@ h2(#installation). Installation
 
 h2(#tags). Tags
 
-h3. <txp:oui_instagram />
+h3. <txp:oui_instagram_images />
 
 Displays a recent images list.
 
@@ -67,8 +67,8 @@ h4. Attributes
 @<txp:oui_instagram />@ should contains at least a @username@ attribute. 
 
 * @username="…"@ - _Default: unset_ - The username of the Instagram account.
-* @size="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
-* @link="…"@ — _Default: unset_ - Images as links to either the image on Instagram or the standard_resolution image. Valid values are instagram and raw.
+* @type="…"@ — _Default: thumbnail_ - The images size to use. Valid values are thumbnail, low_resolution, standard_resolution.
+* @link="…"@ — _Default: auto_ - …
 * @limit="…"@ — _Default: 10_ - The number of images to display.
 * @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
 
@@ -79,6 +79,45 @@ h4. Attributes
 
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+
+h3. <txp:oui_instagram_image />
+
+h4. Attributes
+
+* @type="…"@ — 
+* @class="…"@ — 
+* @link="…"@ — 
+
+h3. <txp:oui_instagram_image_info />
+
+h4. Attributes
+
+* @wraptag="…"@ — 
+* @class="…"@ — 
+* @break="…"@ — 
+* @type="…"@ — 
+
+h3. <txp:oui_instagram_image_url />
+
+h4. Attributes
+
+* @type="…"@ — 
+* @class="…"@ — 
+* @link="…"@ — 
+
+
+h3. <txp:oui_instagram_image_date />
+
+h4. Attributes
+
+* @format="…"@ — 
+
+h3. <txp:oui_instagram_image_author />
+
+* @wraptag="…"@ — 
+* @class="…"@ — 
+* @title="…"@ — 
+* @link="…"@ — 
 
 h2(#examples). Examples
 
