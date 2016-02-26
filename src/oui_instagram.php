@@ -147,9 +147,9 @@ class instagramPhp{
                 $this->userid=$useridquery->data[0]->id;
             } else {
                 //Not found
-        	  trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
+              trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
               return;            
-        	}
+            }
         } else {
           trigger_error("empty username or access token.");
           return; 
@@ -197,7 +197,7 @@ class instagramPhp{
             //remove old caches
             $oldcaches = glob($cachefolder.$cachekey."*.txt");
             if(!empty($oldcaches)) {
-            	foreach($oldcaches as $todel) {
+                foreach($oldcaches as $todel) {
                     unlink($todel);
                 }
             }      
@@ -232,36 +232,36 @@ function oui_instagram_images($atts, $thing=null) {
 
     $access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca';
 
-	if(!empty($username) && !empty($access_token)){	
-		$isg = new instagramPhp($username,$access_token,$cache_time); // instanciates the class with the parameters
-		$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
+    if(!empty($username) && !empty($access_token)){    
+        $isg = new instagramPhp($username,$access_token,$cache_time); // instanciates the class with the parameters
+        $shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
 
-	    if(!empty($shots->data)){
+        if(!empty($shots->data)){
 
-			foreach($shots->data as $shot){
-				if ($thing===null) {
-					$shot_image = $shot->{'images'}->{$type}->{'url'};
-					$shot_image_width = $shot->{'images'}->{$type}->{'width'};
-					$shot_image_height = $shot->{'images'}->{$type}->{'height'};
-					$shot_caption = $shot->{'caption'}->{'text'};
-					$shot_image_url = ($link == 'auto') ? $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
+            foreach($shots->data as $shot){
+                if ($thing===null) {
+                    $shot_image = $shot->{'images'}->{$type}->{'url'};
+                    $shot_image_width = $shot->{'images'}->{$type}->{'width'};
+                    $shot_image_height = $shot->{'images'}->{$type}->{'height'};
+                    $shot_caption = $shot->{'caption'}->{'text'};
+                    $shot_image_url = ($link == 'auto') ? $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
 
-					$out[]= ($link) ? href('<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />',$shot_image_url, ' title="'.$shot_caption.'"') : '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
-   	 			} else {
-					$out[]= parse($thing);
-   	 			}
-			}
+                    $out[]= ($link) ? href('<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />',$shot_image_url, ' title="'.$shot_caption.'"') : '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
+                    } else {
+                    $out[]= parse($thing);
+                    }
+            }
 
-	    	return doWrap($out, $wraptag, $break, $class);
-	    	
-	    } else { 
-	    	trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
-	        return;         
-	    } 
-	    trigger_error("Missing required value(s); oui_instagram requires a username attribute and an access_token preference.");
-	    return; 	   
-	}
- 	
+            return doWrap($out, $wraptag, $break, $class);
+            
+        } else { 
+            trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
+            return;         
+        } 
+        trigger_error("Missing required value(s); oui_instagram requires a username attribute and an access_token preference.");
+        return;        
+    }
+     
 }
 
 function oui_instagram_image($atts) {
@@ -273,14 +273,14 @@ function oui_instagram_image($atts) {
         'link'    => 'instagram',
     ),$atts));
 
-	$shot_image = $shot->{'images'}->{$type}->{'url'};
-	$shot_image_width = $shot->{'images'}->{$type}->{'width'};
-	$shot_image_height = $shot->{'images'}->{$type}->{'height'};
-	$shot_caption = $shot->{'caption'}->{'text'};
-	
-	$out = '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
-	
-	return $out;
+    $shot_image = $shot->{'images'}->{$type}->{'url'};
+    $shot_image_width = $shot->{'images'}->{$type}->{'width'};
+    $shot_image_height = $shot->{'images'}->{$type}->{'height'};
+    $shot_caption = $shot->{'caption'}->{'text'};
+    
+    $out = '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
+    
+    return $out;
     
 }
 
@@ -294,18 +294,18 @@ function oui_instagram_image_url($atts, $thing=null) {
         'link'    => 'auto',
     ),$atts));
 
-	if (in_array($type, array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution'))) {
-		$shot_image_url = ($type == 'instagram') ? $shot_link = $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
-		$link = ($link == 'auto') ? (($thing) ? 1 : 0) : $link;
+    if (in_array($type, array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution'))) {
+        $shot_image_url = ($type == 'instagram') ? $shot_link = $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
+        $link = ($link == 'auto') ? (($thing) ? 1 : 0) : $link;
         $out = ($thing) ? parse($thing) : $shot_image_url;
-        $out = ($link) ? href($out, $shot_image_url) : $out;
+        $out = ($link) ? href($out, $shot_image_url, ' class="'.$class.'"') : $out;
         return $out;
 
-	} else {
-		trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
-	    return;
-	}
-	    
+    } else {
+        trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
+        return;
+    }
+        
 }
 
 
@@ -323,7 +323,7 @@ function oui_instagram_image_info($atts) {
     $type = do_list($type);
 
     foreach ($type as $item) {
-    	$data = ($item=='caption') ? 'text' : 'count';
+        $data = ($item=='caption') ? 'text' : 'count';
         if (in_array($item, $validItems)) {
                 $out[] = $shot->{$item}->{$data};
         }
@@ -340,14 +340,14 @@ function oui_instagram_image_date($atts) {
         'format'    => '',
     ),$atts));
 
-	$shot_date = $shot->{'caption'}->{'created_time'};
+    $shot_date = $shot->{'caption'}->{'created_time'};
 
     $out = fileDownloadFormatTime(array(
         'ftime'  => $shot_date,
         'format' => $format,
     ));
-		
-	return $out;
+        
+    return $out;
     
 }
 
@@ -355,11 +355,9 @@ function oui_instagram_image_author($atts) {
     global $username, $shots, $shot;
 
     extract(lAtts(array(
-        'class'        => '',
+        'class'        => 'oui_instagram_image_author',
         'link'         => 0,
         'title'        => 1,
-        'section'      => '',
-        'this_section' => '',
         'wraptag'      => '',
     ), $atts));
 
