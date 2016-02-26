@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.4.0';
+$plugin['version'] = '0.5.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'http://www.nicolasmorand.com';
 $plugin['description'] = 'Instagram gallery';
@@ -29,6 +29,7 @@ if (0) {
 
 ?>
 # --- BEGIN PLUGIN HELP ---
+*IN PROCESS — This plugin is not released yet.*
 
 h1. oui_instagram
 
@@ -103,45 +104,12 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 if (class_exists('\Textpattern\Tag\Registry')) {
     // Register Textpattern tags for TXP 4.6+.
     Txp::get('\Textpattern\Tag\Registry')
-        ->register('oui_instagram');
-}
-
-if (txpinterface === 'admin') {
-	add_privs('prefs.oui_instagram', '1,2');
-	add_privs('plugin_prefs.oui_instagram', '1,2');
-	register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
-	register_callback('oui_instagram_install', 'prefs', null, 1);
-}
-
-/**
- * Handler for plugin lifecycle events.
- *
- * @param string $evt Textpattern action event
- * @param string $stp Textpattern action step
- */
-function oui_instagram_welcome($evt, $stp)
-{
-	switch ($stp) {
-		case 'installed':
-		case 'enabled':
-			oui_instagram_install();
-			break;
-		case 'deleted':
-			if (function_exists('remove_pref')) {
-				// 4.6 API
-				remove_pref(null, 'oui_instagram');
-			} else {
-				safe_delete('txp_prefs', "event='oui_instagram'");
-			}
-			safe_delete('txp_lang', "name LIKE 'oui\_instagram%'");
-			break;
-	}
-}
-
-function oui_instagram_install() {
-	if (get_pref('oui_instagram_access_token', false) === false) {
-		set_pref('oui_instagram_access_token', '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
-	}
+        ->register('oui_instagram_images')
+        ->register('oui_instagram_image')
+        ->register('oui_instagram_image_info')
+        ->register('oui_instagram_image_url')
+        ->register('oui_instagram_images_date')
+        ->register('oui_instagram_images_author');
 }
 
 //From instagramPhp by NOE interactive
@@ -246,56 +214,45 @@ class instagramPhp{
 
 }
 
-function oui_instagram($atts, $thing=null) {
-
+function oui_instagram_images($atts, $thing=null) {
+    global $username, $shots, $shot;
+    
     extract(lAtts(array(
         'username'    => '',
         'limit'  => '10',
-        'size'    => 'thumbnail',
-        'link' => '',
+        'type'    => 'thumbnail',
+        'link' => 'auto',
         'cache_time' => '0',
         'wraptag'     => 'ul',
-        'class'       => 'oui_instagram_wrapper',
+        'class'       => 'oui_instagram_images',
         'break'       => 'li',
         'label'       => '',
         'labeltag'    => '',
     ),$atts));
 
-    $access_token = get_pref('oui_instagram_access_token');
+    $access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca';
 
 	if(!empty($username) && !empty($access_token)){	
 		$isg = new instagramPhp($username,$access_token,$cache_time); // instanciates the class with the parameters
 		$shots = $isg->getUserMedia(array('count'=>$limit)); // Get the shots from instagram
-	
+
 	    if(!empty($shots->data)){
-		    $out =  ($label ? doLabel($label, $labeltag) : '').'<'.$wraptag.' class="'.$class.'">';
-		    foreach($shots->data as $istg){
-		        // Image
-		        if (in_array($size, array('thumbnail', 'low_resolution', 'standard_resolution'))) {
-		            $istg_image = $istg->{'images'}->{$size}->{'url'};
-		        } else {
-		            trigger_error("unkown attribute value; oui_instagram size attribute accepts the following values: thumbnail, low_resolution, standard_resolution.");
-		            return;
-		        }
-		        // Caption
-		        $istg_caption = $istg->{'caption'}->{'text'};
-		        if (isset($atts['link'])) {
-		            // Link
-		            if ($link === 'instagram') {
-		                $istg_link = $istg->{'link'};
-		            } elseif ($link === 'raw') {
-		        	    $istg_link  = $istg->{'images'}->{'standard_resolution'}->{'url'};	
-		            } else {
-		                trigger_error("unkown attribute value; oui_instagram link attribute accepts the following values: instagram, raw.");
-		                return;
-		            }
-		            $out.='<'.$break.'><a rel="external" href="'.$istg_link.'"><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></a></'.$break.'>';
-		        } else {             
-		        	$out.='<'.$break.'><img src="'.$istg_image.'" alt="'.$istg_caption.'" title="'.$istg_caption.'" /></'.$break.'>';         	   
-		        }
-		    }               
-	    	$out.= '</'.$wraptag.'>';         
-	    	return $out;
+
+			foreach($shots->data as $shot){
+				if ($thing===null) {
+					$shot_image = $shot->{'images'}->{$type}->{'url'};
+					$shot_image_width = $shot->{'images'}->{$type}->{'width'};
+					$shot_image_height = $shot->{'images'}->{$type}->{'height'};
+					$shot_caption = $shot->{'caption'}->{'text'};
+					$shot_image_url = ($link == 'auto') ? $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
+
+					$out[]= ($link) ? href('<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />',$shot_image_url, ' title="'.$shot_caption.'"') : '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
+   	 			} else {
+					$out[]= parse($thing);
+   	 			}
+			}
+
+	    	return doWrap($out, $wraptag, $break, $class);
 	    	
 	    } else { 
 	    	trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
@@ -306,6 +263,116 @@ function oui_instagram($atts, $thing=null) {
 	}
  	
 }
+
+function oui_instagram_image($atts) {
+    global $shots, $shot;
+
+    extract(lAtts(array(
+        'type'    => 'thumbnail',
+        'class'    => 'oui_instagram_image',
+        'link'    => 'instagram',
+    ),$atts));
+
+	$shot_image = $shot->{'images'}->{$type}->{'url'};
+	$shot_image_width = $shot->{'images'}->{$type}->{'width'};
+	$shot_image_height = $shot->{'images'}->{$type}->{'height'};
+	$shot_caption = $shot->{'caption'}->{'text'};
+	
+	$out = '<img class="'.$class.'" src="'.$shot_image.'" alt="'.$shot_caption.'" width="'.$shot_image_width.'" height="'.$shot_image_height.'" />';
+	
+	return $out;
+    
+}
+
+
+function oui_instagram_image_url($atts, $thing=null) {
+    global $shots, $shot;
+
+    extract(lAtts(array(
+        'type'    => 'instagram',
+        'class'    => 'oui_instagram_image_url',
+        'link'    => 'auto',
+    ),$atts));
+
+	if (in_array($type, array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution'))) {
+		$shot_image_url = ($type == 'instagram') ? $shot_link = $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
+		$link = ($link == 'auto') ? (($thing) ? 1 : 0) : $link;
+        $out = ($thing) ? parse($thing) : $shot_image_url;
+        $out = ($link) ? href($out, $shot_image_url) : $out;
+        return $out;
+
+	} else {
+		trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
+	    return;
+	}
+	    
+}
+
+
+function oui_instagram_image_info($atts) {
+    global $shots, $shot;
+
+    extract(lAtts(array(
+        'wraptag'    => 'p',
+        'class'    => 'oui_instagram_image_info',
+        'break' => br,
+        'type'    => 'caption',
+    ),$atts));
+    
+    $validItems = array('caption', 'likes', 'comments');
+    $type = do_list($type);
+
+    foreach ($type as $item) {
+    	$data = ($item=='caption') ? 'text' : 'count';
+        if (in_array($item, $validItems)) {
+                $out[] = $shot->{$item}->{$data};
+        }
+    }
+
+return doWrap($out, $wraptag, $break, $class);
+
+}
+
+function oui_instagram_image_date($atts) {
+    global $shots, $shot;
+
+    extract(lAtts(array(
+        'format'    => '',
+    ),$atts));
+
+	$shot_date = $shot->{'caption'}->{'created_time'};
+
+    $out = fileDownloadFormatTime(array(
+        'ftime'  => $shot_date,
+        'format' => $format,
+    ));
+		
+	return $out;
+    
+}
+
+function oui_instagram_image_author($atts) {
+    global $username, $shots, $shot;
+
+    extract(lAtts(array(
+        'class'        => '',
+        'link'         => 0,
+        'title'        => 1,
+        'section'      => '',
+        'this_section' => '',
+        'wraptag'      => '',
+    ), $atts));
+
+    $author_name = ($title) ? $shot->{'user'}->{'username'} : $shot->{'user'}->{'full_name'};
+
+    $author = ($link)
+        ? href($author_name, 'http://instagram.com/'.$username)
+        : $author_name;
+
+    return ($wraptag) ? doTag($author, $wraptag, $class) : $author;
+    
+}
+
 # --- END PLUGIN CODE ---
 
 ?>
