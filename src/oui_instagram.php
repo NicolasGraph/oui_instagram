@@ -54,7 +54,7 @@ h2(#requirements). Plugin requirements
 
 oui_instagram’s minimum requirements:
 
-* Textpattern 4.6+
+* Textpattern 4.5+
 
 h2(#installation). Installation
 
