@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.1bêta';
+$plugin['version'] = '0.5.2bêta';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -319,15 +319,15 @@ function oui_instagram_images($atts, $thing=null) {
                     $width = $image->{'images'}->{$type}->{'width'};
                     $height = $image->{'images'}->{$type}->{'height'};
                     $caption = $image->{'caption'}->{'text'};
-                    $link = ($link == 'auto') ? $image->{'link'} : $image->{'images'}->{$type}->{'url'};
+                    $to = ($link == 'auto') ? $image->{'link'} : $image->{'images'}->{$type}->{'url'};
 
-                    $out[]= ($link) ? href('<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$link, ' title="'.$caption.'"') : '<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                    $out[]= ($link) ? href('<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
                     } else {
                     $out[]= parse($thing);
                     }
             }
 
-            return doWrap($out, $wraptag, $break, $class);
+            return doWrap($out, $wraptag, $break, $class, '');
             
         } else {
             trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
@@ -344,15 +344,16 @@ function oui_instagram_image($atts) {
 
     extract(lAtts(array(
         'type'    => 'thumbnail',
-        'class'    => 'oui_instagram_image',
+        'class'    => '',
     ),$atts));
-
+    
     $url = $image->{'images'}->{$type}->{'url'};
     $width = $image->{'images'}->{$type}->{'width'};
     $height = $image->{'images'}->{$type}->{'height'};
     $caption = $image->{'caption'}->{'text'};
     
-    $out = '<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+    $out = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" ';
+    $out .= ($class) ? 'class="'.$class.'"' : '/>';
 
     return $out;
 
