@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.2bêta';
+$plugin['version'] = '0.5.3bêta';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -321,7 +321,7 @@ function oui_instagram_images($atts, $thing=null) {
                     $caption = $image->{'caption'}->{'text'};
                     $to = ($link == 'auto') ? $image->{'link'} : $image->{'images'}->{$type}->{'url'};
 
-                    $out[]= ($link) ? href('<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img class="'.$class.'" src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                    $out[]= ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
                     } else {
                     $out[]= parse($thing);
                     }
