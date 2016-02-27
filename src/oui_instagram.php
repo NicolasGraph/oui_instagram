@@ -38,7 +38,15 @@ h2. Table of contents
 * "Plugin requirements":#requirements
 * "Installation":#installation
 * "Tags":#tags
+** "oui_instagram_images":#oui_instagram_images
+** "oui_instagram_image":#oui_instagram_image
+** "oui_instagram_image_info":#oui_instagram_image_info
+** "oui_instagram_image_url":#oui_instagram_image_url
+** "oui_instagram_image_date":#oui_instagram_image_date
+** "oui_instagram_image_author":#oui_instagram_image_author
 * "Examples":#examples
+** "Single tag":#single_tag
+** "Container tag":#container_tag
 * "Author":#author
 * "Licence":#licence
 
@@ -54,7 +62,7 @@ h2(#installation). Installation
 
 h2(#tags). Tags
 
-h3. <txp:oui_instagram_images />
+h3(#oui_instagram_images). oui_instagram_images
 
 Displays a recent images list.
 
@@ -81,7 +89,7 @@ h5. Optional
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
-h3. <txp:oui_instagram_image />
+h3(#oui_instagram_image). oui_instagram_image
 
 Displays each image in a @oui_instagram_images@ container tag.
 
@@ -92,7 +100,7 @@ h4. Attributes
 * @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 
-h3. <txp:oui_instagram_image_info />
+h3(#oui_instagram_image_info). oui_instagram_image_info
 
 Displays each image info in a @oui_instagram_images@ container tag.
 
@@ -105,7 +113,7 @@ h4. Attributes
 * @type="…"@ — _Default: caption_ - The information type to display. Valid values are caption, likes, comments.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
-h3. <txp:oui_instagram_image_url />
+h3(#oui_instagram_image_url). oui_instagram_image_url
 
 Uses each image url/link in a @oui_instagram_images@ container tag.
 
@@ -117,7 +125,7 @@ h4. Attributes
 * @link="…"@ — _Default: auto_ - To apply a link to the standard_resolution image. Valid values are auto (link container tag only), 1, 0.
 * @type="…"@ — _Default: instagram_ - The url type to use. Valid values are thumbnail, low_resolution, standard_resolution, instagram.
 
-h3. <txp:oui_instagram_image_date />
+h3(#oui_instagram_image_date). oui_instagram_image_date
 
 Displays each image date in a @oui_instagram_images@ container tag.
 
@@ -129,7 +137,7 @@ h4. Attributes
 * @format="…"@ — _Default: the Archive date format set in the preferences_ - To adjust the display of the date to taste. Valid values are any valid strftime() string values.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
-h3. <txp:oui_instagram_image_author />
+h3(#oui_instagram_image_author). oui_instagram_image_author
 
 Displays each image author in a @oui_instagram_images@ container tag.
 
@@ -142,17 +150,17 @@ bc. <txp:oui_instagram_image_author />
 
 h2(#examples). Examples
 
-h3. Example 1: single tag use
+h3(#single_tag). Example 1: single tag use
 
-bc. <txp:oui_instagram username="cercle_magazine" />
+bc. <txp:oui_instagram_images username="cercle_magazine" />
 
-h3. Example 2: container tag use
+h3(#container_tag). Example 2: container tag use
 
-bc. <txp:oui_instagram username="cercle_magazine">
+bc. <txp:oui_instagram_images username="cercle_magazine">
     <txp:oui_instagram_image_url><txp:oui_instagram_image /></txp:oui_instagram_image_url>
     <txp:oui_instagram_image_info />
     <txp:oui_instagram_image_date />, <txp:oui_instagram_image_date />
-</txp:oui_instagram>
+</txp:oui_instagram_images>
 
 h2(#author). Author
 
