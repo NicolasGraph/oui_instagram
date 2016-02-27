@@ -1,3 +1,132 @@
-h1. oui_instagram
+h1. oui_instagram (Bêta)
 
-In process…
+Easily display recent images from an Instagram account.
+
+h2. Table of contents
+
+* "Plugin requirements":#requirements
+* "Installation":#installation
+* "Tags":#tags
+* "Examples":#examples
+* "Author":#author
+* "Licence":#licence
+
+h2(#requirements). Plugin requirements
+
+oui_instagram’s minimum requirements:
+
+* Textpattern 4.6+
+
+h2(#installation). Installation
+
+# Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+
+h2(#tags). Tags
+
+h3. <txp:oui_instagram_images />
+
+Displays a recent images list.
+
+bc. <txp:oui_instagram_images />
+
+h4. Attributes 
+
+h5. Required
+
+* @username="…"@ - _Default: unset_ - The username of the Instagram account.
+
+h5. Recommended
+
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+
+h5. Optional
+
+* @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
+* @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
+* @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
+* @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+* @limit="…"@ — _Default: 10_ - The number of images to display.
+* @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
+* @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
+* @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
+h3. <txp:oui_instagram_image />
+
+Displays each image in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image />
+
+h4. Attributes
+
+* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag.
+* @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
+
+h3. <txp:oui_instagram_image_info />
+
+Displays each image info in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_info />
+
+h4. Attributes
+
+* @break="…"@ — _Default: unset_ - The HTML tag used around each generated info. 
+* @class="…"@ — _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@. 
+* @type="…"@ — _Default: caption_ - The information type to display. Valid values are caption, likes, comments.
+* @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
+
+h3. <txp:oui_instagram_image_url />
+
+Uses each image url/link in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_url />
+
+h4. Attributes
+
+* @class="…"@ — _Default: unset_ - The css class to apply to the @a@ HTML tag if link is defined.
+* @link="…"@ — _Default: auto_ - To apply a link to the standard_resolution image. Valid values are auto (link container tag only), 1, 0.
+* @type="…"@ — _Default: instagram_ - The url type to use. Valid values are thumbnail, low_resolution, standard_resolution, instagram.
+
+h3. <txp:oui_instagram_image_date />
+
+Displays each image date in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_date />
+
+h4. Attributes
+
+* @class="…"@ — _Default: unset - The css class to apply to the HTML tag assigned to @wraptag@.
+* @format="…"@ — _Default: the Archive date format set in the preferences_ - To adjust the display of the date to taste. Valid values are any valid strftime() string values.
+* @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
+
+h3. <txp:oui_instagram_image_author />
+
+Displays each image author in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_author />
+
+* @class="…"@ — _Default: unset - The css class to apply to the HTML tag assigned to @wraptag@.
+* @link="…"@ — _Default: 0_ - To apply a link around the generated content.  
+* @title="…"@ — _Default: 1_ - To show the full name (1) or the username (0). 
+* @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
+
+h2(#examples). Examples
+
+h3. Example 1: single tag use
+
+bc. <txp:oui_instagram username="cercle_magazine" />
+
+h3. Example 2: container tag use
+
+bc. <txp:oui_instagram username="cercle_magazine">
+    <txp:oui_instagram_image_url><txp:oui_instagram_image /></txp:oui_instagram_image_url>
+    <txp:oui_instagram_image_info />
+    <txp:oui_instagram_image_date />, <txp:oui_instagram_image_date />
+</txp:oui_instagram>
+
+h2(#author). Author
+
+"Nicolas Morand":https://github.com/NicolasGraph, from a "NOE interactive tip":http://noe-interactive.com/comment-integrer-ses-photos-instagram-sur-son-site.
+
+h2(#licence). Licence
+
+This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.html.
