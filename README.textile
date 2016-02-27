@@ -14,6 +14,8 @@ h2. Table of contents
 ** "oui_instagram_image_date":#oui_instagram_image_date
 ** "oui_instagram_image_author":#oui_instagram_image_author
 * "Examples":#examples
+** "Single tag":#single_tag
+** "Container tag":#container_tag
 * "Author":#author
 * "Licence":#licence
 
@@ -117,11 +119,11 @@ bc. <txp:oui_instagram_image_author />
 
 h2(#examples). Examples
 
-h3. Example 1: single tag use
+h3(#single_tag). Example 1: single tag use
 
 bc. <txp:oui_instagram username="cercle_magazine" />
 
-h3. Example 2: container tag use
+h3(#container_tag). Example 2: container tag use
 
 bc. <txp:oui_instagram username="cercle_magazine">
     <txp:oui_instagram_image_url><txp:oui_instagram_image /></txp:oui_instagram_image_url>
