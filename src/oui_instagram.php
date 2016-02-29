@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.3bêta';
+$plugin['version'] = '0.5.4';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -29,7 +29,7 @@ if (0) {
 
 ?>
 # --- BEGIN PLUGIN HELP ---
-h1. oui_instagram (Bêta)
+h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
@@ -143,7 +143,7 @@ Displays each image author in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_author />
 
-* @class="…"@ — _Default: unset - The css class to apply to the HTML tag assigned to @wraptag@.
+* @class="…"@ — _Default: unset - The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
 * @link="…"@ — _Default: 0_ - To apply a link around the generated content.  
 * @title="…"@ — _Default: 1_ - To show the full name (1) or the username (0). 
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
@@ -314,6 +314,7 @@ function oui_instagram_images($atts, $thing=null) {
         if(!empty($images->data)){
 
             foreach($images->data as $image){
+
                 if ($thing===null) {
                     $url = $image->{'images'}->{$type}->{'url'};
                     $width = $image->{'images'}->{$type}->{'width'};
@@ -322,12 +323,12 @@ function oui_instagram_images($atts, $thing=null) {
                     $to = ($link == 'auto') ? $image->{'link'} : $image->{'images'}->{$type}->{'url'};
 
                     $out[]= ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
-                    } else {
-                    $out[]= parse($thing);
-                    }
-            }
 
-            return doWrap($out, $wraptag, $break, $class, '');
+                } else {
+                    $out[]= parse($thing);
+                }
+            }
+            return doWrap($out, $wraptag, $break, $class);
             
         } else {
             trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
@@ -397,14 +398,15 @@ function oui_instagram_image_info($atts) {
     $validItems = array('caption', 'likes', 'comments');
     $type = do_list($type);
 
+    $out = array();
     foreach ($type as $item) {
         $data = ($item=='caption') ? 'text' : 'count';
         if (in_array($item, $validItems)) {
-                $out[] = $image->{$item}->{$data};
+            $out[] = $image->{$item}->{$data};
         }
     }
 
-    return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
+    return doWrap($out, $wraptag, $break, $class);
 
 }
 
@@ -439,7 +441,7 @@ function oui_instagram_image_author($atts) {
     ), $atts));
 
     $author_name = ($title) ? $image->{'user'}->{'username'} : $image->{'user'}->{'full_name'};
-    $author = ($link) ? href($author_name, 'http://instagram.com/'.$username) : $author_name;
+    $author = ($link) ? href($author_name, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"') : $author_name;
 
     return ($wraptag) ? doTag($author, $wraptag, $class) : $author;
 

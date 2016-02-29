@@ -1,4 +1,4 @@
-h1. oui_instagram (Bêta)
+h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
@@ -114,7 +114,7 @@ Displays each image author in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_author />
 
-* @class="…"@ — _Default: unset - The css class to apply to the HTML tag assigned to @wraptag@.
+* @class="…"@ — _Default: unset - The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
 * @link="…"@ — _Default: 0_ - To apply a link around the generated content.  
 * @title="…"@ — _Default: 1_ - To show the full name (1) or the username (0). 
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
