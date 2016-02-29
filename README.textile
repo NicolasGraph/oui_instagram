@@ -2,8 +2,6 @@ h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
-!https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif!:https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
-
 h2. Table of contents
 
 * "Plugin requirements":#requirements
@@ -68,8 +66,9 @@ bc. <txp:oui_instagram_image />
 
 h4. Attributes
 
-* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag.
+* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@..
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
+* @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image_info). oui_instagram_image_info
 
@@ -92,9 +91,10 @@ bc. <txp:oui_instagram_image_url />
 
 h4. Attributes
 
-* @class="…"@ — _Default: unset_ - The css class to apply to the @a@ HTML tag if link is defined.
+* @class="…"@ — _Default: unset_ - The css class to apply to the @a@ HTML tag if link is defined or to the HTML tag assigned to @wraptag@.
 * @link="…"@ — _Default: auto_ - To apply a link to the standard_resolution image. Valid values are auto (link container tag only), 1, 0.
 * @type="…"@ — _Default: instagram_ - The url type to use. Valid values are thumbnail, low_resolution, standard_resolution, instagram.
+* @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image_date). oui_instagram_image_date
 
