@@ -1,4 +1,4 @@
-h1. oui_instagram_
+h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
