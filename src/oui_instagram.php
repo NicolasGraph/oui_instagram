@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.5';
+$plugin['version'] = '0.5.7';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -189,25 +189,28 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_instagram_image_author');
 }
 
-//From instagramPhp by NOE interactive
+// From instagramPhp by NOE interactive
 class instagramPhp{
+    /*
+     * Constant
+     */
+    const access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca'; // Your access token
+
     /*
      * Attributes
      */
-    private $username, //Instagram username
-            $access_token, //Your access token
-            $userid; //Instagram userid
+    private $username, // Instagram username
+            $userid; // Instagram userid
     
     /*
      * Constructor
      */
-    function __construct($username='',$access_token='',$cache_time='') {
-        if(empty($username) || empty($access_token)){
+    function __construct($username='',$cache_time='') {
+        if(empty($username)){
             trigger_error("empty username or access token.");
             return;
         } else {
             $this->username=$username;
-            $this->access_token = $access_token;
             $this->cache_time = $cache_time;
         }
     }
@@ -216,19 +219,19 @@ class instagramPhp{
      * This function gets the userid corresponding to the username
      */
     public function getUserIDFromUserName(){
-        if(strlen($this->username)>0 && strlen($this->access_token)>0){
-            //Search for the username
-            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.$this->access_token);
+        if(strlen($this->username)>0) {
+            // Search for the username
+            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.self::access_token);
             if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
-                //Found
+                // Found
                 $this->userid=$useridquery->data[0]->id;
             } else {
-                //Not found
-              trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
+                // Not found
+              trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
               return;            
             }
         } else {
-          trigger_error("empty username or access token.");
+          trigger_error("empty username.");
           return; 
         }
     }
@@ -238,20 +241,21 @@ class instagramPhp{
      */
     public function getUserMedia($args=array()){
         if($this->userid<=0){
-            //If no user id, get user id
+            // If no user id, get user id
             $this->getUserIDFromUserName();
         }
-        if($this->userid>0 && strlen($this->access_token)>0){
+        if($this->userid>0){
             $qs='';
-            if(!empty($args)){ $qs = '&'.http_build_query($args); } //Adds query string if any args are specified
-            $images = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.$this->access_token.$qs); //Get images
+            if(!empty($args)){ $qs = '&'.http_build_query($args); } // Adds query string if any args are specified
+            $images = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.self::access_token.$qs); //Get images
             if($images->meta->code=='200'){
                 return $images;
             } else {
-                $this->error('getUserMedia');
+                trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
+                return;            
             }
         } else {
-          trigger_error("unknown attribute value; oui_instagram username attribute and/or access token preference is not valid.");
+          trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
           return;
         }
     }
@@ -259,15 +263,15 @@ class instagramPhp{
      * Common mechanism to query the instagram api
      */
     public function queryInstagram($url){
-        //prepare caching
+        // Prepare caching
         $cachefolder = find_temp_dir().DS;
         $cachekey = md5($url);
         $cachedate = get_pref('cachedate');
         $cacheoutdate = (time() - $cachedate);
         $cachefile = $cachefolder.'oui_instagram_data_'.$cachekey.'.txt';
-        //If not cached, -> instagram request
+        // If not cached, -> instagram request
         if(!file_exists($cachefile) || $cacheoutdate > $this->cache_time){
-            //Request
+            // Request
             $request='error';
             if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
             else { $request = file_get_contents($url); }
@@ -278,13 +282,13 @@ class instagramPhp{
                     unlink($todel);
                 }
             }
-            //Cache result
+            // Cache result
             set_pref('cachedate', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
             $rh = fopen($cachefile,'w+');
             fwrite($rh,$request);
             fclose($rh);
         }
-        //Execute and return query
+        // Execute and return query
         $query = json_decode(file_get_contents($cachefile));
         return $query;
     }
@@ -295,23 +299,21 @@ function oui_instagram_images($atts, $thing=null) {
     global $username, $thisimage;
     
     extract(lAtts(array(
-        'username'    => '',
-        'limit'  => '10',
-        'type'    => 'thumbnail',
-        'link' => 'auto',
+        'username'   => '',
+        'limit'      => '10',
+        'type'       => 'thumbnail',
+        'link'       => 'auto',
         'cache_time' => '0',
-        'wraptag'     => 'ul',
-        'class'       => 'oui_instagram_images',
-        'break'       => 'li',
-        'label'       => '',
-        'labeltag'    => '',
+        'wraptag'    => 'ul',
+        'class'      => 'oui_instagram_images',
+        'break'      => 'li',
+        'label'      => '',
+        'labeltag'   => '',
     ),$atts));
 
-    $access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca';
-
     if(!empty($username)){    
-        $isg = new instagramPhp($username,$access_token,$cache_time); // instanciates the class with the parameters
-        $images = $isg->getUserMedia(array('count'=>$limit)); // Get the images from instagram
+        $feed = new instagramPhp($username,$cache_time); // instanciates the class with the parameters
+        $images = $feed->getUserMedia(array('count'=>$limit)); // Get the images from instagram
 
         if(!empty($images->data)){
 
@@ -346,7 +348,7 @@ function oui_instagram_image($atts) {
 
     extract(lAtts(array(
         'type'    => 'thumbnail',
-        'class'    => '',
+        'class'   => '',
         'wraptag' => '',
     ),$atts));
     
@@ -368,7 +370,7 @@ function oui_instagram_image_url($atts, $thing=null) {
     extract(lAtts(array(
         'type'    => 'instagram',
         'wraptag' => '',
-        'class'    => '',
+        'class'   => '',
         'link'    => 'auto',
     ),$atts));
 
@@ -399,9 +401,9 @@ function oui_instagram_image_info($atts) {
     global $thisimage;
 
     extract(lAtts(array(
-        'wraptag'    => '',
-        'class'    => '',
-        'break' => '',
+        'wraptag' => '',
+        'class'   => '',
+        'break'   => '',
         'type'    => 'caption',
     ),$atts));
     
@@ -423,9 +425,9 @@ function oui_instagram_image_date($atts) {
     global $thisimage;
 
     extract(lAtts(array(
-        'wraptag'      => '',
-        'class'        => '',
-        'format'    => '',
+        'wraptag' => '',
+        'class'   => '',
+        'format'  => '',
     ),$atts));
 
     $date = $thisimage->{'caption'}->{'created_time'};
@@ -442,10 +444,10 @@ function oui_instagram_image_author($atts) {
     global $username, $thisimage;
 
     extract(lAtts(array(
-        'wraptag'      => '',
-        'class'        => '',
-        'link'         => 0,
-        'title'        => 1,
+        'wraptag' => '',
+        'class'   => '',
+        'link'    => 0,
+        'title'   => 1,
     ), $atts));
 
     $author = ($title) ? $thisimage->{'user'}->{'username'} : $thisimage->{'user'}->{'full_name'};
