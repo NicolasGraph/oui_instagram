@@ -34,8 +34,15 @@ h2(#tags). Tags
 h3(#oui_instagram_images). oui_instagram_images
 
 Displays a recent images list.
+Can be used as a single or a container tag.
 
 bc. <txp:oui_instagram_images />
+
+or
+
+bc. <txp:oui_instagram_images>
+[…]
+</txp:oui_instagram_images />
 
 h4. Attributes 
 

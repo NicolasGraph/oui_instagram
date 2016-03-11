@@ -65,8 +65,15 @@ h2(#tags). Tags
 h3(#oui_instagram_images). oui_instagram_images
 
 Displays a recent images list.
+Can be used as a single or a container tag.
 
 bc. <txp:oui_instagram_images />
+
+or
+
+bc. <txp:oui_instagram_images>
+[…]
+</txp:oui_instagram_images />
 
 h4. Attributes 
 
@@ -194,7 +201,7 @@ class instagramPhp {
     /*
      * Constant
      */
-    const access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca'; // Your access token
+    const access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca'; // Instagram access token
 
     /*
      * Attributes
