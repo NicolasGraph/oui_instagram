@@ -1,6 +1,6 @@
 <?php
 
-$plugin['name'] = 'oui_instagram';
+$plugin['name'] = 'oui_instagram_';
 
 $plugin['allow_html_help'] = 0;
 
