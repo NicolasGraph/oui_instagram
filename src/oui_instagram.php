@@ -190,7 +190,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 // From instagramPhp by NOE interactive
-class instagramPhp{
+class instagramPhp {
     /*
      * Constant
      */
@@ -207,7 +207,7 @@ class instagramPhp{
      */
     function __construct($username='',$cache_time='') {
         if(empty($username)){
-            trigger_error("empty username or access token.");
+            trigger_error("empty username.");
             return;
         } else {
             $this->username=$username;
