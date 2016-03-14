@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.7';
+$plugin['version'] = '0.5.8';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -73,7 +73,7 @@ or
 
 bc. <txp:oui_instagram_images>
 […]
-</txp:oui_instagram_images />
+</txp:oui_instagram_images>
 
 h4. Attributes 
 
@@ -96,6 +96,11 @@ h5. Optional
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
+h5. Special
+
+* @access_token="…"@ - _Default: set_ - A valid Instagram access token (you shouldn't need to change that).
+* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+
 h3(#oui_instagram_image). oui_instagram_image
 
 Displays each image in a @oui_instagram_images@ container tag.
@@ -104,7 +109,7 @@ bc. <txp:oui_instagram_image />
 
 h4. Attributes
 
-* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@..
+* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
@@ -197,28 +202,20 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 // From instagramPhp by NOE interactive
-class instagramPhp {
-    /*
-     * Constant
-     */
-    const access_token = '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca'; // Instagram access token
-
-    /*
-     * Attributes
-     */
-    private $username, // Instagram username
-            $userid; // Instagram userid
+class Oui_Instagram {
     
     /*
      * Constructor
      */
-    function __construct($username='',$cache_time='') {
+    function __construct($username='',$access_token='',$cache_time='', $hash_key='') {
         if(empty($username)){
             trigger_error("empty username.");
             return;
         } else {
             $this->username=$username;
+            $this->access_token=$access_token;
             $this->cache_time = $cache_time;
+            $this->hash_key=$hash_key;
         }
     }
     /*
@@ -228,7 +225,7 @@ class instagramPhp {
     public function getUserIDFromUserName(){
         if(strlen($this->username)>0) {
             // Search for the username
-            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.self::access_token);
+            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.$this->access_token);
             if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
                 // Found
                 $this->userid=$useridquery->data[0]->id;
@@ -254,7 +251,7 @@ class instagramPhp {
         if($this->userid>0){
             $qs='';
             if(!empty($args)){ $qs = '&'.http_build_query($args); } // Adds query string if any args are specified
-            $images = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.self::access_token.$qs); //Get images
+            $images = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.$this->access_token.$qs); //Get images
             if($images->meta->code=='200'){
                 return $images;
             } else {
@@ -266,31 +263,35 @@ class instagramPhp {
           return;
         }
     }
+
     /*
      * Common mechanism to query the instagram api
      */
     public function queryInstagram($url){
         // Prepare caching
-        $cachefolder = find_temp_dir().DS;
-        $cachekey = md5($url);
-        $cachedate = get_pref('cachedate');
-        $cacheoutdate = (time() - $cachedate);
-        $cachefile = $cachefolder.'oui_instagram_data_'.$cachekey.'.txt';
+        $keybase = md5($url);
+        $hash = str_split($this->hash_key);
+        $cachekey='';
+        foreach ($hash as $hashskip) {
+	        $cachekey .= $keybase[$hashskip];
+        }
+        $cachedate = get_pref($cacheset);
+        $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
         // If not cached, -> instagram request
-        if(!file_exists($cachefile) || $cacheoutdate > $this->cache_time){
+        if(!file_exists($cachefile) || (time() - $cachedate) > $this->cache_time){
             // Request
             $request='error';
             if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
             else { $request = file_get_contents($url); }
             //remove old caches
-            $oldcaches = glob($cachefolder.$cachekey."*.txt");
+            $oldcaches = glob($cachefolder.$cachekey);
             if(!empty($oldcaches)) {
                 foreach($oldcaches as $todel) {
                     unlink($todel);
                 }
             }
             // Cache result
-            set_pref('cachedate', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
+            set_pref($cacheset, time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
             $rh = fopen($cachefile,'w+');
             fwrite($rh,$request);
             fclose($rh);
@@ -316,10 +317,12 @@ function oui_instagram_images($atts, $thing=null) {
         'break'      => 'li',
         'label'      => '',
         'labeltag'   => '',
+        'hash_key'   => '195263',
+        'access_token' => '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca',
     ),$atts));
 
     if(!empty($username)){    
-        $feed = new instagramPhp($username,$cache_time); // instanciates the class with the parameters
+        $feed = new Oui_Instagram($username,$access_token,$cache_time,$hash_key); // instanciates the class with the parameters
         $images = $feed->getUserMedia(array('count'=>$limit)); // Get the images from instagram
 
         if(!empty($images->data)){

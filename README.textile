@@ -2,8 +2,6 @@ h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
-"Download":https://github.com/NicolasGraph/oui_instagram/releases | "Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
-
 h2. Table of contents
 
 * "Plugin requirements":#requirements
@@ -67,6 +65,11 @@ h5. Optional
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
+h5. Special
+
+* @access_token="…"@ - _Default: set_ - A valid Instagram access token (you shouldn't need to change that).
+* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+
 h3(#oui_instagram_image). oui_instagram_image
 
 Displays each image in a @oui_instagram_images@ container tag.
@@ -75,7 +78,7 @@ bc. <txp:oui_instagram_image />
 
 h4. Attributes
 
-* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@..
+* @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
