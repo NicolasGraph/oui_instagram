@@ -44,7 +44,7 @@ or
 
 bc. <txp:oui_instagram_images>
 […]
-</txp:oui_instagram_images />
+</txp:oui_instagram_images>
 
 h4. Attributes 
 
