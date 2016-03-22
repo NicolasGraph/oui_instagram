@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.8';
+$plugin['version'] = '0.5.9';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -203,7 +203,10 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 
 // From instagramPhp by NOE interactive
 class Oui_Instagram {
-    
+
+    private $username, // Instagram username
+    		$access_token, // Instagram username
+            $userid; // Instagram userid    
     /*
      * Constructor
      */
@@ -275,7 +278,7 @@ class Oui_Instagram {
         foreach ($hash as $hashskip) {
 	        $cachekey .= $keybase[$hashskip];
         }
-        $cachedate = get_pref($cacheset);
+        $cachedate = get_pref('cacheset');
         $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
         // If not cached, -> instagram request
         if(!file_exists($cachefile) || (time() - $cachedate) > $this->cache_time){
@@ -284,14 +287,14 @@ class Oui_Instagram {
             if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
             else { $request = file_get_contents($url); }
             //remove old caches
-            $oldcaches = glob($cachefolder.$cachekey);
+            $oldcaches = glob($cachefile);
             if(!empty($oldcaches)) {
                 foreach($oldcaches as $todel) {
                     unlink($todel);
                 }
             }
             // Cache result
-            set_pref($cacheset, time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
+            set_pref('cacheset', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
             $rh = fopen($cachefile,'w+');
             fwrite($rh,$request);
             fclose($rh);
