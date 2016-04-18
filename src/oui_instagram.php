@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.5.9';
+$plugin['version'] = '0.6.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -201,111 +201,6 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_instagram_image_author');
 }
 
-// From instagramPhp by NOE interactive
-class Oui_Instagram {
-
-    private $username, // Instagram username
-    		$access_token, // Instagram username
-            $userid; // Instagram userid    
-    /*
-     * Constructor
-     */
-    function __construct($username='',$access_token='',$cache_time='', $hash_key='') {
-        if(empty($username)){
-            trigger_error("empty username.");
-            return;
-        } else {
-            $this->username=$username;
-            $this->access_token=$access_token;
-            $this->cache_time = $cache_time;
-            $this->hash_key=$hash_key;
-        }
-    }
-    /*
-     * The api works mostly with user ids, but it's easier for users to use their username.
-     * This function gets the userid corresponding to the username
-     */
-    public function getUserIDFromUserName(){
-        if(strlen($this->username)>0) {
-            // Search for the username
-            $useridquery = $this->queryInstagram('https://api.instagram.com/v1/users/search?q='.$this->username.'&access_token='.$this->access_token);
-            if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
-                // Found
-                $this->userid=$useridquery->data[0]->id;
-            } else {
-                // Not found
-              trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
-              return;            
-            }
-        } else {
-          trigger_error("empty username.");
-          return; 
-        }
-    }
-    /*
-     * Get the most recent media published by a user.
-     * you can use the $args array to pass the attributes that are used by the GET/users/user-id/media/recent method
-     */
-    public function getUserMedia($args=array()){
-        if($this->userid<=0){
-            // If no user id, get user id
-            $this->getUserIDFromUserName();
-        }
-        if($this->userid>0){
-            $qs='';
-            if(!empty($args)){ $qs = '&'.http_build_query($args); } // Adds query string if any args are specified
-            $images = $this->queryInstagram('https://api.instagram.com/v1/users/'.(int)$this->userid.'/media/recent?access_token='.$this->access_token.$qs); //Get images
-            if($images->meta->code=='200'){
-                return $images;
-            } else {
-                trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
-                return;            
-            }
-        } else {
-          trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
-          return;
-        }
-    }
-
-    /*
-     * Common mechanism to query the instagram api
-     */
-    public function queryInstagram($url){
-        // Prepare caching
-        $keybase = md5($url);
-        $hash = str_split($this->hash_key);
-        $cachekey='';
-        foreach ($hash as $hashskip) {
-	        $cachekey .= $keybase[$hashskip];
-        }
-        $cachedate = get_pref('cacheset');
-        $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
-        // If not cached, -> instagram request
-        if(!file_exists($cachefile) || (time() - $cachedate) > $this->cache_time){
-            // Request
-            $request='error';
-            if(!extension_loaded('openssl')){ $request = 'This class requires the php extension open_ssl to work as the instagram api works with httpS.'; }
-            else { $request = file_get_contents($url); }
-            //remove old caches
-            $oldcaches = glob($cachefile);
-            if(!empty($oldcaches)) {
-                foreach($oldcaches as $todel) {
-                    unlink($todel);
-                }
-            }
-            // Cache result
-            set_pref('cacheset', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
-            $rh = fopen($cachefile,'w+');
-            fwrite($rh,$request);
-            fclose($rh);
-        }
-        // Execute and return query
-        $query = json_decode(file_get_contents($cachefile));
-        return $query;
-    }
-
-}
-
 function oui_instagram_images($atts, $thing=null) {
     global $username, $thisimage;
     
@@ -324,35 +219,88 @@ function oui_instagram_images($atts, $thing=null) {
         'access_token' => '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca',
     ),$atts));
 
-    if(!empty($username)){    
-        $feed = new Oui_Instagram($username,$access_token,$cache_time,$hash_key); // instanciates the class with the parameters
-        $images = $feed->getUserMedia(array('count'=>$limit)); // Get the images from instagram
-
-        if(!empty($images->data)){
-
-            foreach($images->data as $thisimage){
-
-                if ($thing===null) {
-                    $url = $thisimage->{'images'}->{$type}->{'url'};
-                    $width = $thisimage->{'images'}->{$type}->{'width'};
-                    $height = $thisimage->{'images'}->{$type}->{'height'};
-                    $caption = $thisimage->{'caption'}->{'text'};
-                    $to = ($link == 'auto') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
-
-                    $out[]= ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
-
-                } else {
-                    $out[]= parse($thing);
-                }
-            }
-            return doWrap($out, $wraptag, $break, $class);
-            
+    if($username) {
+        // Search for the userid
+        $useridquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+        if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
+            // Found
+            $userid=$useridquery->data[0]->id;
         } else {
-            trigger_error("nothing to display; oui_instagram is unable to find any data to display.");
-            return;
+            // Not found
+          trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
+          return;            
         }
-        trigger_error("Missing required attribute value; oui_instagram requires a username.");
-        return;
+    } else {
+      trigger_error("Required attribute missing: username.");
+      return; 
+    }
+
+    // Prepare cache variables
+    $keybase = md5($username.$limit.$type.$thing);
+    $hash = str_split($hash_key);
+    $cachekey='';
+    foreach ($hash as $hashskip) {
+        $cachekey .= $keybase[$hashskip];
+    }
+    $cachedate = get_pref('cacheset');
+    $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
+    $cacheexists = file_exists($cachefile) ? true : false;
+
+    $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > $cache_time)) ? true : false;
+    $readcache = (($cache_time > 0) && ($cacheexists)) ? true : false;
+
+    // Cache_time is not set, or a new cache file is needed; throw a new request
+    if ($needcache || $cache_time == 0) {
+        
+		$images = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
+
+        foreach($images->data as $thisimage) {
+    
+	        // single tag use
+	        if ($thing === null) {
+	
+	            $url = $thisimage->{'images'}->{$type}->{'url'};
+	            $width = $thisimage->{'images'}->{$type}->{'width'};
+	            $height = $thisimage->{'images'}->{$type}->{'height'};
+	            $caption = $thisimage->{'caption'}->{'text'};
+	            $to = ($link == 'auto') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
+	
+	            $data = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+	            $out = (($label) ? doLabel($label, $labeltag) : '').\n
+	                  .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+	
+	        // Conatiner tag use
+	        } else {
+	            $data[] = parse($thing);
+            	$out = (($label) ? doLabel($label, $labeltag) : '').\n
+                  		.doWrap($data, $wraptag, $break, $class);            
+	        }
+        }
+    }
+    
+    // Cache file is needed
+    if ($needcache) {
+        // Remove old cache files
+        $oldcaches = glob($cachefile);
+        if (!empty($oldcaches)) {
+            foreach($oldcaches as $todel) {
+                unlink($todel);
+            }
+        }
+        // Time stamp and write the new cache files and return
+        set_pref('cacheset', time(), 'oui_instagram', PREF_HIDDEN, 'text_input'); 
+        $cache = fopen($cachefile,'w+');
+        fwrite($cache,$out);
+        fclose($cache);
+    }
+
+    // Cache is on and file is found, get it!
+    if ($readcache) {            
+        $cache_out = file_get_contents($cachefile);
+        return $cache_out;
+    // No cache file :(       
+    } else {            
+        return $out;
     }
 }
 
