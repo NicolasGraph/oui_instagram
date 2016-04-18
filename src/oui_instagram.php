@@ -202,7 +202,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 function oui_instagram_images($atts, $thing=null) {
-    global $username, $thisimage;
+    global $username, $thisshot;
     
     extract(lAtts(array(
         'username'   => '',
@@ -252,18 +252,18 @@ function oui_instagram_images($atts, $thing=null) {
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
         
-        $images = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
+        $shots = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
 
-        foreach($images->data as $thisimage) {
+        foreach($shots->data as $thisshot) {
     
             // single tag use
             if ($thing === null) {
     
-                $url = $thisimage->{'images'}->{$type}->{'url'};
-                $width = $thisimage->{'images'}->{$type}->{'width'};
-                $height = $thisimage->{'images'}->{$type}->{'height'};
-                $caption = $thisimage->{'caption'}->{'text'};
-                $to = ($link == 'auto') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
+                $url = $thisshot->{'images'}->{$type}->{'url'};
+                $width = $thisshot->{'images'}->{$type}->{'width'};
+                $height = $thisshot->{'images'}->{$type}->{'height'};
+                $caption = $thisshot->{'caption'}->{'text'};
+                $to = ($link == 'auto') ? $thisshot->{'link'} : $thisshot->{'images'}->{$type}->{'url'};
     
                 $data[] = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
                 $out = (($label) ? doLabel($label, $labeltag) : '').\n
@@ -305,7 +305,7 @@ function oui_instagram_images($atts, $thing=null) {
 }
 
 function oui_instagram_image($atts) {
-    global $thisimage;
+    global $thisshot;
 
     extract(lAtts(array(
         'type'    => 'thumbnail',
@@ -313,10 +313,10 @@ function oui_instagram_image($atts) {
         'wraptag' => '',
     ),$atts));
     
-    $url = $thisimage->{'images'}->{$type}->{'url'};
-    $width = $thisimage->{'images'}->{$type}->{'width'};
-    $height = $thisimage->{'images'}->{$type}->{'height'};
-    $caption = $thisimage->{'caption'}->{'text'};
+    $url = $thisshot->{'images'}->{$type}->{'url'};
+    $width = $thisshot->{'images'}->{$type}->{'width'};
+    $height = $thisshot->{'images'}->{$type}->{'height'};
+    $caption = $thisshot->{'caption'}->{'text'};
     
     $out = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" ';
     $out .= ($wraptag) ? '' : ($class) ? 'class="'.$class.'" />' : '/>';
@@ -326,7 +326,7 @@ function oui_instagram_image($atts) {
 
 
 function oui_instagram_image_url($atts, $thing=null) {
-    global $thisimage;
+    global $thisshot;
 
     extract(lAtts(array(
         'type'    => 'instagram',
@@ -338,7 +338,7 @@ function oui_instagram_image_url($atts, $thing=null) {
     $validTypes = array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution');
 
     if (in_array($type, $validTypes)) {
-        $url = ($type == 'instagram') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
+        $url = ($type == 'instagram') ? $thisshot->{'link'} : $thisshot->{'images'}->{$type}->{'url'};
     } else {
         trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
         return;
@@ -359,7 +359,7 @@ function oui_instagram_image_url($atts, $thing=null) {
 
 
 function oui_instagram_image_info($atts) {
-    global $thisimage;
+    global $thisshot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -375,7 +375,7 @@ function oui_instagram_image_info($atts) {
     foreach ($types as $type) {
         $data = ($type=='caption') ? 'text' : 'count';
         if (in_array($type, $validTypes)) {
-            $out[] = $thisimage->{$type}->{$data};
+            $out[] = $thisshot->{$type}->{$data};
         }
     }
 
@@ -383,7 +383,7 @@ function oui_instagram_image_info($atts) {
 }
 
 function oui_instagram_image_date($atts) {
-    global $thisimage;
+    global $thisshot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -391,7 +391,7 @@ function oui_instagram_image_date($atts) {
         'format'  => '',
     ),$atts));
 
-    $date = $thisimage->{'caption'}->{'created_time'};
+    $date = $thisshot->{'caption'}->{'created_time'};
 
     $out = fileDownloadFormatTime(array(
         'ftime'  => $date,
@@ -402,7 +402,7 @@ function oui_instagram_image_date($atts) {
 }
 
 function oui_instagram_image_author($atts) {
-    global $username, $thisimage;
+    global $username, $thisshot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -411,7 +411,7 @@ function oui_instagram_image_author($atts) {
         'title'   => 1,
     ), $atts));
 
-    $author = ($title) ? $thisimage->{'user'}->{'username'} : $thisimage->{'user'}->{'full_name'};
+    $author = ($title) ? $thisshot->{'user'}->{'username'} : $thisshot->{'user'}->{'full_name'};
     $out = ($link) ? href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"') : $author;
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
