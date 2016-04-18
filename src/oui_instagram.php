@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.1';
+$plugin['version'] = '0.6.2';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -201,6 +201,38 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_instagram_image_author');
 }
 
+if (txpinterface === 'admin') {
+    add_privs('prefs.oui_instagram', '1');
+    add_privs('plugin_prefs.oui_instagram', '1');
+    register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
+    register_callback('oui_instagram_install', 'prefs', null, 1);
+}
+
+function oui_instagram_welcome($evt, $stp)
+{
+    switch ($stp) {
+        case 'installed':
+        case 'enabled':
+            oui_instagram_install();
+            break;
+        case 'deleted':
+            if (function_exists('remove_pref')) {
+                // 4.6 API
+                remove_pref(null, 'oui_instagram');
+            } else {
+                safe_delete('txp_prefs', "event='oui_instagram'");
+            }
+            safe_delete('txp_lang', "name LIKE 'oui\_instagram%'");
+            break;
+    }
+}
+
+function oui_instagram_install() {
+    if (get_pref('oui_instagram_access_token', null) === null) {
+        set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+    }
+}
+
 function oui_instagram_images($atts, $thing=null) {
     global $username, $thisshot;
     
@@ -216,8 +248,9 @@ function oui_instagram_images($atts, $thing=null) {
         'label'      => '',
         'labeltag'   => '',
         'hash_key'   => '195263',
-        'access_token' => '1517036843.ab103e5.2e484d7e57514253abb5d838d54511ca',
     ),$atts));
+
+    $access_token = get_pref('oui_instagram_access_token');
 
     if($username) {
         // Search for the userid
