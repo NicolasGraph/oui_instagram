@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.0';
+$plugin['version'] = '0.6.1';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -178,7 +178,7 @@ bc. <txp:oui_instagram_images username="cercle_magazine">
 
 h2(#author). Author
 
-"Nicolas Morand":https://github.com/NicolasGraph, from a "NOE interactive tip":http://noe-interactive.com/comment-integrer-ses-photos-instagram-sur-son-site.
+"Nicolas Morand":https://github.com/NicolasGraph
 
 h2(#licence). Licence
 
@@ -252,29 +252,29 @@ function oui_instagram_images($atts, $thing=null) {
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
         
-		$images = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
+        $images = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
 
         foreach($images->data as $thisimage) {
     
-	        // single tag use
-	        if ($thing === null) {
-	
-	            $url = $thisimage->{'images'}->{$type}->{'url'};
-	            $width = $thisimage->{'images'}->{$type}->{'width'};
-	            $height = $thisimage->{'images'}->{$type}->{'height'};
-	            $caption = $thisimage->{'caption'}->{'text'};
-	            $to = ($link == 'auto') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
-	
-	            $data = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
-	            $out = (($label) ? doLabel($label, $labeltag) : '').\n
-	                  .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-	
-	        // Conatiner tag use
-	        } else {
-	            $data[] = parse($thing);
-            	$out = (($label) ? doLabel($label, $labeltag) : '').\n
-                  		.doWrap($data, $wraptag, $break, $class);            
-	        }
+            // single tag use
+            if ($thing === null) {
+    
+                $url = $thisimage->{'images'}->{$type}->{'url'};
+                $width = $thisimage->{'images'}->{$type}->{'width'};
+                $height = $thisimage->{'images'}->{$type}->{'height'};
+                $caption = $thisimage->{'caption'}->{'text'};
+                $to = ($link == 'auto') ? $thisimage->{'link'} : $thisimage->{'images'}->{$type}->{'url'};
+    
+                $data[] = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                $out = (($label) ? doLabel($label, $labeltag) : '').\n
+                       .doWrap($data, $wraptag, $break, $class);
+    
+            // Conatiner tag use
+            } else {
+                $data[] = parse($thing);
+                $out = (($label) ? doLabel($label, $labeltag) : '').\n
+                       .doWrap($data, $wraptag, $break, $class);            
+            }
         }
     }
     
