@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.2';
+$plugin['version'] = '0.6.3';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Instagram gallery';
@@ -252,22 +252,6 @@ function oui_instagram_images($atts, $thing=null) {
 
     $access_token = get_pref('oui_instagram_access_token');
 
-    if($username) {
-        // Search for the userid
-        $useridquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
-        if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
-            // Found
-            $userid=$useridquery->data[0]->id;
-        } else {
-            // Not found
-          trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
-          return;            
-        }
-    } else {
-      trigger_error("Required attribute missing: username.");
-      return; 
-    }
-
     // Prepare cache variables
     $keybase = md5($username.$limit.$type.$thing);
     $hash = str_split($hash_key);
@@ -284,6 +268,22 @@ function oui_instagram_images($atts, $thing=null) {
 
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
+
+        if($username) {
+            // Search for the userid
+            $useridquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+            if(!empty($useridquery) && $useridquery->meta->code=='200' && $useridquery->data[0]->id>0){
+                // Found
+                $userid=$useridquery->data[0]->id;
+            } else {
+                // Not found
+              trigger_error("unknown attribute value; oui_instagram username attribute is not valid.");
+              return;            
+            }
+        } else {
+          trigger_error("Required attribute missing: username.");
+          return; 
+        }
         
         $shots = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$userid.'/media/recent?access_token='.$access_token.'&count='.$limit));        
 
