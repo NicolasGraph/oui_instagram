@@ -2,12 +2,11 @@ h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
-"Download":https://github.com/NicolasGraph/oui_instagram/releases | "Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
-
 h2. Table of contents
 
 * "Plugin requirements":#requirements
 * "Installation":#installation
+* "Preferences":#prefs
 * "Tags":#tags
 ** "oui_instagram_images":#oui_instagram_images
 ** "oui_instagram_image":#oui_instagram_image
@@ -31,6 +30,10 @@ h2(#installation). Installation
 
 # Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
+h2(#prefs). Preferences / options
+
+This plugin needs a valid Instagram access token as a plugin pref. You can easily get it online.
+
 h2(#tags). Tags
 
 h3(#oui_instagram_images). oui_instagram_images
@@ -52,6 +55,10 @@ h5. Required
 
 * @username="…"@ - _Default: unset_ - The username of the Instagram account.
 
+or
+
+* @user_id="…"@ - _Default: unset_ - The user id of the Instagram account; faster than username!
+
 h5. Recommended
 
 * @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
@@ -69,7 +76,6 @@ h5. Optional
 
 h5. Special
 
-* @access_token="…"@ - _Default: set_ - A valid Instagram access token (you shouldn't need to change that).
 * @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h3(#oui_instagram_image). oui_instagram_image
@@ -149,7 +155,7 @@ bc. <txp:oui_instagram_images username="cercle_magazine">
 
 h2(#author). Author
 
-"Nicolas Morand":https://github.com/NicolasGraph, from a "NOE interactive tip":http://noe-interactive.com/comment-integrer-ses-photos-instagram-sur-son-site.
+"Nicolas Morand":https://github.com/NicolasGraph
 
 h2(#licence). Licence
 

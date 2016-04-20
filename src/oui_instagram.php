@@ -20,7 +20,18 @@ if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001); // This pl
 if (!defined('PLUGIN_LIFECYCLE_NOTIFY')) define('PLUGIN_LIFECYCLE_NOTIFY', 0x0002); // This plugin wants to receive "plugin_lifecycle.{$plugin['name']}" events
 
 // $plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
-$plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
+$plugin['flags'] = 3;
+
+// Plugin 'textpack' is optional. It provides i18n strings to be used in conjunction with gTxt().
+$plugin['textpack'] = <<< EOT
+#@public
+#@language en-gb
+oui_instagram => Instagram gallery
+oui_instagram_access_token => Access token
+#@language fr-fr
+oui_instagram => Galerie Instagram
+oui_instagram_access_token => Access token
+EOT;
 
 if (!defined('txpinterface'))
     @include_once('zem_tpl.php');
@@ -61,9 +72,9 @@ h2(#installation). Installation
 
 # Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
-h2(#prefs). Preferences
+h2(#prefs). Preferences / options
 
-* @access_token="…"@ - _Default: set_ - A valid Instagram access token. You can easily get it online.
+This plugin needs a valid Instagram access token as a plugin pref. You can easily get it online.
 
 h2(#tags). Tags
 
@@ -214,6 +225,7 @@ if (txpinterface === 'admin') {
     add_privs('plugin_prefs.oui_instagram', '1');
     register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
     register_callback('oui_instagram_install', 'prefs', null, 1);
+	register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
 }
 
 function oui_instagram_welcome($evt, $stp)
@@ -225,7 +237,7 @@ function oui_instagram_welcome($evt, $stp)
             break;
         case 'deleted':
             if (function_exists('remove_pref')) {
-                // 4.6 API
+                // Txp 4.6
                 remove_pref(null, 'oui_instagram');
             } else {
                 safe_delete('txp_prefs', "event='oui_instagram'");
@@ -237,8 +249,22 @@ function oui_instagram_welcome($evt, $stp)
 
 function oui_instagram_install() {
     if (get_pref('oui_instagram_access_token', null) === null) {
-        set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        if (defined('PREF_PLUGIN')) {
+            // Txp 4.6
+            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        } else {
+            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
+        }
     }
+}
+
+function oui_instagram_options() {    
+    if (defined('PREF_PLUGIN')) {
+        $link = '?event=prefs';
+    } else {
+        $link = '?event=prefs&step=advanced_prefs';
+    }
+    header('Location: ' . $link);
 }
 
 function oui_instagram_images($atts, $thing=null) {
@@ -264,7 +290,7 @@ function oui_instagram_images($atts, $thing=null) {
     if (!$access_token) {
         trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
         return;
-    }    
+    }   
          
     // Prepare cache variables
     $keybase = md5($username.$limit.$type.$thing);
