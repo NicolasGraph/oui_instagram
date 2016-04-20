@@ -314,7 +314,7 @@ function oui_instagram_images($atts, $thing=null) {
                     $url = $thisshot->{'images'}->{$type}->{'url'};
                     $width = $thisshot->{'images'}->{$type}->{'width'};
                     $height = $thisshot->{'images'}->{$type}->{'height'};
-                    $caption = $thisshot->{'caption'}->{'text'};
+                    $caption = isset($thisshot->{'caption'}->{'text'}) ? $thisshot->{'caption'}->{'text'} : '';
                     $to = ($link == 'auto') ? $thisshot->{'link'} : $thisshot->{'images'}->{$type}->{'url'};
 
                     $data[] = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
@@ -372,8 +372,8 @@ function oui_instagram_image($atts) {
     $url = $thisshot->{'images'}->{$type}->{'url'};
     $width = $thisshot->{'images'}->{$type}->{'width'};
     $height = $thisshot->{'images'}->{$type}->{'height'};
-    $caption = $thisshot->{'caption'}->{'text'};
-    
+    $caption = isset($thisshot->{'caption'}->{'text'}) ? $caption = $thisshot->{'caption'}->{'text'} : '';
+                        
     $out = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" ';
     $out .= ($wraptag) ? '' : ($class) ? 'class="'.$class.'" />' : '/>';
 
@@ -431,7 +431,7 @@ function oui_instagram_image_info($atts) {
     foreach ($types as $type) {
         $data = ($type=='caption') ? 'text' : 'count';
         if (in_array($type, $validTypes)) {
-            $out[] = $thisshot->{$type}->{$data};
+            $out[] = isset($thisshot->{$type}->{$data}) ? $thisshot->{$type}->{$data} : '';
         }
     }
 
