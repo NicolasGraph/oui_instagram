@@ -2,7 +2,7 @@ h1. oui_instagram
 
 Easily display recent images from an Instagram account.
 
-"Download":https://github.com/NicolasGraph/oui_nstagram/releases | "Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
+"Download":https://github.com/NicolasGraph/oui_instagram/releases | "Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
 
 h2. Table of contents
 
