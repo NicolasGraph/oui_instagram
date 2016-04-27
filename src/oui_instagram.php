@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.3';
+$plugin['version'] = '0.6.4';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -28,9 +28,17 @@ $plugin['textpack'] = <<< EOT
 #@language en-gb
 oui_instagram => Instagram gallery
 oui_instagram_access_token => Access token
+oui_instagram_username => Default username
+oui_instagram_user_id => Default user id
+oui_instagram_cache_time => Default cache time
+oui_instagram_hash_key => Cache file hash key
 #@language fr-fr
 oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
+oui_instagram_username => Nom d'utilisateur par défaut
+oui_instagram_user_id => Identifiant utilisateur par défaut
+oui_instagram_cache_time => Durée du cache par défaut
+oui_instagram_hash_key => Clé de hachage du fichier cache
 EOT;
 
 if (!defined('txpinterface'))
@@ -74,7 +82,12 @@ h2(#installation). Installation
 
 h2(#prefs). Preferences / options
 
-This plugin needs a valid Instagram access token as a plugin pref. You can easily get it online.
+* @access_token@ - _Default: unset_ - A valid Instagram access token. 
+*Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/.
+* @username="…"@ - _Default: unset_ - The username of the Instagram account used by default.
+* @user_id="…"@ - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+* @hash_key="…"@ - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h2(#tags). Tags
 
@@ -93,32 +106,17 @@ bc. <txp:oui_instagram_images>
 
 h4. Attributes 
 
-h5. Required
-
-* @username="…"@ - _Default: unset_ - The username of the Instagram account.
-
-or
-
-* @user_id="…"@ - _Default: unset_ - The user id of the Instagram account; faster than username!
-
-h5. Recommended
-
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
-
-h5. Optional
-
 * @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @limit="…"@ — _Default: 10_ - The number of images to display.
+* @limit="…"@ — _Default: 10_ - The number of images to display (Instagram have a max limit 20 or 33 images depending on your access token login permission).
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
+* @user_id="…"@ - _Default: unset_ - An Instagram user id (which would be different from the default user id provided in the plugin preferences); faster than username!
+* @username="…"@ - _Default: unset_ - An Instagram username (which would be different from the default username provided in the plugin preferences).
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
-
-h5. Special
-
-* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h3(#oui_instagram_image). oui_instagram_image
 
@@ -185,7 +183,7 @@ h2(#examples). Examples
 
 h3(#single_tag). Example 1: single tag use
 
-bc. <txp:oui_instagram_images username="cercle_magazine" />
+bc. <txp:oui_instagram_images />
 
 h3(#container_tag). Example 2: container tag use
 
@@ -256,6 +254,38 @@ function oui_instagram_install() {
             set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
         }
     }
+    if (get_pref('oui_instagram_username', null) === null) {
+        if (defined('PREF_PLUGIN')) {
+            // Txp 4.6
+            set_pref('oui_instagram_username', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        } else {
+            set_pref('oui_instagram_username', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
+        }
+    }
+    if (get_pref('oui_instagram_user_id', null) === null) {
+        if (defined('PREF_PLUGIN')) {
+            // Txp 4.6
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        } else {
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
+        }
+    }
+    if (get_pref('oui_instagram_cache_time', null) === null) {
+        if (defined('PREF_PLUGIN')) {
+            // Txp 4.6
+            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        } else {
+            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
+        }
+    } 
+    if (get_pref('oui_instagram_hash_key', null) === null) {
+        if (defined('PREF_PLUGIN')) {
+            // Txp 4.6
+            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+        } else {
+            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_ADVANCED, 'text_input', 20);            
+        }
+    }        
 }
 
 function oui_instagram_options() {    
@@ -271,21 +301,21 @@ function oui_instagram_images($atts, $thing=null) {
     global $username, $thisshot;
     
     extract(lAtts(array(
-        'username'   => '',
-        'user_id'     => '',
+        'username'   => get_pref('oui_instagram_username'),
+        'user_id'    => get_pref('oui_instagram_user_id'),
         'limit'      => '10',
         'type'       => 'thumbnail',
         'link'       => 'auto',
-        'cache_time' => '0',
+        'cache_time' => get_pref('oui_instagram_cache_time'),
         'wraptag'    => 'ul',
         'class'      => 'oui_instagram_images',
         'break'      => 'li',
         'label'      => '',
         'labeltag'   => '',
-        'hash_key'   => '195263',
     ),$atts));
 
     $access_token = get_pref('oui_instagram_access_token');
+    $hash_key =  get_pref('oui_instagram_hash_key');
 
     if (!$access_token) {
         trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
