@@ -1,4 +1,4 @@
-h1. oui_instagram
+h1. oui_instagram <img src="https://img.shields.io/badge/textpattern-4.5+-brightgreen.svg" />
 
 Easily display recent images from an Instagram account.
 
