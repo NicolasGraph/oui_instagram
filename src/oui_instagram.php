@@ -78,13 +78,14 @@ oui_instagram’s minimum requirements:
 
 h2(#installation). Installation
 
-# Paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+# Paste the content of the plugin file under the *Admin > Plugins*, upload it and install;
+# get an Instagram access token - *Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
+# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
 
 h2(#prefs). Preferences / options
 
 * @access_token@ - _Default: unset_ - A valid Instagram access token. 
-*Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/.
-* @username="…"@ - _Default: unset_ - The username of the Instagram account used by default.
+* @username="…"@ - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
 * @user_id="…"@ - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
 * @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
 * @hash_key="…"@ - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
@@ -104,7 +105,9 @@ bc. <txp:oui_instagram_images>
 […]
 </txp:oui_instagram_images>
 
-h4. Attributes 
+h4. Attributes
+
+_(Alphabetical order)_
 
 * @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
 * @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
@@ -114,8 +117,8 @@ h4. Attributes
 * @limit="…"@ — _Default: 10_ - The number of images to display (Instagram have a max limit 20 or 33 images depending on your access token login permission).
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
-* @user_id="…"@ - _Default: unset_ - An Instagram user id (which would be different from the default user id provided in the plugin preferences); faster than username!
-* @username="…"@ - _Default: unset_ - An Instagram username (which would be different from the default username provided in the plugin preferences).
+* @user_id="…"@ - _Default: unset_ - An Instagram user id to override the default user id provided in the plugin preferences; faster than username!
+* @username="…"@ - _Default: unset_ - An Instagram username to override the the default username provided in the plugin preferences.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image). oui_instagram_image
@@ -124,7 +127,9 @@ Displays each image in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image />
 
-h4. Attributes
+h4. Attributes 
+
+_(Alphabetical order)_
 
 * @class="…"@ — _Default: oui_instagram_image_ - The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
@@ -137,6 +142,8 @@ Displays each image info in a @oui_instagram_images@ container tag.
 bc. <txp:oui_instagram_image_info />
 
 h4. Attributes
+
+_(Alphabetical order)_
 
 * @break="…"@ — _Default: unset_ - The HTML tag used around each generated info. 
 * @class="…"@ — _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@. 
@@ -151,6 +158,8 @@ bc. <txp:oui_instagram_image_url />
 
 h4. Attributes
 
+_(Alphabetical order)_
+
 * @class="…"@ — _Default: unset_ - The css class to apply to the @a@ HTML tag if link is defined or to the HTML tag assigned to @wraptag@.
 * @link="…"@ — _Default: auto_ - To apply a link to the standard_resolution image. Valid values are auto (link container tag only), 1, 0.
 * @type="…"@ — _Default: instagram_ - The url type to use. Valid values are thumbnail, low_resolution, standard_resolution, instagram.
@@ -164,6 +173,8 @@ bc. <txp:oui_instagram_image_date />
 
 h4. Attributes
 
+_(Alphabetical order)_
+
 * @class="…"@ — _Default: unset - The css class to apply to the HTML tag assigned to @wraptag@.
 * @format="…"@ — _Default: the Archive date format set in the preferences_ - To adjust the display of the date to taste. Valid values are any valid strftime() string values.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
@@ -173,6 +184,8 @@ h3(#oui_instagram_image_author). oui_instagram_image_author
 Displays each image author in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_author />
+
+_(Alphabetical order)_
 
 * @class="…"@ — _Default: unset - The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
 * @link="…"@ — _Default: 0_ - To apply a link around the generated content.  
