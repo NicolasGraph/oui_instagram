@@ -84,11 +84,11 @@ h2(#installation). Installation
 
 h2(#prefs). Preferences / options
 
-* @access_token@ - _Default: unset_ - A valid Instagram access token. 
-* @username="…"@ - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
-* @user_id="…"@ - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
-* @hash_key="…"@ - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+* Access token - _Default: unset_ - A valid Instagram access token. 
+* Default username - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
+* Default user id - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
+* Default cache time — _Default: 0_ - Duration of the cache in seconds.
+* Cache file hash key - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h2(#tags). Tags
 
