@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.5-alpha.b';
+$plugin['version'] = '0.6.5-beta';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -114,7 +114,7 @@ _(Alphabetical order)_
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @limit="…"@ — _Default: 10_ - The number of images to display (Instagram have a max limit 20 or 33 images depending on your access token login permission).
+* @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be required to pull your images, increasing the loading time.
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @user_id="…"@ - _Default: unset_ - An Instagram user id to override the default user id provided in the plugin preferences; faster than username!
@@ -370,7 +370,7 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
 
-        // Get the Instagram feed…
+        // Get the Instagram feed per 20 images because of the Instagram limit (20/33)…
         $pages_count = ceil(($limit / 20) -1);
         $last_limit = $limit % 20;
         $shots = array();
@@ -392,12 +392,8 @@ function oui_instagram_images($atts, $thing=null) {
                 $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$user_id.'/media/recent?access_token='.$access_token.'&count=20'.'&max_id='.$next_shots));
                 $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
             }
-        }
 
-
-        // …and check the result
-        for ($page = 0; $page <= $pages_count; $page++) {
-
+            // …and check the result
             if(isset($shots[$page]->data)){
 
                 foreach($shots[$page]->data as $thisshot) {
