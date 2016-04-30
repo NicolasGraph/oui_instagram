@@ -114,7 +114,7 @@ _(Alphabetical order)_
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be required to pull your images, increasing the loading time.
+* @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be thrown to pull your images.
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
 * @user_id="…"@ - _Default: unset_ - An Instagram user id to override the default user id provided in the plugin preferences; faster than username!
