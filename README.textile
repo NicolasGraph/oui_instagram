@@ -1,4 +1,4 @@
-h1. oui_instagram <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/github/release/NicolasGraph/oui_instagram.svg?maxAge=2592000" />
+h1. oui_instagram <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/github/release/NicolasGraph/oui_instagram.svg?maxAge=2592000" />
 
 Easily display recent images from an Instagram account.
 
