@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.5-beta';
+$plugin['version'] = '0.6.6-beta';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -262,9 +262,9 @@ function oui_instagram_install() {
     if (get_pref('oui_instagram_access_token', null) === null) {
         if (defined('PREF_PLUGIN')) {
             // Txp 4.6
-            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
         } else {
-            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
+            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 10);
         }
     }
     if (get_pref('oui_instagram_username', null) === null) {
@@ -278,25 +278,25 @@ function oui_instagram_install() {
     if (get_pref('oui_instagram_user_id', null) === null) {
         if (defined('PREF_PLUGIN')) {
             // Txp 4.6
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 30);
         } else {
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 30);
         }
     }
     if (get_pref('oui_instagram_cache_time', null) === null) {
         if (defined('PREF_PLUGIN')) {
             // Txp 4.6
-            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_PLUGIN, 'text_input', 40);
         } else {
-            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
+            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_ADVANCED, 'text_input', 40);
         }
     }
     if (get_pref('oui_instagram_hash_key', null) === null) {
         if (defined('PREF_PLUGIN')) {
             // Txp 4.6
-            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
+            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_PLUGIN, 'text_input', 50);
         } else {
-            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
+            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_ADVANCED, 'text_input', 50);
         }
     }
 }
@@ -342,12 +342,12 @@ function oui_instagram_images($atts, $thing=null) {
     foreach ($hash as $hashskip) {
         $cachekey .= $keybase[$hashskip];
     }
-    $cachedate = get_pref('cacheset');
+    $cachedate = get_pref('oui_instagram_cache_set');
     $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
     $cacheexists = file_exists($cachefile) ? true : false;
 
-    $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > $cache_time)) ? true : false;
-    $readcache = (($cache_time > 0) && ($cacheexists)) ? true : false;
+    $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > ($cache_time *  60))) ? true : false;
+    $readcache = ((!$needcache) && ($cache_time > 0) && ($cacheexists)) ? true : false;
 
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
@@ -434,7 +434,7 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
         // Time stamp and write the new cache files and return
-        set_pref('cacheset', time(), 'oui_instagram', PREF_HIDDEN, 'text_input');
+        set_pref('oui_instagram_cache_set', time(), 'oui_instagram', PREF_HIDDEN, 'text_input');
         $cache = fopen($cachefile,'w+');
         fwrite($cache,$out);
         fclose($cache);
