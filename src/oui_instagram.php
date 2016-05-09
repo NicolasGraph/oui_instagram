@@ -37,8 +37,7 @@ oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
 oui_instagram_username => Nom d'utilisateur par défaut
 oui_instagram_user_id => Identifiant utilisateur par défaut
-oui_instagram_cache_time => Durée du cache par défaut
-oui_instagram_hash_key => Clé de hachage du fichier cache
+oui_instagram_cache_time => Durée du cache par défaut en minutes
 EOT;
 
 if (!defined('txpinterface'))
@@ -87,7 +86,7 @@ h2(#prefs). Preferences / options
 * Access token - _Default: unset_ - A valid Instagram access token. 
 * Default username - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
 * Default user id - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
-* Default cache time — _Default: 0_ - Duration of the cache in seconds.
+* Default cache time — _Default: 0_ - Duration of the cache in minutes.
 * Cache file hash key - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h2(#tags). Tags
@@ -110,7 +109,7 @@ h4. Attributes
 _(Alphabetical order)_
 
 * @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in minutes.
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
@@ -286,18 +285,16 @@ function oui_instagram_install() {
     if (get_pref('oui_instagram_cache_time', null) === null) {
         if (defined('PREF_PLUGIN')) {
             // Txp 4.6
-            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_PLUGIN, 'text_input', 40);
+            set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_PLUGIN, 'text_input', 40);
         } else {
-            set_pref('oui_instagram_cache_time', '0', 'oui_instagram', PREF_ADVANCED, 'text_input', 40);
+            set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_ADVANCED, 'text_input', 40);
         }
     }
     if (get_pref('oui_instagram_hash_key', null) === null) {
-        if (defined('PREF_PLUGIN')) {
-            // Txp 4.6
-            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_PLUGIN, 'text_input', 50);
-        } else {
-            set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_ADVANCED, 'text_input', 50);
-        }
+        set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_HIDDEN, 'text_input', 50);
+    }
+    if (get_pref('oui_instagram_cache_set', null) === null) {
+        set_pref('oui_instagram_cache_set', time(), 'oui_instagram', PREF_HIDDEN, 'text_input', 60);
     }
 }
 
@@ -328,29 +325,26 @@ function oui_instagram_images($atts, $thing=null) {
     ),$atts));
 
     $access_token = get_pref('oui_instagram_access_token');
-    $hash_key =  get_pref('oui_instagram_hash_key');
 
     if (!$access_token) {
         trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
         return;
     }
 
-    // Prepare cache variables
+    // Prepare the cache file name
     $keybase = md5($username.$limit.$type.$thing);
-    $hash = str_split($hash_key);
+    $hash = str_split(get_pref('oui_instagram_hash_key'));
     $cachekey='';
     foreach ($hash as $hashskip) {
         $cachekey .= $keybase[$hashskip];
     }
-    $cachedate = get_pref('oui_instagram_cache_set');
     $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
-    $cacheexists = file_exists($cachefile) ? true : false;
 
-    $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > ($cache_time *  60))) ? true : false;
-    $readcache = ((!$needcache) && ($cache_time > 0) && ($cacheexists)) ? true : false;
+    // Main cache conditioning variable
+    $needquery = (!file_exists($cachefile) || (time() - get_pref('oui_instagram_cache_set')) > ($cache_time *  60)) ? true : false;
 
-    // Cache_time is not set, or a new cache file is needed; throw a new request
-    if ($needcache || $cache_time == 0) {
+    // New query needed
+    if ($needquery) {
 
         // Get the user id if not set
         if(!$user_id) {
@@ -424,8 +418,8 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
     }
-    // Cache file is needed
-    if ($needcache) {
+    // Cache file needed
+    if ($needquery && $cache_time > 0) {
         // Remove old cache files
         $oldcaches = glob($cachefile);
         if (!empty($oldcaches)) {
@@ -434,17 +428,17 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
         // Time stamp and write the new cache files and return
-        set_pref('oui_instagram_cache_set', time(), 'oui_instagram', PREF_HIDDEN, 'text_input');
+        set_pref('oui_instagram_cache_set', time());
         $cache = fopen($cachefile,'w+');
         fwrite($cache,$out);
         fclose($cache);
     }
 
-    // Cache is on and file is found, get it!
-    if ($readcache) {
+    // Read the cache
+    if (!$needquery && $cache_time > 0) {
         $cache_out = file_get_contents($cachefile);
         return $cache_out;
-    // No cache file :(
+    // or return the query result
     } else {
         return $out;
     }
