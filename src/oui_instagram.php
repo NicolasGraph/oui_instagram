@@ -109,7 +109,7 @@ h4. Attributes
 _(Alphabetical order)_
 
 * @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in minutes.
+* @cache_time="…"@ — _Default: 5_ - Duration of the cache in minutes.
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
@@ -417,7 +417,9 @@ function oui_instagram_images($atts, $thing=null) {
                 return;
             }
         }
+        update_lastmod();
     }
+    
     // Cache file needed
     if ($needquery && $cache_time > 0) {
         // Remove old cache files
