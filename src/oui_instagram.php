@@ -219,8 +219,10 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 # --- BEGIN PLUGIN CODE ---
 
+/**
+ * Register tags for Txp 4.6+.
+ */
 if (class_exists('\Textpattern\Tag\Registry')) {
-    // Register Textpattern tags for TXP 4.6+.
     Txp::get('\Textpattern\Tag\Registry')
         ->register('oui_instagram_images')
         ->register('oui_instagram_image')
@@ -230,6 +232,9 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_instagram_image_author');
 }
 
+/**
+ * Register callbacks.
+ */
 if (txpinterface === 'admin') {
     add_privs('prefs.oui_instagram', '1');
     add_privs('plugin_prefs.oui_instagram', '1');
@@ -238,6 +243,12 @@ if (txpinterface === 'admin') {
     register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
 }
 
+/**
+ * Handler for plugin lifecycle events.
+ *
+ * @param string $evt Textpattern action event
+ * @param string $stp Textpattern action step
+ */
 function oui_instagram_welcome($evt, $stp)
 {
     switch ($stp) {
@@ -257,10 +268,15 @@ function oui_instagram_welcome($evt, $stp)
     }
 }
 
+/**
+ * Set prefs through:
+ *
+ * PREF_PLUGIN for 4.5
+ * PREF_ADVANCED for 4.6+
+ */
 function oui_instagram_install() {
     if (get_pref('oui_instagram_access_token', null) === null) {
         if (defined('PREF_PLUGIN')) {
-            // Txp 4.6
             set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
         } else {
             set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 10);
@@ -268,7 +284,6 @@ function oui_instagram_install() {
     }
     if (get_pref('oui_instagram_username', null) === null) {
         if (defined('PREF_PLUGIN')) {
-            // Txp 4.6
             set_pref('oui_instagram_username', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
         } else {
             set_pref('oui_instagram_username', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
@@ -276,7 +291,6 @@ function oui_instagram_install() {
     }
     if (get_pref('oui_instagram_user_id', null) === null) {
         if (defined('PREF_PLUGIN')) {
-            // Txp 4.6
             set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 30);
         } else {
             set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 30);
@@ -284,7 +298,6 @@ function oui_instagram_install() {
     }
     if (get_pref('oui_instagram_cache_time', null) === null) {
         if (defined('PREF_PLUGIN')) {
-            // Txp 4.6
             set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_PLUGIN, 'text_input', 40);
         } else {
             set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_ADVANCED, 'text_input', 40);
@@ -298,6 +311,9 @@ function oui_instagram_install() {
     }
 }
 
+/**
+ * Jump to the prefs panel.
+ */
 function oui_instagram_options() {
     if (defined('PREF_PLUGIN')) {
         $link = '?event=prefs';
@@ -307,6 +323,13 @@ function oui_instagram_options() {
     header('Location: ' . $link);
 }
 
+/**
+ * Main plugin function.
+ * 
+ * Pull the images if needed;
+ * parse and cache the gallery;
+ * display the content.
+ */
 function oui_instagram_images($atts, $thing=null) {
     global $username, $thisshot;
 
@@ -331,7 +354,7 @@ function oui_instagram_images($atts, $thing=null) {
         return;
     }
 
-    // Prepare the cache file name
+    // Prepare the cache file name.
     $keybase = md5($username.$limit.$type.$thing);
     $hash = str_split(get_pref('oui_instagram_hash_key'));
     $cachekey='';
@@ -340,18 +363,18 @@ function oui_instagram_images($atts, $thing=null) {
     }
     $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
 
-    // Main cache conditioning variable
+    // Main cache conditioning variable.
     $needquery = (!file_exists($cachefile) || (time() - get_pref('oui_instagram_cache_set')) > ($cache_time *  60)) ? true : false;
 
-    // New query needed
+    // New query needed.
     if ($needquery) {
 
-        // Get the user id if not set
+        // Get the user id if not set.
         if(!$user_id) {
             if($username) {
                 // Search for the user id…
                 $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
-                // …and check the result
+                // …and check the result.
                 if(isset($user_idquery->data[0]->id)){
                     $user_id=$user_idquery->data[0]->id;
                 } else {
@@ -387,12 +410,12 @@ function oui_instagram_images($atts, $thing=null) {
                 $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
             }
 
-            // …and check the result
+            // …and check the result.
             if(isset($shots[$page]->data)){
 
                 foreach($shots[$page]->data as $thisshot) {
 
-                    // single tag use
+                    // single tag use.
                     if ($thing === null) {
 
                         $url = $thisshot->{'images'}->{$type}->{'url'};
@@ -405,7 +428,7 @@ function oui_instagram_images($atts, $thing=null) {
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
 
-                    // Conatiner tag use
+                    // Conatiner tag use.
                     } else {
                         $data[] = parse($thing);
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
@@ -418,34 +441,37 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
         update_lastmod();
-    }
-    
-    // Cache file needed
-    if ($needquery && $cache_time > 0) {
-        // Remove old cache files
-        $oldcaches = glob($cachefile);
-        if (!empty($oldcaches)) {
-            foreach($oldcaches as $todel) {
-                unlink($todel);
-            }
-        }
-        // Time stamp and write the new cache files and return
-        set_pref('oui_instagram_cache_set', time());
-        $cache = fopen($cachefile,'w+');
-        fwrite($cache,$out);
-        fclose($cache);
+
+	    // Cache file needed.
+	    if ($cache_time > 0) {
+	        // Remove old cache files.
+	        $oldcaches = glob($cachefile);
+	        if (!empty($oldcaches)) {
+	            foreach($oldcaches as $todel) {
+	                unlink($todel);
+	            }
+	        }
+	        // Time stamp and write the new cache files and return.
+	        set_pref('oui_instagram_cache_set', time());
+	        $cache = fopen($cachefile,'w+');
+	        fwrite($cache,$out);
+	        fclose($cache);
+	    }
     }
 
-    // Read the cache
+    // Read the cache.
     if (!$needquery && $cache_time > 0) {
         $cache_out = file_get_contents($cachefile);
         return $cache_out;
-    // or return the query result
+    // or return the query result.
     } else {
         return $out;
     }
 }
 
+/**
+ * Display each image in a oui_instagram_images context.
+ */
 function oui_instagram_image($atts) {
     global $thisshot;
 
@@ -466,7 +492,9 @@ function oui_instagram_image($atts) {
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
 }
 
-
+/**
+ * Display each image url in a oui_instagram_images context.
+ */
 function oui_instagram_image_url($atts, $thing=null) {
     global $thisshot;
 
@@ -499,7 +527,9 @@ function oui_instagram_image_url($atts, $thing=null) {
     }
 }
 
-
+/**
+ * Display each image information in a oui_instagram_images context.
+ */
 function oui_instagram_image_info($atts) {
     global $thisshot;
 
@@ -524,6 +554,9 @@ function oui_instagram_image_info($atts) {
     return doWrap($out, $wraptag, $break, $class);
 }
 
+/**
+ * Display each image date in a oui_instagram_images context.
+ */
 function oui_instagram_image_date($atts) {
     global $thisshot;
 
@@ -543,6 +576,9 @@ function oui_instagram_image_date($atts) {
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
 }
 
+/**
+ * Display each image author in a oui_instagram_images context.
+ */
 function oui_instagram_image_author($atts) {
     global $thisshot;
 
