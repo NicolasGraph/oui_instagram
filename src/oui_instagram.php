@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.6-beta';
+$plugin['version'] = '0.6.6';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -31,7 +31,6 @@ oui_instagram_access_token => Access token
 oui_instagram_username => Default username
 oui_instagram_user_id => Default user id
 oui_instagram_cache_time => Default cache time
-oui_instagram_hash_key => Cache file hash key
 #@language fr-fr
 oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
@@ -83,11 +82,10 @@ h2(#installation). Installation
 
 h2(#prefs). Preferences / options
 
-* Access token - _Default: unset_ - A valid Instagram access token. 
-* Default username - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
-* Default user id - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
-* Default cache time — _Default: 0_ - Duration of the cache in minutes.
-* Cache file hash key - _Default: a random number_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+* *Access token* - _Default: unset_ - A valid Instagram access token. 
+* *Default username* - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
+* *Default user id* - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
+* *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
 
@@ -109,7 +107,7 @@ h4. Attributes
 _(Alphabetical order)_
 
 * @break="…"@ - _Default: li_ - The HTML tag used around each generated image.
-* @cache_time="…"@ — _Default: 5_ - Duration of the cache in minutes.
+* @cache_time="…"@ — _Default: 5 (set via the preferences)_ - Duration of the cache in minutes.
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
@@ -208,6 +206,7 @@ bc. <txp:oui_instagram_images username="cercle_magazine">
 h2(#author). Author
 
 "Nicolas Morand":https://github.com/NicolasGraph
+_Thank you to the Textpattern community and the core team._ 
 
 h2(#licence). Licence
 
