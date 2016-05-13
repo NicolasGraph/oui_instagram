@@ -441,21 +441,21 @@ function oui_instagram_images($atts, $thing=null) {
         }
         update_lastmod();
 
-	    // Cache file needed.
-	    if ($cache_time > 0) {
-	        // Remove old cache files.
-	        $oldcaches = glob($cachefile);
-	        if (!empty($oldcaches)) {
-	            foreach($oldcaches as $todel) {
-	                unlink($todel);
-	            }
-	        }
-	        // Time stamp and write the new cache files and return.
-	        set_pref('oui_instagram_cache_set', time());
-	        $cache = fopen($cachefile,'w+');
-	        fwrite($cache,$out);
-	        fclose($cache);
-	    }
+        // Cache file needed.
+        if ($cache_time > 0) {
+            // Remove old cache files.
+            $oldcaches = glob($cachefile);
+            if (!empty($oldcaches)) {
+                foreach($oldcaches as $todel) {
+                    unlink($todel);
+                }
+            }
+            // Time stamp and write the new cache files and return.
+            set_pref('oui_instagram_cache_set', time());
+            $cache = fopen($cachefile,'w+');
+            fwrite($cache,$out);
+            fclose($cache);
+        }
     }
 
     // Read the cache.
