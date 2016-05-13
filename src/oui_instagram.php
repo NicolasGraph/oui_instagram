@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.6';
+$plugin['version'] = '0.6.7-beta';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -31,12 +31,14 @@ oui_instagram_access_token => Access token
 oui_instagram_username => Default username
 oui_instagram_user_id => Default user id
 oui_instagram_cache_time => Default cache time
+oui_instagram_automatically_filled => Automatically filled after saving.
 #@language fr-fr
 oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
 oui_instagram_username => Nom d'utilisateur par défaut
 oui_instagram_user_id => Identifiant utilisateur par défaut
 oui_instagram_cache_time => Durée du cache par défaut en minutes
+oui_instagram_automatically_filled => Renseigner automatiquement après sauvegarde.
 EOT;
 
 if (!defined('txpinterface'))
@@ -84,7 +86,7 @@ h2(#prefs). Preferences / options
 
 * *Access token* - _Default: unset_ - A valid Instagram access token. 
 * *Default username* - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
-* *Default user id* - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
+* *Default user id* - _Default: unset (automatically set on prefs saving)_ - The user id of the Instagram account used by default.
 * *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
@@ -240,6 +242,7 @@ if (txpinterface === 'admin') {
     register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
     register_callback('oui_instagram_install', 'prefs', null, 1);
     register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
+    register_callback('oui_instagram_user_id', 'prefs', 'prefs_save', 1);
 }
 
 /**
@@ -268,6 +271,18 @@ function oui_instagram_welcome($evt, $stp)
 }
 
 /**
+ * Jump to the prefs panel.
+ */
+function oui_instagram_options() {
+    if (defined('PREF_PLUGIN')) {
+        $link = '?event=prefs';
+    } else {
+        $link = '?event=prefs&step=advanced_prefs';
+    }
+    header('Location: ' . $link);
+}
+
+/**
  * Set prefs through:
  *
  * PREF_PLUGIN for 4.5
@@ -290,9 +305,9 @@ function oui_instagram_install() {
     }
     if (get_pref('oui_instagram_user_id', null) === null) {
         if (defined('PREF_PLUGIN')) {
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 30);
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'oui_instagram_user_id_input', 30);
         } else {
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 30);
+            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'oui_instagram_user_id_input', 30);
         }
     }
     if (get_pref('oui_instagram_cache_time', null) === null) {
@@ -311,15 +326,43 @@ function oui_instagram_install() {
 }
 
 /**
- * Jump to the prefs panel.
+ * Required field for preferences
  */
-function oui_instagram_options() {
-    if (defined('PREF_PLUGIN')) {
-        $link = '?event=prefs';
-    } else {
-        $link = '?event=prefs&step=advanced_prefs';
+function oui_instagram_required_input($name, $val) {
+
+    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', $required = true);
+}
+
+/**
+ * Disable the user id preference field
+ * as it is now automatically filled on prefs saving.
+ */
+function oui_instagram_user_id_input($name, $val) {
+
+    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, $disabled = true, '', $placeholder = gTxt('oui_instagram_automatically_filled'));
+}
+
+/**
+ * Get the user id on prefs saving
+ * and set the related preference automatically.
+ */
+function oui_instagram_user_id() {
+    // Get the user id if not set.
+    $username = $_POST['oui_instagram_username'];
+    $access_token = $_POST['oui_instagram_access_token'];
+    
+    if($username && $access_token) {
+        // Search for the user id…
+        $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+        // …and check the result.
+        foreach($user_idquery->data as $user)
+        {
+            if($user->username == $username)
+            {
+                set_pref('oui_instagram_user_id', $user->id);
+            }
+        }
     }
-    header('Location: ' . $link);
 }
 
 /**
@@ -333,12 +376,12 @@ function oui_instagram_images($atts, $thing=null) {
     global $username, $thisshot;
 
     extract(lAtts(array(
-        'username'   => get_pref('oui_instagram_username'),
-        'user_id'    => get_pref('oui_instagram_user_id'),
+        'username'   => '',
+        'user_id'    => '',
         'limit'      => '10',
         'type'       => 'thumbnail',
         'link'       => 'auto',
-        'cache_time' => get_pref('oui_instagram_cache_time'),
+        'cache_time' => '',
         'wraptag'    => 'ul',
         'class'      => 'oui_instagram_images',
         'break'      => 'li',
@@ -351,6 +394,14 @@ function oui_instagram_images($atts, $thing=null) {
     if (!$access_token) {
         trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
         return;
+    }
+
+    if (!$user_id && !$username) {
+        $user_id = get_pref('oui_instagram_user_id');
+    }
+    
+    if (!$cache_time) {
+        $cache_time = get_pref('oui_instagram_cache_time');
     }
 
     // Prepare the cache file name.
@@ -374,11 +425,10 @@ function oui_instagram_images($atts, $thing=null) {
                 // Search for the user id…
                 $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
                 // …and check the result.
-                if(isset($user_idquery->data[0]->id)){
-                    $user_id=$user_idquery->data[0]->id;
-                } else {
-                  trigger_error("oui_instagram was unable to find the user id of the following instagram username: ".$username);
-                  return;
+                foreach($user_idquery->data as $user) {
+                    if($user->username == $username) {
+                        $user_id = $user->id;
+                    }
                 }
             } else {
               trigger_error("oui_instagram_images tag requires a username or a user_id attribute.");
