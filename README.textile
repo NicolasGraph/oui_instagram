@@ -38,7 +38,7 @@ h2(#prefs). Preferences / options
 
 * *Access token* - _Default: unset_ - A valid Instagram access token. 
 * *Default username* - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
-* *Default user id* - _Default: unset_ - The user id of the Instagram account used by default; faster than username!
+* *Default user id* - _Default: unset (automatically set on prefs saving)_ - The user id of the Instagram account used by default.
 * *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
