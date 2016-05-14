@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.7';
+$plugin['version'] = '0.6.8';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -220,6 +220,8 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 # --- BEGIN PLUGIN CODE ---
 
+
+
 /**
  * Register tags for Txp 4.6+.
  */
@@ -237,12 +239,26 @@ if (class_exists('\Textpattern\Tag\Registry')) {
  * Register callbacks.
  */
 if (txpinterface === 'admin') {
+
     add_privs('prefs.oui_instagram', '1');
     add_privs('plugin_prefs.oui_instagram', '1');
+
     register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
     register_callback('oui_instagram_install', 'prefs', null, 1);
     register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
     register_callback('oui_instagram_user_id', 'prefs', 'prefs_save', 1);
+
+    $prefList = oui_instagram_preflist();
+    foreach ($prefList as $pref => $options) {
+        register_callback('oui_instagram_pophelp', 'admin_help', $pref);
+    }        
+}
+
+/**
+ * Get external popHelp contents
+ */
+function oui_instagram_pophelp($evt, $stp, $ui, $vars) {
+    return str_replace(HELP_URL, 'http://help.nicolasmorand.com/', $ui);
 }
 
 /**
@@ -254,7 +270,6 @@ if (txpinterface === 'admin') {
 function oui_instagram_welcome($evt, $stp)
 {
     switch ($stp) {
-        case 'installed':
         case 'enabled':
             oui_instagram_install();
             break;
@@ -288,42 +303,80 @@ function oui_instagram_options() {
  * PREF_PLUGIN for 4.5
  * PREF_ADVANCED for 4.6+
  */
-function oui_instagram_install() {
-    if (get_pref('oui_instagram_access_token', null) === null) {
-        if (defined('PREF_PLUGIN')) {
-            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 10);
-        } else {
-            set_pref('oui_instagram_access_token', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 10);
-        }
-    }
-    if (get_pref('oui_instagram_username', null) === null) {
-        if (defined('PREF_PLUGIN')) {
-            set_pref('oui_instagram_username', '', 'oui_instagram', PREF_PLUGIN, 'text_input', 20);
-        } else {
-            set_pref('oui_instagram_username', '', 'oui_instagram', PREF_ADVANCED, 'text_input', 20);
-        }
-    }
-    if (get_pref('oui_instagram_user_id', null) === null) {
-        if (defined('PREF_PLUGIN')) {
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_PLUGIN, 'oui_instagram_user_id_input', 30);
-        } else {
-            set_pref('oui_instagram_user_id', '', 'oui_instagram', PREF_ADVANCED, 'oui_instagram_user_id_input', 30);
-        }
-    }
-    if (get_pref('oui_instagram_cache_time', null) === null) {
-        if (defined('PREF_PLUGIN')) {
-            set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_PLUGIN, 'text_input', 40);
-        } else {
-            set_pref('oui_instagram_cache_time', '5', 'oui_instagram', PREF_ADVANCED, 'text_input', 40);
-        }
-    }
-    if (get_pref('oui_instagram_hash_key', null) === null) {
-        set_pref('oui_instagram_hash_key', mt_rand(100000, 999999), 'oui_instagram', PREF_HIDDEN, 'text_input', 50);
-    }
-    if (get_pref('oui_instagram_cache_set', null) === null) {
-        set_pref('oui_instagram_cache_set', time(), 'oui_instagram', PREF_HIDDEN, 'text_input', 60);
-    }
+function oui_instagram_preflist() {
+    $prefList = array(
+        'oui_instagram_access_token' => array(
+            'value'      => '',
+            'event'      => 'oui_instagram',
+            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'widget'     => 'text_input',
+            'position'   => '10',
+            'is_private' => false,
+        ),
+        'oui_instagram_username' => array(
+            'value'      => '',
+            'event'      => 'oui_instagram',
+            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'widget'     => 'text_input',
+            'position'   => '20',
+            'is_private' => false,
+        ), 
+        'oui_instagram_user_id' => array(
+            'value'      => '',
+            'event'      => 'oui_instagram',
+            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'widget'     => 'oui_instagram_user_id_input',
+            'position'   => '30',
+            'is_private' => false,
+        ), 
+        'oui_instagram_cache_time' => array(
+            'value'      => '5',
+            'event'      => 'oui_instagram',
+            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'widget'     => 'text_input',
+            'position'   => '40',
+            'is_private' => false,
+        ),
+        'oui_instagram_hash_key' => array(
+            'value'      => mt_rand(100000, 999999),
+            'event'      => 'oui_instagram',
+            'visibility' => PREF_HIDDEN,
+            'widget'     => 'text_input',
+            'position'   => '50',
+            'is_private' => false,
+        ),
+        'oui_instagram_cache_set' => array(
+            'value'      => time(),
+            'event'      => 'oui_instagram',
+            'visibility' => PREF_HIDDEN,
+            'widget'     => 'text_input',
+            'position'   => '60',
+            'is_private' => false,
+        ),
+    );
+    return $prefList;    
 }
+
+
+function oui_instagram_install() {
+
+    $prefList = oui_instagram_preflist();
+
+    foreach ($prefList as $pref => $options) {
+        if (get_pref($pref, null) === null) {
+            set_pref(
+                $pref,
+                $options['value'],
+                $options['event'],
+                $options['visibility'],
+                $options['widget'],
+                $options['position'],
+                $options['is_private']
+            );
+        }
+    }
+    return $prefList;
+}    
 
 /**
  * Required field for preferences
@@ -373,7 +426,7 @@ function oui_instagram_user_id() {
  * display the content.
  */
 function oui_instagram_images($atts, $thing=null) {
-    global $username, $thisshot;
+    global $thisshot;
 
     extract(lAtts(array(
         'username'   => '',
