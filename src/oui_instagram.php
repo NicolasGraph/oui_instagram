@@ -31,14 +31,16 @@ oui_instagram_access_token => Access token
 oui_instagram_username => Default username
 oui_instagram_user_id => Default user id
 oui_instagram_cache_time => Default cache time
-oui_instagram_automatically_filled => Automatically filled after saving.
+oui_instagram_user_id_placeholder => Filled after saving if a username is provided.
+oui_instagram_username_placeholder => optional
 #@language fr-fr
 oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
 oui_instagram_username => Nom d'utilisateur par défaut
 oui_instagram_user_id => Identifiant utilisateur par défaut
 oui_instagram_cache_time => Durée du cache par défaut en minutes
-oui_instagram_automatically_filled => Renseigner automatiquement après sauvegarde.
+oui_instagram_user_id_placeholder => Renseigné après sauvegarde si un nom d'utilisateur est fournit.
+oui_instagram_username_placeholder => Optionnel
 EOT;
 
 if (!defined('txpinterface'))
@@ -82,13 +84,6 @@ h2(#installation). Installation
 # get an Instagram access token - *Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
 # Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
 
-h2(#prefs). Preferences / options
-
-* *Access token* - _Default: unset_ - A valid Instagram access token. 
-* *Default username* - _Default: unset_ - The username of the Instagram account used by default (not needed if the user id is provided).
-* *Default user id* - _Default: unset (automatically set on prefs saving)_ - The user id of the Instagram account used by default.
-* *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
-
 h2(#tags). Tags
 
 h3(#oui_instagram_images). oui_instagram_images
@@ -116,8 +111,8 @@ _(Alphabetical order)_
 * @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be thrown to pull your images.
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
-* @user_id="…"@ - _Default: unset_ - An Instagram user id to override the default user id provided in the plugin preferences; faster than username!
-* @username="…"@ - _Default: unset_ - An Instagram username to override the the default username provided in the plugin preferences.
+* @user_id="…"@ - _Default: unset_ - An Instagram user id to override the access token related one or the one generated from ther username provided in the plugin preferences; faster than username!
+* @username="…"@ - _Default: unset_ - An Instagram username to override the access token related one or the one provided maunally in the plugin preferences.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image). oui_instagram_image
@@ -126,7 +121,7 @@ Displays each image in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image />
 
-h4. Attributes 
+h4. Attributes
 
 _(Alphabetical order)_
 
@@ -144,8 +139,8 @@ h4. Attributes
 
 _(Alphabetical order)_
 
-* @break="…"@ — _Default: unset_ - The HTML tag used around each generated info. 
-* @class="…"@ — _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@. 
+* @break="…"@ — _Default: unset_ - The HTML tag used around each generated info.
+* @class="…"@ — _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@.
 * @type="…"@ — _Default: caption_ - The information type to display. Valid values are caption, likes, comments.
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
@@ -187,8 +182,8 @@ bc. <txp:oui_instagram_image_author />
 _(Alphabetical order)_
 
 * @class="…"@ — _Default: unset - The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
-* @link="…"@ — _Default: 0_ - To apply a link around the generated content.  
-* @title="…"@ — _Default: 1_ - To show the full name (1) or the username (0). 
+* @link="…"@ — _Default: 0_ - To apply a link around the generated content.
+* @title="…"@ — _Default: 1_ - To show the full name (1) or the username (0).
 * @wraptag="…"@ — _Default: unset_ - The HTML tag to use around the generated content.
 
 h2(#examples). Examples
@@ -208,7 +203,7 @@ bc. <txp:oui_instagram_images username="cercle_magazine">
 h2(#author). Author
 
 "Nicolas Morand":https://github.com/NicolasGraph
-_Thank you to the Textpattern community and the core team._ 
+_Thank you to the Textpattern community and the core team._
 
 h2(#licence). Licence
 
@@ -251,14 +246,14 @@ if (txpinterface === 'admin') {
     $prefList = oui_instagram_preflist();
     foreach ($prefList as $pref => $options) {
         register_callback('oui_instagram_pophelp', 'admin_help', $pref);
-    }        
+    }
 }
 
 /**
  * Get external popHelp contents
  */
 function oui_instagram_pophelp($evt, $stp, $ui, $vars) {
-    return str_replace(HELP_URL, 'http://help.nicolasmorand.com/', $ui);
+    return str_replace(HELP_URL, 'http://help.ouisource.com/', $ui);
 }
 
 /**
@@ -317,10 +312,10 @@ function oui_instagram_preflist() {
             'value'      => '',
             'event'      => 'oui_instagram',
             'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
-            'widget'     => 'text_input',
+            'widget'     => 'oui_instagram_username_input',
             'position'   => '20',
             'is_private' => false,
-        ), 
+        ),
         'oui_instagram_user_id' => array(
             'value'      => '',
             'event'      => 'oui_instagram',
@@ -328,7 +323,7 @@ function oui_instagram_preflist() {
             'widget'     => 'oui_instagram_user_id_input',
             'position'   => '30',
             'is_private' => false,
-        ), 
+        ),
         'oui_instagram_cache_time' => array(
             'value'      => '5',
             'event'      => 'oui_instagram',
@@ -354,7 +349,7 @@ function oui_instagram_preflist() {
             'is_private' => false,
         ),
     );
-    return $prefList;    
+    return $prefList;
 }
 
 
@@ -375,8 +370,7 @@ function oui_instagram_install() {
             );
         }
     }
-    return $prefList;
-}    
+}
 
 /**
  * Required field for preferences
@@ -387,12 +381,20 @@ function oui_instagram_required_input($name, $val) {
 }
 
 /**
+ * Add a placeholder to the username field.
+ */
+function oui_instagram_username_input($name, $val) {
+
+    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', '', $placeholder = gTxt('oui_instagram_username_placeholder'));
+}
+
+/**
  * Disable the user id preference field
  * as it is now automatically filled on prefs saving.
  */
 function oui_instagram_user_id_input($name, $val) {
 
-    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, $disabled = true, '', $placeholder = gTxt('oui_instagram_automatically_filled'));
+    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '$disabled = true', '', $placeholder = gTxt('oui_instagram_user_id_placeholder'));
 }
 
 /**
@@ -403,24 +405,26 @@ function oui_instagram_user_id() {
     // Get the user id if not set.
     $username = $_POST['oui_instagram_username'];
     $access_token = $_POST['oui_instagram_access_token'];
-    
-    if($username && $access_token) {
-        // Search for the user id…
-        $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
-        // …and check the result.
-        foreach($user_idquery->data as $user)
-        {
-            if($user->username == $username)
-            {
-                set_pref('oui_instagram_user_id', $user->id);
+
+    if($access_token) {
+        if($username) {
+            // Search for the user id…
+            $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+            // …and check the result.
+            foreach($user_idquery->data as $user) {
+                if($user->username == $username) {
+                    set_pref('oui_instagram_user_id', $user->id);
+                }
             }
+        } else {
+            set_pref('oui_instagram_user_id', '');
         }
     }
 }
 
 /**
  * Main plugin function.
- * 
+ *
  * Pull the images if needed;
  * parse and cache the gallery;
  * display the content.
@@ -450,9 +454,9 @@ function oui_instagram_images($atts, $thing=null) {
     }
 
     if (!$user_id && !$username) {
-        $user_id = get_pref('oui_instagram_user_id');
+        $user_id = (get_pref('oui_instagram_user_id') ? get_pref('oui_instagram_user_id') : 'self' );
     }
-    
+
     if (!$cache_time) {
         $cache_time = get_pref('oui_instagram_cache_time');
     }
@@ -473,19 +477,14 @@ function oui_instagram_images($atts, $thing=null) {
     if ($needquery) {
 
         // Get the user id if not set.
-        if(!$user_id) {
-            if($username) {
-                // Search for the user id…
-                $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
-                // …and check the result.
-                foreach($user_idquery->data as $user) {
-                    if($user->username == $username) {
-                        $user_id = $user->id;
-                    }
+        if($username) {
+            // Search for the user id…
+            $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+            // …and check the result.
+            foreach($user_idquery->data as $user) {
+                if($user->username == $username) {
+                    $user_id = $user->id;
                 }
-            } else {
-              trigger_error("oui_instagram_images tag requires a username or a user_id attribute.");
-              return;
             }
         }
 
@@ -498,17 +497,16 @@ function oui_instagram_images($atts, $thing=null) {
 
             if ($page == 0 && $page != $pages_count) {
 
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$user_id.'/media/recent?access_token='.$access_token.'&count=20'));
+                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count=20'));
                 $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
 
             } else if ($page == $pages_count) {
 
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$user_id.'/media/recent?access_token='.$access_token.'&count='.$last_limit.(($limit > 20) ? '&max_id='.$next_shots : '')));
-                $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
+                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.$last_limit.(($limit > 20) ? '&max_id='.$next_shots : '')));
 
             } else {
 
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.(int)$user_id.'/media/recent?access_token='.$access_token.'&count=20'.'&max_id='.$next_shots));
+                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count=20'.'&max_id='.$next_shots));
                 $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
             }
 
@@ -532,6 +530,7 @@ function oui_instagram_images($atts, $thing=null) {
 
                     // Conatiner tag use.
                     } else {
+
                         $data[] = parse($thing);
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
