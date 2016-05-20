@@ -107,8 +107,8 @@ _(Alphabetical order)_
 * @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be thrown to pull your images.
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
-* @user_id="…"@ - _Default: unset_ - An Instagram user id to override the access token related one or the one generated from ther username provided in the plugin preferences; faster than username!
-* @username="…"@ - _Default: unset_ - An Instagram username to override the access token related one or the one provided maunally in the plugin preferences.
+* @user_id="…"@ - _Default: unset_ - An Instagram user id; faster than username!
+* @username="…"@ - _Default: unset_ - An Instagram username.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image). oui_instagram_image
@@ -444,25 +444,13 @@ function oui_instagram_images($atts, $thing=null) {
 
         // Get the Instagram feed per 20 images because of the Instagram limit (20/33)…
         $pages_count = ceil(($limit / 20) -1);
-        $last_limit = $limit % 20;
         $shots = array();
 
         for ($page = 0; $page <= $pages_count; $page++) {
 
-            if ($page == 0 && $page != $pages_count) {
+            $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.(($page == $pages_count) ? ($limit % 20) : '20').(($page == 0) ? '' : '&max_id='.$next_shots)));
 
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count=20'));
-                $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
-
-            } else if ($page == $pages_count) {
-
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.$last_limit.(($limit > 20) ? '&max_id='.$next_shots : '')));
-
-            } else {
-
-                $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count=20'.'&max_id='.$next_shots));
-                $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'};
-            }
+            ($page != $pages_count) ? $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'} : '';
 
             // …and check the result.
             if(isset($shots[$page]->data)){
