@@ -28,16 +28,12 @@ $plugin['textpack'] = <<< EOT
 #@language en-gb
 oui_instagram => Instagram gallery
 oui_instagram_access_token => Access token
-oui_instagram_username => Default username
-oui_instagram_user_id => Default user id
 oui_instagram_cache_time => Default cache time
 oui_instagram_user_id_placeholder => Filled after saving if a username is provided.
 oui_instagram_username_placeholder => optional
 #@language fr-fr
 oui_instagram => Galerie Instagram
 oui_instagram_access_token => Access token
-oui_instagram_username => Nom d'utilisateur par défaut
-oui_instagram_user_id => Identifiant utilisateur par défaut
 oui_instagram_cache_time => Durée du cache par défaut en minutes
 oui_instagram_user_id_placeholder => Renseigné après sauvegarde si un nom d'utilisateur est fournit.
 oui_instagram_username_placeholder => Optionnel
@@ -241,7 +237,6 @@ if (txpinterface === 'admin') {
     register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
     register_callback('oui_instagram_install', 'prefs', null, 1);
     register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
-    register_callback('oui_instagram_user_id', 'prefs', 'prefs_save', 1);
 
     $prefList = oui_instagram_preflist();
     foreach ($prefList as $pref => $options) {
@@ -306,22 +301,6 @@ function oui_instagram_preflist() {
             'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
             'widget'     => 'text_input',
             'position'   => '10',
-            'is_private' => false,
-        ),
-        'oui_instagram_username' => array(
-            'value'      => '',
-            'event'      => 'oui_instagram',
-            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
-            'widget'     => 'oui_instagram_username_input',
-            'position'   => '20',
-            'is_private' => false,
-        ),
-        'oui_instagram_user_id' => array(
-            'value'      => '',
-            'event'      => 'oui_instagram',
-            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
-            'widget'     => 'oui_instagram_user_id_input',
-            'position'   => '30',
             'is_private' => false,
         ),
         'oui_instagram_cache_time' => array(
@@ -398,31 +377,6 @@ function oui_instagram_user_id_input($name, $val) {
 }
 
 /**
- * Get the user id on prefs saving
- * and set the related preference automatically.
- */
-function oui_instagram_user_id() {
-    // Get the user id if not set.
-    $username = $_POST['oui_instagram_username'];
-    $access_token = $_POST['oui_instagram_access_token'];
-
-    if($access_token) {
-        if($username) {
-            // Search for the user id…
-            $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
-            // …and check the result.
-            foreach($user_idquery->data as $user) {
-                if($user->username == $username) {
-                    set_pref('oui_instagram_user_id', $user->id);
-                }
-            }
-        } else {
-            set_pref('oui_instagram_user_id', '');
-        }
-    }
-}
-
-/**
  * Main plugin function.
  *
  * Pull the images if needed;
@@ -454,7 +408,7 @@ function oui_instagram_images($atts, $thing=null) {
     }
 
     if (!$user_id && !$username) {
-        $user_id = (get_pref('oui_instagram_user_id') ? get_pref('oui_instagram_user_id') : 'self' );
+        $user_id = 'self';
     }
 
     if (!$cache_time) {
