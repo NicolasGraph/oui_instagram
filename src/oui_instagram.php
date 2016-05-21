@@ -211,8 +211,6 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 # --- BEGIN PLUGIN CODE ---
 
-
-
 /**
  * Register tags for Txp 4.6+.
  */
@@ -264,12 +262,9 @@ function oui_instagram_welcome($evt, $stp)
             oui_instagram_install();
             break;
         case 'deleted':
-            if (function_exists('remove_pref')) {
-                // Txp 4.6
-                remove_pref(null, 'oui_instagram');
-            } else {
-                safe_delete('txp_prefs', "event='oui_instagram'");
-            }
+            function_exists('remove_pref')
+                ? remove_pref(null, 'oui_instagram')
+                : safe_delete('txp_prefs', "event='oui_instagram'");
             safe_delete('txp_lang', "name LIKE 'oui\_instagram%'");
             break;
     }
@@ -298,7 +293,7 @@ function oui_instagram_preflist() {
         'oui_instagram_access_token' => array(
             'value'      => '',
             'event'      => 'oui_instagram',
-            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'visibility' => defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED,
             'widget'     => 'text_input',
             'position'   => '10',
             'is_private' => false,
@@ -306,7 +301,7 @@ function oui_instagram_preflist() {
         'oui_instagram_cache_time' => array(
             'value'      => '5',
             'event'      => 'oui_instagram',
-            'visibility' => (defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED),
+            'visibility' => defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED,
             'widget'     => 'text_input',
             'position'   => '40',
             'is_private' => false,
@@ -355,7 +350,6 @@ function oui_instagram_install() {
  * Required field for preferences
  */
 function oui_instagram_required_input($name, $val) {
-
     return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', $required = true);
 }
 
@@ -363,7 +357,6 @@ function oui_instagram_required_input($name, $val) {
  * Add a placeholder to the username field.
  */
 function oui_instagram_username_input($name, $val) {
-
     return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', '', $placeholder = gTxt('oui_instagram_username_placeholder'));
 }
 
@@ -372,7 +365,6 @@ function oui_instagram_username_input($name, $val) {
  * as it is now automatically filled on prefs saving.
  */
 function oui_instagram_user_id_input($name, $val) {
-
     return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '$disabled = true', '', $placeholder = gTxt('oui_instagram_user_id_placeholder'));
 }
 
@@ -442,15 +434,15 @@ function oui_instagram_images($atts, $thing=null) {
             }
         }
 
-        // Get the Instagram feed per 20 images because of the Instagram limit (20/33)…
-        $pages_count = ceil(($limit / 20) -1);
+        // Get the Instagram feed per 20 images because of the Instagram limit…
+        $pages_count = ceil($limit / 20);
         $shots = array();
 
-        for ($page = 0; $page <= $pages_count; $page++) {
+        for ($page = 1; $page <= $pages_count; $page++) {
 
-            $shots[] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.(($page == $pages_count) ? ($limit % 20) : '20').(($page == 0) ? '' : '&max_id='.$next_shots)));
+            $shots[$page] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.(($page == $pages_count) ? ($limit % 20) : '20').(($page == 1) ? '' : $next_shots)));
 
-            ($page != $pages_count) ? $next_shots = $shots[$page]->{'pagination'}->{'next_max_id'} : '';
+            ($page != $pages_count) ? $next_shots = '&max_id='.$shots[$page]->{'pagination'}->{'next_max_id'} : '';
 
             // …and check the result.
             if(isset($shots[$page]->data)){
@@ -479,7 +471,7 @@ function oui_instagram_images($atts, $thing=null) {
                     }
                 }
             } else {
-                trigger_error("oui_instagram was unable to get any content for the following user id: ".$user_id);
+                trigger_error("Something went wrong while oui_instagram tried to get your feed");
                 return;
             }
         }
@@ -502,11 +494,10 @@ function oui_instagram_images($atts, $thing=null) {
         }
     }
 
-    // Read the cache.
+    // Return the cache content or the generated images.
     if (!$needquery && $cache_time > 0) {
-        $cache_out = file_get_contents($cachefile);
+        isset($cache_out) ?: $cache_out = file_get_contents($cachefile);
         return $cache_out;
-    // or return the query result.
     } else {
         return $out;
     }
