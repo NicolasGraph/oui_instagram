@@ -78,7 +78,7 @@ h2(#installation). Installation
 
 # Paste the content of the plugin file under the *Admin > Plugins*, upload it and install;
 # get an Instagram access token - *Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
-# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
+# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs (pop helps available).
 
 h2(#tags). Tags
 
@@ -274,11 +274,7 @@ function oui_instagram_welcome($evt, $stp)
  * Jump to the prefs panel.
  */
 function oui_instagram_options() {
-    if (defined('PREF_PLUGIN')) {
-        $link = '?event=prefs';
-    } else {
-        $link = '?event=prefs&step=advanced_prefs';
-    }
+    $link = defined('PREF_PLUGIN') ? '?event=prefs' : '?event=prefs&step=advanced_prefs';
     header('Location: ' . $link);
 }
 
@@ -496,7 +492,7 @@ function oui_instagram_images($atts, $thing=null) {
 
     // Return the cache content or the generated images.
     if (!$needquery && $cache_time > 0) {
-        isset($cache_out) ?: $cache_out = file_get_contents($cachefile);
+        $cache_out = file_get_contents($cachefile);
         return $cache_out;
     } else {
         return $out;
