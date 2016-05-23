@@ -77,8 +77,13 @@ oui_instagram’s minimum requirements:
 h2(#installation). Installation
 
 # Paste the content of the plugin file under the *Admin > Plugins*, upload it and install;
-# get an Instagram access token - *Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram images associated with a user id, nevetheless, you will need a _public_content_ scope/permission to use a username. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
-# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs (pop helps available).
+# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
+
+h2(#prefs). Preferences / options
+
+* *Access token* - _Default: unset_ - A valid Instagram access token.
+*Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram 20 images associated with your access token, nevetheless, you could need a _public_content_ scope/permission to do more. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
+* *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
 
@@ -107,8 +112,8 @@ _(Alphabetical order)_
 * @limit="…"@ — _Default: 10_ - The number of images to display. If the @limit@ value is greater than _20_, several requests will be thrown to pull your images.
 * @link="…"@ — _Default: auto_ - To apply a link around each generated image to the standard_resolution image. Valid values are auto (linked to the Instagram page), 1 (linked to the image url), 0.
 * @type="…"@ — _Default: thumbnail_ - The image type to display. Valid values are thumbnail, low_resolution, standard_resolution.
-* @user_id="…"@ - _Default: unset_ - An Instagram user id; faster than username!
-* @username="…"@ - _Default: unset_ - An Instagram username.
+* @user_id="…"@ - _Default: unset_ - Provide an Instagram username to generate a gallery from different account than the one associated with the access token plugin preference; it is faster than username.
+* @username="…"@ - _Default: unset_ - Provide an Instagram username to generate a gallery from different account than the one associated with the access token plugin preference.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h3(#oui_instagram_image). oui_instagram_image
