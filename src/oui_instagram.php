@@ -279,7 +279,7 @@ function oui_instagram_welcome($evt, $stp)
  * Jump to the prefs panel.
  */
 function oui_instagram_options() {
-    $link = defined('PREF_PLUGIN') ? '?event=prefs' : '?event=prefs#prefs_group_oui_instagram';
+    $url = defined('PREF_PLUGIN') ? '?event=prefs#prefs_group_oui_instagram' : '?event=prefs&step=advanced_prefs';
     header('Location: ' . $link);
 }
 
