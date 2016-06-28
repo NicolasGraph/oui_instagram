@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_instagram';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.6.8';
+$plugin['version'] = '0.6.9-dev';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Recent Instagram images gallery';
@@ -26,13 +26,13 @@ $plugin['flags'] = 3;
 $plugin['textpack'] = <<< EOT
 #@public
 #@language en-gb
-oui_instagram => Instagram gallery
+oui_instagram => Instagram gallery (oui_instagram)
 oui_instagram_access_token => Access token
 oui_instagram_cache_time => Default cache time
 oui_instagram_user_id_placeholder => Filled after saving if a username is provided.
 oui_instagram_username_placeholder => optional
 #@language fr-fr
-oui_instagram => Galerie Instagram
+oui_instagram => Galerie Instagram (oui_instagram)
 oui_instagram_access_token => Access token
 oui_instagram_cache_time => Durée du cache par défaut en minutes
 oui_instagram_user_id_placeholder => Renseigné après sauvegarde si un nom d'utilisateur est fournit.
@@ -82,7 +82,7 @@ h2(#installation). Installation
 h2(#prefs). Preferences / options
 
 * *Access token* - _Default: unset_ - A valid Instagram access token.
-*Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram 20 images associated with your access token, nevetheless, you could need a _public_content_ scope/permission to do more. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
+*Important:* you can easily get an access token from Instagram or by using a webservice like "Pixel Union":http://instagram.pixelunion.net/. However by default, this access token will allow you to display images from your own account only. If you need to use other accounts, you will need to create an Instagram client and invite users in the Sandbox, or ask a special permission and register your app. See the "Instagram developer documentation":https://www.instagram.com/developer/ for more informations.
 * *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
@@ -279,7 +279,7 @@ function oui_instagram_welcome($evt, $stp)
  * Jump to the prefs panel.
  */
 function oui_instagram_options() {
-    $link = defined('PREF_PLUGIN') ? '?event=prefs' : '?event=prefs&step=advanced_prefs';
+    $link = defined('PREF_PLUGIN') ? '?event=prefs' : '?event=prefs#prefs_group_oui_instagram';
     header('Location: ' . $link);
 }
 

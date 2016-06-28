@@ -36,7 +36,7 @@ h2(#installation). Installation
 h2(#prefs). Preferences / options
 
 * *Access token* - _Default: unset_ - A valid Instagram access token.
-*Important:* by default Instagram provides you a _basic_ "login permission":https://www.instagram.com/developer/authorization/ with your access token. It should be enough to pull Instagram 20 images associated with your access token, nevetheless, you could need a _public_content_ scope/permission to do more. You can easily get an access token with this scope form "Pixel Union":http://instagram.pixelunion.net/;
+*Important:* you can easily get an access token from Instagram or by using a webservice like "Pixel Union":http://instagram.pixelunion.net/. However by default, this access token will allow you to display images from your own account only. If you need to use other accounts, you will need to create an Instagram client and invite users in the Sandbox, or ask a special permission and register your app. See the "Instagram developer documentation":https://www.instagram.com/developer/ for more informations.
 * *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
 
 h2(#tags). Tags
