@@ -1,0 +1,7 @@
+#@admin
+#@language en-gb
+oui_instagram => Instagram gallery (oui_instagram)
+oui_instagram_access_token => Access token
+oui_instagram_cache_time => Default cache time
+oui_instagram_user_id_placeholder => Filled after saving if a username is provided.
+oui_instagram_username_placeholder => optional

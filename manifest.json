@@ -1,0 +1,11 @@
+{
+    "name"        : "oui_instagram",
+    "description" : "Recent Instagram images gallery",
+    "version"     : "0.6.9-dev",
+    "type"        : 0,
+    "author"      : "Nicolas Morand",
+    "author_uri"  : "http://github.com/NicolasGraph",
+    "order"       : 5,
+    "flags"       : 3,
+    "help"        : {"file" : ["./README.textile"]}
+}
