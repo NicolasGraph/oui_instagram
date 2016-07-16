@@ -34,7 +34,8 @@ if (txpinterface === 'admin') {
 /**
  * Get external popHelp contents
  */
-function oui_instagram_pophelp($evt, $stp, $ui, $vars) {
+function oui_instagram_pophelp($evt, $stp, $ui, $vars)
+{
     return str_replace(HELP_URL, 'http://help.ouisource.com/', $ui);
 }
 
@@ -62,8 +63,11 @@ function oui_instagram_welcome($evt, $stp)
 /**
  * Jump to the prefs panel.
  */
-function oui_instagram_options() {
-    $url = defined('PREF_PLUGIN') ? '?event=prefs#prefs_group_oui_instagram' : '?event=prefs&step=advanced_prefs';
+function oui_instagram_options()
+{
+    $url = defined('PREF_PLUGIN')
+           ? '?event=prefs#prefs_group_oui_instagram'
+           : '?event=prefs&step=advanced_prefs';
     header('Location: ' . $link);
 }
 
@@ -73,7 +77,8 @@ function oui_instagram_options() {
  * PREF_PLUGIN for 4.5
  * PREF_ADVANCED for 4.6+
  */
-function oui_instagram_preflist() {
+function oui_instagram_preflist()
+{
     $prefList = array(
         'oui_instagram_access_token' => array(
             'value'      => '',
@@ -112,8 +117,8 @@ function oui_instagram_preflist() {
 }
 
 
-function oui_instagram_install() {
-
+function oui_instagram_install()
+{
     $prefList = oui_instagram_preflist();
 
     foreach ($prefList as $pref => $options) {
@@ -132,36 +137,15 @@ function oui_instagram_install() {
 }
 
 /**
- * Required field for preferences
- */
-function oui_instagram_required_input($name, $val) {
-    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', $required = true);
-}
-
-/**
- * Add a placeholder to the username field.
- */
-function oui_instagram_username_input($name, $val) {
-    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '', '', $placeholder = gTxt('oui_instagram_username_placeholder'));
-}
-
-/**
- * Disable the user id preference field
- * as it is now automatically filled on prefs saving.
- */
-function oui_instagram_user_id_input($name, $val) {
-    return fInput('text', $name, $val, '', '', '', $size = 32, '', $name, '$disabled = true', '', $placeholder = gTxt('oui_instagram_user_id_placeholder'));
-}
-
-/**
  * Main plugin function.
  *
  * Pull images if needed;
  * parse and cache the gallery;
  * display the content.
  */
-function oui_instagram_images($atts, $thing=null) {
-    global $thisshot;
+function oui_instagram_images($atts, $thing=null)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'username'   => '',
@@ -177,112 +161,131 @@ function oui_instagram_images($atts, $thing=null) {
         'labeltag'   => '',
     ),$atts));
 
-    $access_token = get_pref('oui_instagram_access_token');
+    $accessToken = get_pref('oui_instagram_access_token');
 
-    if (!$access_token) {
+    if (!$accessToken) {
         trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
         return;
     }
 
-    if (!$user_id && !$username) {
-        $user_id = 'self';
+    if (!$userId && !$username) {
+        $userId = 'self';
     }
 
-    if (!$cache_time) {
-        $cache_time = get_pref('oui_instagram_cache_time');
+    if (!$cacheTime) {
+        $cacheTime = get_pref('oui_instagram_cache_time');
     }
 
     // Prepare the cache file name.
-    $keybase = md5($username.$limit.$type.$thing);
-    $hash = str_split(get_pref('oui_instagram_hash_key'));
-    $cachekey='';
-    foreach ($hash as $hashskip) {
-        $cachekey .= $keybase[$hashskip];
+    $keyBase = md5($username.$limit.$type.$thing);
+    $hashKey = str_split(get_pref('oui_instagram_hash_key'));
+    $cacheKey='';
+    foreach ($hashKey as $hashSkip) {
+        $cacheKey .= $keyBase[$hashSkip];
     }
-    $cachefile = find_temp_dir().DS.'oui_instagram_data_'.$cachekey;
+    $cacheFile = find_temp_dir().DS.'oui_instagram_data_'.$cacheKey;
+    $cacheExists = file_exists($cacheFile);
+    $cacheSet = get_pref('oui_instagram_cache_set');
 
     // Main cache conditioning variable.
-    $needquery = (!file_exists($cachefile) || (time() - get_pref('oui_instagram_cache_set')) > ($cache_time *  60)) ? true : false;
+    $needQuery = (!$cacheExists || (time() - $cacheSet) > ($cacheTime *  60)) ? true : false;
 
     // New query needed.
-    if ($needquery) {
+    if ($needQuery) {
+
+        $api = 'https://api.instagram.com/v1/users/';
 
         // Get the user id if not set.
         if($username) {
             // Search for the user id…
-            $user_idquery = json_decode(file_get_contents('https://api.instagram.com/v1/users/search?q='.$username.'&access_token='.$access_token));
+            $queryUrl = $api.$username.'&access_token='.$accessToken;
+            $userIdQuery = json_decode(file_get_contents($url));
             // …and check the result.
-            foreach($user_idquery->data as $user) {
-                if($user->username == $username) {
-                    $user_id = $user->id;
+            if ($userIdQuery->meta->code=='200') {
+                foreach($userIdQuery->data as $user) {
+                    if($user->username == $username) {
+                        $userId = $user->id;
+                    }
                 }
+            } else {
+                trigger_error('oui_instagram was not able to get an Instagram user ID for '.$username.'. '.$userIdQuery->meta->error_message);
             }
         }
 
         // Get the Instagram feed per 20 images because of the Instagram limit…
-        $pages_count = ceil($limit / 20);
+        $pagesCount = ceil($limit / 20);
         $shots = array();
 
-        for ($page = 1; $page <= $pages_count; $page++) {
+        for ($page = 1; $page <= $pagesCount; $page++) {
 
-            $shots[$page] = json_decode(file_get_contents('https://api.instagram.com/v1/users/'.$user_id.'/media/recent?access_token='.$access_token.'&count='.(($page == $pages_count) ? ($limit % 20) : '20').(($page == 1) ? '' : $next_shots)));
+            $count = ($page === $pagesCount) ? ($limit % 20) : '20';
+            $from = $nextShots ? $nextShots : '';
+            $query = $api.$userId.'/media/recent?access_token='.$accessToken.'&count='.$count.$from;
 
-            ($page != $pages_count) ? $next_shots = '&max_id='.$shots[$page]->{'pagination'}->{'next_max_id'} : '';
+            $shots[$page] = json_decode(file_get_contents($query));
+
+            if ($page != $pagesCount) {
+                $nextShots = '&max_id='.$shots[$page]->{'pagination'}->{'next_max_id'};
+            }
 
             // …and check the result.
             if(isset($shots[$page]->data)){
 
-                foreach($shots[$page]->data as $thisshot) {
+                foreach($shots[$page]->data as $thisShot) {
 
                     // single tag use.
                     if ($thing === null) {
 
-                        $url = $thisshot->{'images'}->{$type}->{'url'};
-                        $width = $thisshot->{'images'}->{$type}->{'width'};
-                        $height = $thisshot->{'images'}->{$type}->{'height'};
-                        $caption = isset($thisshot->{'caption'}->{'text'}) ? $thisshot->{'caption'}->{'text'} : '';
-                        $to = ($link == 'auto') ? $thisshot->{'link'} : $thisshot->{'images'}->{$type}->{'url'};
+                        $url = $thisShot->{'images'}->{$type}->{'url'};
+                        $width = $thisShot->{'images'}->{$type}->{'width'};
+                        $height = $thisShot->{'images'}->{$type}->{'height'};
+                        $caption = isset($thisShot->{'caption'}->{'text'}) ? $thisShot->{'caption'}->{'text'} : '';
+                        $to = ($link == 'auto') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
 
-                        $data[] = ($link) ? href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"') : '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                        if ($link) {
+                            $data[] = href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"');
+                        } else {
+                            $data[] = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                        }
+
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
 
                     // Container tag use.
                     } else {
-
                         $data[] = parse($thing);
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
                     }
                 }
             } else {
-                trigger_error("Something went wrong while oui_instagram tried to get your feed");
+                trigger_error("oui_instagram was not able to get your account feed");
                 return;
             }
         }
         update_lastmod();
 
         // Cache file needed.
-        if ($cache_time > 0) {
+        if ($cacheTime > 0) {
             // Remove old cache files.
-            $oldcaches = glob($cachefile);
-            if (!empty($oldcaches)) {
-                foreach($oldcaches as $todel) {
-                    unlink($todel);
+            $oldCaches = glob($cacheFile);
+            if (!empty($oldCaches)) {
+                foreach($oldCaches as $toDelete) {
+                    unlink($toDelete);
                 }
             }
             // Time stamp and write the new cache files and return.
             set_pref('oui_instagram_cache_set', time());
-            $cache = fopen($cachefile,'w+');
+            $cache = fopen($cacheFile,'w+');
             fwrite($cache,$out);
             fclose($cache);
         }
     }
 
     // Return the cache content or the generated images.
-    if (!$needquery && $cache_time > 0) {
-        $cache_out = file_get_contents($cachefile);
-        return $cache_out;
+    if (!$needQuery && $cacheTime > 0) {
+        $cacheOut = file_get_contents($cacheFile);
+        return $cacheOut;
     } else {
         return $out;
     }
@@ -291,8 +294,9 @@ function oui_instagram_images($atts, $thing=null) {
 /**
  * Display each image in a oui_instagram_images context.
  */
-function oui_instagram_image($atts) {
-    global $thisshot;
+function oui_instagram_image($atts)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'type'    => 'thumbnail',
@@ -300,10 +304,10 @@ function oui_instagram_image($atts) {
         'wraptag' => '',
     ),$atts));
 
-    $url = $thisshot->{'images'}->{$type}->{'url'};
-    $width = $thisshot->{'images'}->{$type}->{'width'};
-    $height = $thisshot->{'images'}->{$type}->{'height'};
-    $caption = isset($thisshot->{'caption'}->{'text'}) ? $caption = $thisshot->{'caption'}->{'text'} : '';
+    $url = $thisShot->{'images'}->{$type}->{'url'};
+    $width = $thisShot->{'images'}->{$type}->{'width'};
+    $height = $thisShot->{'images'}->{$type}->{'height'};
+    $caption = isset($thisShot->{'caption'}->{'text'}) ? $caption = $thisShot->{'caption'}->{'text'} : '';
 
     $out = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" ';
     $out .= ($wraptag) ? '' : ($class) ? 'class="'.$class.'" />' : '/>';
@@ -314,8 +318,9 @@ function oui_instagram_image($atts) {
 /**
  * Display each image url in a oui_instagram_images context.
  */
-function oui_instagram_image_url($atts, $thing=null) {
-    global $thisshot;
+function oui_instagram_image_url($atts, $thing=null)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'type'    => 'instagram',
@@ -327,7 +332,7 @@ function oui_instagram_image_url($atts, $thing=null) {
     $validTypes = array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution');
 
     if (in_array($type, $validTypes)) {
-        $url = ($type == 'instagram') ? $thisshot->{'link'} : $thisshot->{'images'}->{$type}->{'url'};
+        $url = ($type == 'instagram') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
     } else {
         trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
         return;
@@ -349,8 +354,9 @@ function oui_instagram_image_url($atts, $thing=null) {
 /**
  * Display each image information in a oui_instagram_images context.
  */
-function oui_instagram_image_info($atts) {
-    global $thisshot;
+function oui_instagram_image_info($atts)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -366,7 +372,7 @@ function oui_instagram_image_info($atts) {
     foreach ($types as $type) {
         $data = ($type=='caption') ? 'text' : 'count';
         if (in_array($type, $validTypes)) {
-            $out[] = isset($thisshot->{$type}->{$data}) ? $thisshot->{$type}->{$data} : '';
+            $out[] = isset($thisShot->{$type}->{$data}) ? $thisShot->{$type}->{$data} : '';
         }
     }
 
@@ -376,8 +382,9 @@ function oui_instagram_image_info($atts) {
 /**
  * Display each image date in a oui_instagram_images context.
  */
-function oui_instagram_image_date($atts) {
-    global $thisshot;
+function oui_instagram_image_date($atts)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -385,7 +392,7 @@ function oui_instagram_image_date($atts) {
         'format'  => '',
     ),$atts));
 
-    $date = $thisshot->{'caption'}->{'created_time'};
+    $date = $thisShot->{'caption'}->{'created_time'};
 
     $out = fileDownloadFormatTime(array(
         'ftime'  => $date,
@@ -398,8 +405,9 @@ function oui_instagram_image_date($atts) {
 /**
  * Display each image author in a oui_instagram_images context.
  */
-function oui_instagram_image_author($atts) {
-    global $thisshot;
+function oui_instagram_image_author($atts)
+{
+    global $thisShot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -408,7 +416,7 @@ function oui_instagram_image_author($atts) {
         'title'   => 1,
     ), $atts));
 
-    $author = ($title) ? $thisshot->{'user'}->{'username'} : $thisshot->{'user'}->{'full_name'};
+    $author = ($title) ? $thisShot->{'user'}->{'username'} : $thisShot->{'user'}->{'full_name'};
     $out = ($link) ? href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"') : $author;
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
