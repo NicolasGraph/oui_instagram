@@ -68,7 +68,7 @@ function oui_instagram_options()
     $url = defined('PREF_PLUGIN')
            ? '?event=prefs#prefs_group_oui_instagram'
            : '?event=prefs&step=advanced_prefs';
-    header('Location: ' . $link);
+    header('Location: ' . $url);
 }
 
 /**
