@@ -156,7 +156,7 @@ function oui_instagram_user_id_input($name, $val) {
 /**
  * Main plugin function.
  *
- * Pull the images if needed;
+ * Pull images if needed;
  * parse and cache the gallery;
  * display the content.
  */
@@ -247,7 +247,7 @@ function oui_instagram_images($atts, $thing=null) {
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
 
-                    // Conatiner tag use.
+                    // Conatainer tag use.
                     } else {
 
                         $data[] = parse($thing);
