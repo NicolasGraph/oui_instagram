@@ -247,7 +247,7 @@ function oui_instagram_images($atts, $thing=null) {
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
 
-                    // Conatainer tag use.
+                    // Container tag use.
                     } else {
 
                         $data[] = parse($thing);
