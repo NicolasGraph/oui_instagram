@@ -168,12 +168,12 @@ function oui_instagram_images($atts, $thing=null)
         return;
     }
 
-    if (!$userId && !$username) {
-        $userId = 'self';
+    if (!$user_id && !$username) {
+        $user_id = 'self';
     }
 
-    if (!$cacheTime) {
-        $cacheTime = get_pref('oui_instagram_cache_time');
+    if (!$cache_time) {
+        $cache_time = get_pref('oui_instagram_cache_time');
     }
 
     // Prepare the cache file name.
@@ -188,7 +188,7 @@ function oui_instagram_images($atts, $thing=null)
     $cacheSet = get_pref('oui_instagram_cache_set');
 
     // Main cache conditioning variable.
-    $needQuery = (!$cacheExists || (time() - $cacheSet) > ($cacheTime *  60)) ? true : false;
+    $needQuery = (!$cacheExists || (time() - $cacheSet) > ($cache_time *  60)) ? true : false;
 
     // New query needed.
     if ($needQuery) {
@@ -199,16 +199,16 @@ function oui_instagram_images($atts, $thing=null)
         if($username) {
             // Search for the user id…
             $queryUrl = $api.$username.'&access_token='.$accessToken;
-            $userIdQuery = json_decode(file_get_contents($url));
+            $user_idQuery = json_decode(file_get_contents($url));
             // …and check the result.
-            if ($userIdQuery->meta->code=='200') {
-                foreach($userIdQuery->data as $user) {
+            if ($user_idQuery->meta->code=='200') {
+                foreach($user_idQuery->data as $user) {
                     if($user->username == $username) {
-                        $userId = $user->id;
+                        $user_id = $user->id;
                     }
                 }
             } else {
-                trigger_error('oui_instagram was not able to get an Instagram user ID for '.$username.'. '.$userIdQuery->meta->error_message);
+                trigger_error('oui_instagram was not able to get an Instagram user ID for '.$username.'. '.$user_idQuery->meta->error_message);
             }
         }
 
@@ -219,8 +219,8 @@ function oui_instagram_images($atts, $thing=null)
         for ($page = 1; $page <= $pagesCount; $page++) {
 
             $count = ($page === $pagesCount) ? ($limit % 20) : '20';
-            $from = $nextShots ? $nextShots : '';
-            $query = $api.$userId.'/media/recent?access_token='.$accessToken.'&count='.$count.$from;
+            $from = isset($nextShots) ? $nextShots : '';
+            $query = $api.$user_id.'/media/recent?access_token='.$accessToken.'&count='.$count.$from;
 
             $shots[$page] = json_decode(file_get_contents($query));
 
@@ -266,7 +266,7 @@ function oui_instagram_images($atts, $thing=null)
         update_lastmod();
 
         // Cache file needed.
-        if ($cacheTime > 0) {
+        if ($cache_time > 0) {
             // Remove old cache files.
             $oldCaches = glob($cacheFile);
             if (!empty($oldCaches)) {
@@ -283,7 +283,7 @@ function oui_instagram_images($atts, $thing=null)
     }
 
     // Return the cache content or the generated images.
-    if (!$needQuery && $cacheTime > 0) {
+    if (!$needQuery && $cache_time > 0) {
         $cacheOut = file_get_contents($cacheFile);
         return $cacheOut;
     } else {
