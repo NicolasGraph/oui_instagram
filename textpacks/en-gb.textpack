@@ -1,5 +1,5 @@
 #@admin
-#@language en-gb
+#Default language, en-us, en-gb
 oui_instagram => Instagram gallery (oui_instagram)
 oui_instagram_access_token => Access token
 oui_instagram_cache_time => Default cache time
