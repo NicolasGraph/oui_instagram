@@ -429,9 +429,9 @@ function oui_instagram_image_author($atts)
 
     $author = ($title) ? $thisShot->{'user'}->{'username'} : $thisShot->{'user'}->{'full_name'};
     if ($link) {
-        href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"');
+        $out = href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"');
     } else {
-        $author;
+        $out = $author;
     }
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
