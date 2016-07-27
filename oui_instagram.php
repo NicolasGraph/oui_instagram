@@ -242,9 +242,9 @@ function oui_instagram_images($atts, $thing = null)
                         $url = ($link == 'auto') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
 
                         if ($link) {
-                            $data[] = href('<img'. $src . $alt . $width . $height .' />', $url, $title);
+                            $data[] = href('<img '. $src . $alt . $width . $height .' />', $url, $title);
                         } else {
-                            $data[] = '<img'. $src . $alt . $width . $height .' />';
+                            $data[] = '<img '. $src . $alt . $width . $height .' />';
                         }
 
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
@@ -312,7 +312,7 @@ function oui_instagram_image($atts)
         $alt = '';
     }
 
-    $out = '<img'. $src . $alt . $width . $height;
+    $out = '<img '. $src . $alt . $width . $height;
     $out .= ($wraptag) ? '' : ($class) ? ' class="'.$class.'" />' : '/>';
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
