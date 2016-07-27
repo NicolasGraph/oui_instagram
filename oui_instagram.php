@@ -17,7 +17,6 @@ if (class_exists('\Textpattern\Tag\Registry')) {
  * Register callbacks.
  */
 if (txpinterface === 'admin') {
-
     add_privs('prefs.oui_instagram', '1');
     add_privs('plugin_prefs.oui_instagram', '1');
 
@@ -65,9 +64,7 @@ function oui_instagram_welcome($evt, $stp)
  */
 function oui_instagram_options()
 {
-    $url = defined('PREF_PLUGIN')
-           ? '?event=prefs#prefs_group_oui_instagram'
-           : '?event=prefs&step=advanced_prefs';
+    $url = defined('PREF_PLUGIN') ? '?event=prefs#prefs_group_oui_instagram' : '?event=prefs&step=advanced_prefs';
     header('Location: ' . $url);
 }
 
@@ -143,7 +140,7 @@ function oui_instagram_install()
  * parse and cache the gallery;
  * display the content.
  */
-function oui_instagram_images($atts, $thing=null)
+function oui_instagram_images($atts, $thing = null)
 {
     global $thisShot;
 
@@ -159,7 +156,7 @@ function oui_instagram_images($atts, $thing=null)
         'break'      => 'li',
         'label'      => '',
         'labeltag'   => '',
-    ),$atts));
+    ), $atts));
 
     $accessToken = get_pref('oui_instagram_access_token');
 
@@ -190,25 +187,26 @@ function oui_instagram_images($atts, $thing=null)
     // Main cache conditioning variable.
     $needQuery = (!$cacheExists || (time() - $cacheSet) > ($cache_time *  60)) ? true : false;
 
-    // New query needed.
     if ($needQuery) {
-
+        // New query needed.
         $api = 'https://api.instagram.com/v1/users/';
 
-        // Get the user id if not set.
-        if($username) {
+        if ($username) {
             // Search for the user id…
             $queryUrl = $api.$username.'&access_token='.$accessToken;
             $user_idQuery = json_decode(file_get_contents($url));
             // …and check the result.
             if ($user_idQuery->meta->code=='200') {
-                foreach($user_idQuery->data as $user) {
-                    if($user->username == $username) {
+                foreach ($user_idQuery->data as $user) {
+                    if ($user->username == $username) {
                         $user_id = $user->id;
                     }
                 }
             } else {
-                trigger_error('oui_instagram was not able to get an Instagram user ID for '.$username.'. '.$user_idQuery->meta->error_message);
+                trigger_error(
+                    'oui_instagram was not able to get an Instagram user ID for '
+                    .$username.'. '.$user_idQuery->meta->error_message
+                );
             }
         }
 
@@ -217,8 +215,7 @@ function oui_instagram_images($atts, $thing=null)
         $shots = array();
 
         for ($page = 1; $page <= $pagesCount; $page++) {
-
-            $count = ($page === $pagesCount) ? ($limit % 20) : '20';
+            $count = ($page == $pagesCount) ? ($limit % 20) : '20';
             $from = isset($nextShots) ? $nextShots : '';
             $query = $api.$user_id.'/media/recent?access_token='.$accessToken.'&count='.$count.$from;
 
@@ -228,31 +225,32 @@ function oui_instagram_images($atts, $thing=null)
                 $nextShots = '&max_id='.$shots[$page]->{'pagination'}->{'next_max_id'};
             }
 
-            // …and check the result.
-            if(isset($shots[$page]->data)){
-
-                foreach($shots[$page]->data as $thisShot) {
-
-                    // single tag use.
+            if (isset($shots[$page]->data)) {
+                // Check the query result.
+                foreach ($shots[$page]->data as $thisShot) {
                     if ($thing === null) {
-
-                        $url = $thisShot->{'images'}->{$type}->{'url'};
-                        $width = $thisShot->{'images'}->{$type}->{'width'};
-                        $height = $thisShot->{'images'}->{$type}->{'height'};
-                        $caption = isset($thisShot->{'caption'}->{'text'}) ? $thisShot->{'caption'}->{'text'} : '';
-                        $to = ($link == 'auto') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
+                        // single tag use.
+                        $src = 'src="'.$thisShot->{'images'}->{$type}->{'url'}.'"';
+                        $width = 'width="'.$thisShot->{'images'}->{$type}->{'width'}.'"';
+                        $height = 'height="'.$thisShot->{'images'}->{$type}->{'height'}.'"';
+                        if (isset($thisShot->{'caption'}->{'text'})) {
+                            $alt = 'title="'.$thisShot->{'caption'}->{'text'}.'"';
+                        } else {
+                            $alt = '';
+                        }
+                        $title = $alt;
+                        $url = ($link == 'auto') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
 
                         if ($link) {
-                            $data[] = href('<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />',$to, ' title="'.$caption.'"');
+                            $data[] = href('<img'. $src . $alt . $width . $height .' />', $url, $title);
                         } else {
-                            $data[] = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" />';
+                            $data[] = '<img'. $src . $alt . $width . $height .' />';
                         }
 
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
-
-                    // Container tag use.
                     } else {
+                        // Container tag use.
                         $data[] = parse($thing);
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
@@ -265,28 +263,29 @@ function oui_instagram_images($atts, $thing=null)
         }
         update_lastmod();
 
-        // Cache file needed.
         if ($cache_time > 0) {
+            // Cache file needed.
             // Remove old cache files.
             $oldCaches = glob($cacheFile);
             if (!empty($oldCaches)) {
-                foreach($oldCaches as $toDelete) {
+                foreach ($oldCaches as $toDelete) {
                     unlink($toDelete);
                 }
             }
             // Time stamp and write the new cache files and return.
             set_pref('oui_instagram_cache_set', time());
-            $cache = fopen($cacheFile,'w+');
-            fwrite($cache,$out);
+            $cache = fopen($cacheFile, 'w+');
+            fwrite($cache, $out);
             fclose($cache);
         }
     }
 
-    // Return the cache content or the generated images.
     if (!$needQuery && $cache_time > 0) {
+        // Return the cache content or the generated images.
         $cacheOut = file_get_contents($cacheFile);
         return $cacheOut;
     } else {
+        // …or the generated images.
         return $out;
     }
 }
@@ -302,15 +301,19 @@ function oui_instagram_image($atts)
         'type'    => 'thumbnail',
         'class'   => '',
         'wraptag' => '',
-    ),$atts));
+    ), $atts));
 
-    $url = $thisShot->{'images'}->{$type}->{'url'};
-    $width = $thisShot->{'images'}->{$type}->{'width'};
-    $height = $thisShot->{'images'}->{$type}->{'height'};
-    $caption = isset($thisShot->{'caption'}->{'text'}) ? $caption = $thisShot->{'caption'}->{'text'} : '';
+    $src = 'src="'.$thisShot->{'images'}->{$type}->{'url'}.'"';
+    $width = 'width="'.$thisShot->{'images'}->{$type}->{'width'}.'"';
+    $height = 'height="'.$thisShot->{'images'}->{$type}->{'height'}.'"';
+    if (isset($thisShot->{'caption'}->{'text'})) {
+        $alt = 'title="'.$thisShot->{'caption'}->{'text'}.'"';
+    } else {
+        $alt = '';
+    }
 
-    $out = '<img src="'.$url.'" alt="'.$caption.'" width="'.$width.'" height="'.$height.'" ';
-    $out .= ($wraptag) ? '' : ($class) ? 'class="'.$class.'" />' : '/>';
+    $out = '<img'. $src . $alt . $width . $height;
+    $out .= ($wraptag) ? '' : ($class) ? ' class="'.$class.'" />' : '/>';
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
 }
@@ -318,7 +321,7 @@ function oui_instagram_image($atts)
 /**
  * Display each image url in a oui_instagram_images context.
  */
-function oui_instagram_image_url($atts, $thing=null)
+function oui_instagram_image_url($atts, $thing = null)
 {
     global $thisShot;
 
@@ -327,14 +330,18 @@ function oui_instagram_image_url($atts, $thing=null)
         'wraptag' => '',
         'class'   => '',
         'link'    => 'auto',
-    ),$atts));
+    ), $atts));
 
     $validTypes = array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution');
 
     if (in_array($type, $validTypes)) {
         $url = ($type == 'instagram') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
     } else {
-        trigger_error("unknown attribute value; oui_instagram_image_url type attribute accepts the following values: instagram, thumbnail, low_resolution, standard_resolution");
+        trigger_error(
+            "unknown attribute value;
+            oui_instagram_image_url type attribute accepts the following values:
+            instagram, thumbnail, low_resolution, standard_resolution"
+        );
         return;
     }
 
@@ -346,7 +353,11 @@ function oui_instagram_image_url($atts, $thing=null)
         $out = ($link) ? href($out, $url, ($wraptag) ? '' : ' class="'.$class.'"') : $out;
         return doTag($out, $wraptag, $class);
     } else {
-        trigger_error("unknown attribute value; oui_instagram_image_url link attribute accepts the following values: auto, 1, 0");
+        trigger_error(
+            "unknown attribute value;
+            oui_instagram_image_url link attribute accepts the following values:
+            auto, 1, 0"
+        );
         return;
     }
 }
@@ -363,7 +374,7 @@ function oui_instagram_image_info($atts)
         'class'   => '',
         'break'   => '',
         'type'    => 'caption',
-    ),$atts));
+    ), $atts));
 
     $validTypes = array('caption', 'likes', 'comments');
     $types = do_list($type);
@@ -390,7 +401,7 @@ function oui_instagram_image_date($atts)
         'wraptag' => '',
         'class'   => '',
         'format'  => '',
-    ),$atts));
+    ), $atts));
 
     $date = $thisShot->{'caption'}->{'created_time'};
 
@@ -417,7 +428,11 @@ function oui_instagram_image_author($atts)
     ), $atts));
 
     $author = ($title) ? $thisShot->{'user'}->{'username'} : $thisShot->{'user'}->{'full_name'};
-    $out = ($link) ? href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"') : $author;
+    if ($link) {
+        href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"');
+    } else {
+        $author;
+    }
 
     return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
 }
