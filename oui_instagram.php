@@ -1,17 +1,16 @@
 <?php
 
 /**
- * Register tags for Txp 4.6+.
+ * Register tags.
  */
-if (class_exists('\Textpattern\Tag\Registry')) {
-    Txp::get('\Textpattern\Tag\Registry')
-        ->register('oui_instagram_images')
-        ->register('oui_instagram_image')
-        ->register('oui_instagram_image_info')
-        ->register('oui_instagram_image_url')
-        ->register('oui_instagram_image_date')
-        ->register('oui_instagram_image_author');
-}
+Txp::get('\Textpattern\Tag\Registry')
+    ->register('oui_instagram_images')
+    ->register('oui_instagram_image')
+    ->register('oui_instagram_image_info')
+    ->register('oui_instagram_image_url')
+    ->register('oui_instagram_image_date')
+    ->register('oui_instagram_image_author');
+
 
 /**
  * Register callbacks.
@@ -23,19 +22,6 @@ if (txpinterface === 'admin') {
     register_callback('oui_instagram_welcome', 'plugin_lifecycle.oui_instagram');
     register_callback('oui_instagram_install', 'prefs', null, 1);
     register_callback('oui_instagram_options', 'plugin_prefs.oui_instagram', null, 1);
-
-    $prefList = oui_instagram_preflist();
-    foreach ($prefList as $pref => $options) {
-        register_callback('oui_instagram_pophelp', 'admin_help', $pref);
-    }
-}
-
-/**
- * Get external popHelp contents
- */
-function oui_instagram_pophelp($evt, $stp, $ui, $vars)
-{
-    return str_replace(HELP_URL, 'http://help.ouisource.com/', $ui);
 }
 
 /**
@@ -51,10 +37,8 @@ function oui_instagram_welcome($evt, $stp)
             oui_instagram_install();
             break;
         case 'deleted':
-            function_exists('remove_pref')
-                ? remove_pref(null, 'oui_instagram')
-                : safe_delete('txp_prefs', "event='oui_instagram'");
-            safe_delete('txp_lang', "name LIKE 'oui\_instagram%'");
+            remove_pref(null, 'oui_instagram');
+            safe_delete('txp_lang', "owner LIKE 'oui\_instagram'");
             break;
     }
 }
@@ -64,15 +48,13 @@ function oui_instagram_welcome($evt, $stp)
  */
 function oui_instagram_options()
 {
-    $url = defined('PREF_PLUGIN') ? '?event=prefs#prefs_group_oui_instagram' : '?event=prefs&step=advanced_prefs';
+    $url = '?event=prefs#prefs_group_oui_instagram';
     header('Location: ' . $url);
 }
 
 /**
  * Set prefs through:
  *
- * PREF_PLUGIN for 4.5
- * PREF_ADVANCED for 4.6+
  */
 function oui_instagram_preflist()
 {
@@ -80,7 +62,7 @@ function oui_instagram_preflist()
         'oui_instagram_access_token' => array(
             'value'      => '',
             'event'      => 'oui_instagram',
-            'visibility' => defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED,
+            'visibility' => PREF_PLUGIN,
             'widget'     => 'text_input',
             'position'   => '10',
             'is_private' => false,
@@ -88,7 +70,7 @@ function oui_instagram_preflist()
         'oui_instagram_cache_time' => array(
             'value'      => '5',
             'event'      => 'oui_instagram',
-            'visibility' => defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED,
+            'visibility' => PREF_PLUGIN,
             'widget'     => 'text_input',
             'position'   => '40',
             'is_private' => false,
@@ -145,25 +127,21 @@ function oui_instagram_images($atts, $thing = null)
     global $thisShot;
 
     extract(lAtts(array(
-        'username'   => '',
-        'user_id'    => '',
-        'limit'      => '10',
-        'type'       => 'thumbnail',
-        'link'       => 'auto',
-        'cache_time' => '',
-        'wraptag'    => 'ul',
-        'class'      => 'oui_instagram_images',
-        'break'      => 'li',
-        'label'      => '',
-        'labeltag'   => '',
+        'access_token' => '',
+        'username'     => '',
+        'user_id'      => '',
+        'limit'        => '10',
+        'type'         => 'thumbnail',
+        'link'         => 'auto',
+        'cache_time'   => '',
+        'wraptag'      => 'ul',
+        'class'        => 'oui_instagram_images',
+        'break'        => 'li',
+        'label'        => '',
+        'labeltag'     => '',
     ), $atts));
 
-    $accessToken = get_pref('oui_instagram_access_token');
-
-    if (!$accessToken) {
-        trigger_error("oui_instagram requires an Instagram access token as a plugin preference");
-        return;
-    }
+    $access_token ?: $access_token = get_pref('oui_instagram_access_token');
 
     if (!$user_id && !$username) {
         $user_id = 'self';
@@ -193,7 +171,7 @@ function oui_instagram_images($atts, $thing = null)
 
         if ($username) {
             // Search for the user id…
-            $queryUrl = $api.$username.'&access_token='.$accessToken;
+            $queryUrl = $api.$username.'&access_token='.$access_token;
             $user_idQuery = json_decode(file_get_contents($url));
             // …and check the result.
             if ($user_idQuery->meta->code=='200') {
@@ -217,7 +195,7 @@ function oui_instagram_images($atts, $thing = null)
         for ($page = 1; $page <= $pagesCount; $page++) {
             $count = ($page == $pagesCount) ? ($limit % 20) : '20';
             $from = isset($nextShots) ? $nextShots : '';
-            $query = $api.$user_id.'/media/recent?access_token='.$accessToken.'&count='.$count.$from;
+            $query = $api.$user_id.'/media/recent?access_token='.$access_token.'&count='.$count.$from;
 
             $shots[$page] = json_decode(file_get_contents($query));
 
