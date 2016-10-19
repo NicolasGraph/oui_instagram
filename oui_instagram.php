@@ -148,7 +148,7 @@ function oui_instagram_install()
  */
 function oui_instagram_images($atts, $thing = null)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'access_token' => '',
@@ -253,9 +253,11 @@ function oui_instagram_images($atts, $thing = null)
                                .doWrap($data, $wraptag, $break, $class);
                     } else {
                         // Container tag use.
+                        $oui_instagram_shot = $thisShot;
                         $data[] = parse($thing);
                         $out = (($label) ? doLabel($label, $labeltag) : '').\n
                                .doWrap($data, $wraptag, $break, $class);
+                        unset($GLOBALS['oui_instagram_shot']);
                     }
                 }
             } else {
@@ -297,7 +299,7 @@ function oui_instagram_images($atts, $thing = null)
  */
 function oui_instagram_image($atts)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'type'    => 'thumbnail',
@@ -305,11 +307,11 @@ function oui_instagram_image($atts)
         'wraptag' => '',
     ), $atts));
 
-    $src = 'src="'.$thisShot->{'images'}->{$type}->{'url'}.'"';
-    $width = 'width="'.$thisShot->{'images'}->{$type}->{'width'}.'"';
-    $height = 'height="'.$thisShot->{'images'}->{$type}->{'height'}.'"';
-    if (isset($thisShot->{'caption'}->{'text'})) {
-        $alt = 'title="'.$thisShot->{'caption'}->{'text'}.'"';
+    $src = 'src="'.$oui_instagram_shot->{'images'}->{$type}->{'url'}.'"';
+    $width = 'width="'.$oui_instagram_shot->{'images'}->{$type}->{'width'}.'"';
+    $height = 'height="'.$oui_instagram_shot->{'images'}->{$type}->{'height'}.'"';
+    if (isset($oui_instagram_shot->{'caption'}->{'text'})) {
+        $alt = 'title="'.$oui_instagram_shot->{'caption'}->{'text'}.'"';
     } else {
         $alt = '';
     }
@@ -325,7 +327,7 @@ function oui_instagram_image($atts)
  */
 function oui_instagram_image_url($atts, $thing = null)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'type'    => 'instagram',
@@ -337,7 +339,7 @@ function oui_instagram_image_url($atts, $thing = null)
     $validTypes = array('instagram', 'thumbnail', 'low_resolution', 'standard_resolution');
 
     if (in_array($type, $validTypes)) {
-        $url = ($type == 'instagram') ? $thisShot->{'link'} : $thisShot->{'images'}->{$type}->{'url'};
+        $url = ($type == 'instagram') ? $oui_instagram_shot->{'link'} : $oui_instagram_shot->{'images'}->{$type}->{'url'};
     } else {
         trigger_error(
             "unknown attribute value;
@@ -369,7 +371,7 @@ function oui_instagram_image_url($atts, $thing = null)
  */
 function oui_instagram_image_info($atts)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -385,7 +387,7 @@ function oui_instagram_image_info($atts)
     foreach ($types as $type) {
         $data = ($type=='caption') ? 'text' : 'count';
         if (in_array($type, $validTypes)) {
-            $out[] = isset($thisShot->{$type}->{$data}) ? $thisShot->{$type}->{$data} : '';
+            $out[] = isset($oui_instagram_shot->{$type}->{$data}) ? $oui_instagram_shot->{$type}->{$data} : '';
         }
     }
 
@@ -397,7 +399,7 @@ function oui_instagram_image_info($atts)
  */
 function oui_instagram_image_date($atts)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -405,7 +407,7 @@ function oui_instagram_image_date($atts)
         'format'  => '',
     ), $atts));
 
-    $date = $thisShot->{'caption'}->{'created_time'};
+    $date = $oui_instagram_shot->{'caption'}->{'created_time'};
 
     $out = fileDownloadFormatTime(array(
         'ftime'  => $date,
@@ -420,7 +422,7 @@ function oui_instagram_image_date($atts)
  */
 function oui_instagram_image_author($atts)
 {
-    global $thisShot;
+    global $oui_instagram_shot;
 
     extract(lAtts(array(
         'wraptag' => '',
@@ -429,7 +431,7 @@ function oui_instagram_image_author($atts)
         'title'   => 1,
     ), $atts));
 
-    $author = ($title) ? $thisShot->{'user'}->{'username'} : $thisShot->{'user'}->{'full_name'};
+    $author = ($title) ? $oui_instagram_shot->{'user'}->{'username'} : $oui_instagram_shot->{'user'}->{'full_name'};
     if ($link) {
         $out = href($author, 'http://instagram.com/'.$username, ($wraptag) ? '' : ' class="'.$class.'"');
     } else {
