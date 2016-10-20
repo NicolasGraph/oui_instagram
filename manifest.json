@@ -1,11 +1,16 @@
 {
     "name"        : "oui_instagram",
     "description" : "Recent Instagram images gallery",
-    "version"     : "0.6.9-dev",
+    "version"     : "0.7.0-dev",
     "type"        : 1,
     "author"      : "Nicolas Morand",
     "author_uri"  : "http://github.com/NicolasGraph",
     "order"       : 5,
     "flags"       : 3,
-    "help"        : {"file" : ["./README.textile"]}
+    "help"        : {"file" : ["./README.textile"]},
+    "code": {"file" : [
+        "./src/Admin.php",
+        "./src/Main.php",
+        "./src/tags.php"
+    ]}
 }
