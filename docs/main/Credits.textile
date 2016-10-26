@@ -1,0 +1,12 @@
+notextile. <section id="credits" class="options_group">
+
+h2. Author
+
+"Nicolas Morand":https://twitter.com/NicolasGraph
+_Thank you to the Textpattern community and the core team._
+
+h2. Licence
+
+This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.html.
+
+notextile. </section>

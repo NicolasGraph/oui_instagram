@@ -46,6 +46,8 @@ namespace Oui\Instagram {
                  * Register tags.
                  */
                 \Txp::get('\Textpattern\Tag\Registry')
+                    ->register('oui_instagram_author')
+                    ->register('oui_instagram_author_info')
                     ->register('oui_instagram_images')
                     ->register('oui_instagram_image')
                     ->register('oui_instagram_image_info')
@@ -93,21 +95,6 @@ namespace Oui\Instagram {
                 'oui_instagram_access_token' => array(
                     'value'      => '',
                     'visibility' => PREF_PLUGIN,
-                    'widget'     => 'text_input',
-                ),
-                'oui_instagram_cache_time' => array(
-                    'value'      => '5',
-                    'visibility' => PREF_PLUGIN,
-                    'widget'     => 'text_input',
-                ),
-                'oui_instagram_hash_key' => array(
-                    'value'      => mt_rand(100000, 999999),
-                    'visibility' => PREF_HIDDEN,
-                    'widget'     => 'text_input',
-                ),
-                'oui_instagram_cache_set' => array(
-                    'value'      => time(),
-                    'visibility' => PREF_HIDDEN,
                     'widget'     => 'text_input',
                 ),
             );

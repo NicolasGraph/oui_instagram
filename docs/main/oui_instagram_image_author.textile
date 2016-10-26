@@ -1,0 +1,28 @@
+notextile. <section id="oui_instagram_image_author" class="options_group">
+
+h2. oui_instagram_image_author
+
+Displays each image author in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_author />
+
+h3. attributes
+
+- @class@ :=
+The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @link@ :=
+To apply a link around the generated content.
+*Default:* @0@
+*Valid:* @0@ or @1@ =:
+- @title@ :=
+To show the full name (1) or the username (0).
+*Default:* @1@
+*Valid:* @0@ or @1@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

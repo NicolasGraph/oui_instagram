@@ -1,79 +1,13 @@
-notextile. <div class="txp-layout">
-<div class="txp-layout-1col">
+notextile. <section id="tags" class="options_group">
 
-h1(txp-heading). oui_instagram
+h2. tags
 
-notextile. </div>
-<div class="txp-layout-4col-alt">
-<section class="txp-details">
-
-h3. Table of contents
-
-notextile. <div role="group">
-
-*(switcher-list) "Plugin requirements":#requirements
-* "Basics":#basics
-* "Installation":#install
-* "Preferences":#prefs
-* "Tags":#tags
-**{list-style:none; padding-left:0;}.
-**{padding-left:2em;} "oui_instagram_images":#oui_instagram_images
-**{padding-left:2em;} "oui_instagram_image":#oui_instagram_image
-**{padding-left:2em;} "oui_instagram_image_info":#oui_instagram_image_info
-**{padding-left:2em;} "oui_instagram_image_url":#oui_instagram_image_url
-**{padding-left:2em;} "oui_instagram_image_date":#oui_instagram_image_date
-**{padding-left:2em;} "oui_instagram_image_author":#oui_instagram_image_author
-* "Examples":#examples
-**{list-style:none; padding-left:0;}.
-**{padding-left:2em;} "Single tag":#single_tag
-**{padding-left:2em;} "Container tag":#container_tag
-* "Author":#author
-* "Licence":#licence
-
-notextile. </div>
-</section>
-
-"(navlink)See on GitHub":https://github.com/NicolasGraph/oui_instagram "(navlink)Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
-
-notextile. </div>
-<div class="txp-layout-4col-3span">
-<hr id="basics" />
-
-h2. Basics
-
-Easily display recent images from an Instagram account.
-
-notextile. <hr id="requirements" />
-
-h2. Plugin requirements
-
-oui_instagram’s minimum requirements:
-
-* Textpattern 4.6+
-
-notextile. <hr id="install" />
-
-h2. Installation
-
-# "Download":https://github.com/NicolasGraph/oui_instagram/releases the plugin;
-# Paste the content of the plugin file under the *Admin > Plugins*, upload it and install;
-# Click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
-
-notextile. <hr id="prefs" />
-
-h2. Preferences / options
-
-* *Access token* - _Default: unset_ - A valid Instagram access token.
-
-p(alert-block warning). %(ui-icon ui-icon-alert).% you can easily get an access token from Instagram or by using a webservice like "Pixel Union":http://instagram.pixelunion.net/. However by default, this access token will allow you to display images from your own account only. If you need to use other accounts, you will need to create an Instagram client and invite users in the Sandbox, or ask a special permission by registering your app. See the "Instagram developer documentation":https://www.instagram.com/developer/ for more informations.
-
-p(alert-block information). %(ui-icon ui-icon-info).% From v0.6.9, you can also use the @access_token@ attribute as an alternative to provide several Instagram access token.
-
-* *Default cache time* — _Default: 0_ - Duration of the cache in minutes.
-
-notextile. <hr id="tags" />
-
-h2. Tags
+* "oui_instagram_images":#oui_instagram_images
+* "oui_instagram_image":#oui_instagram_image
+* "oui_instagram_image_info":#oui_instagram_image_info
+* "oui_instagram_image_url":#oui_instagram_image_url
+* "oui_instagram_image_date":#oui_instagram_image_date
+* "oui_instagram_image_author":#oui_instagram_image_author
 
 h3(#oui_instagram_images). oui_instagram_images
 
@@ -87,6 +21,10 @@ or
 bc. <txp:oui_instagram_images>
 […]
 </txp:oui_instagram_images>
+
+h4. attributes
+
+p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v0.7.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
 
 - @access_token@ :=
 the access token provided via the plugin prefs.
@@ -102,7 +40,7 @@ Duration of the cache in minutes
 *Valid:* integer =:
 - @class@ :=
 The css class to apply to the HTML tag assigned to @wraptag@.
-*Default:* @oui_instagram_images@
+*Default:* none
 *Valid:* string =:
 - @label@ :=
 The label used to entitled the generated content.
@@ -126,14 +64,6 @@ The image type to display.
 Should be set in the @<txp:oui_instagram_image />@ tag if @<txp:oui_instagram_images />@ is used as a container
 *Default:* @thumbnail@
 *Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
-- @user_id@ :=
-Provide an Instagram username to generate a gallery from different account than the one associated with the access token plugin preference; it is faster than username
-*Default:* none
-*Valid:* string =:
-- @username@ :=
-Provide an Instagram username to generate a gallery from different account than the one associated with the access token plugin preference
-*Default:* none
-*Valid:* string =:
 - @wraptag@ :=
 The HTML tag to use around the generated content.
 *Default:* @ul@
@@ -145,13 +75,15 @@ Displays each image in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image />
 
+h4. attributes
+
 - @class@ :=
 The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@
-*Default:* @oui_instagram_image@
+*Default:* none
 *Valid:* string =:
 - @type@ :=
 The image type to display.
-*Default:* @thumbnail@
+*Default:* value of the @type@ attribute of the container tag.
 *Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
 - @wraptag@ :=
 The HTML tag to use around the generated content
@@ -163,6 +95,8 @@ h3(#oui_instagram_image_info). oui_instagram_image_info
 Displays each image info in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_info />
+
+h4. attributes
 
 - @break@ :=
 The HTML tag used around each generated info.
@@ -187,6 +121,8 @@ Uses each image url/link in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_url />
 
+h4. attributes
+
 - @class@ :=
 The css class to apply to the @a@ HTML tag if link is defined or to the HTML tag assigned to @wraptag@.
 *Default:* none
@@ -210,6 +146,8 @@ Displays each image date in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_date />
 
+h4. attributes
+
 - @class@ :=
 The css class to apply to the HTML tag assigned to @wraptag@.
 *Default:* none
@@ -229,6 +167,8 @@ Displays each image author in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_author />
 
+h4. attributes
+
 - @class@ :=
 The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
 *Default:* none
@@ -246,31 +186,4 @@ The HTML tag to use around the generated content.
 *Default:* none
 *Valid:* HTML container tag without brakets =:
 
-h2. Examples
-
-h3(#single_tag). Example 1: single tag use
-
-bc. <txp:oui_instagram_images />
-
-h3(#container_tag). Example 2: container tag use
-
-bc. <txp:oui_instagram_images username="cercle_magazine">
-    <txp:oui_instagram_image_url><txp:oui_instagram_image /></txp:oui_instagram_image_url>
-    <txp:oui_instagram_image_info />
-    <txp:oui_instagram_image_author />, <txp:oui_instagram_image_date />
-</txp:oui_instagram_images>
-
-notextile. <hr id="author" />
-
-h2. Author
-
-"Nicolas Morand":https://twitter.com/NicolasGraph
-_Thank you to the Textpattern community and the core team._
-
-notextile. <hr id="licence" />
-
-h2. Licence
-
-This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.html.
-
-notextile. </div>
+notextile. </section>

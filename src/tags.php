@@ -35,101 +35,58 @@ namespace {
      */
     function oui_instagram_images($atts, $thing = null)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot, $oui_instagram_type;
 
         extract(lAtts(array(
-            'access_token' => '',
-            'username'     => '',
-            'user_id'      => '',
+            'access_token' => get_pref('oui_instagram_access_token'),
             'limit'        => '10',
+            'form'         => '',
             'type'         => 'thumbnail',
             'link'         => 'auto',
-            'cache_time'   => '',
             'wraptag'      => 'ul',
-            'class'        => 'oui_instagram_images',
+            'class'        => '',
             'break'        => 'li',
             'label'        => '',
             'labeltag'     => '',
         ), $atts));
 
-        $access_token ?: $access_token = get_pref('oui_instagram_access_token');
+        $class = 'Oui\Instagram\Main';
+        $obj = new $class;
+        $obj->access_token = $access_token;
+        $obj->limit = $limit;
 
-        if (!$user_id && !$username) {
-            $user_id = 'self';
-        }
-
-        if (!$cache_time) {
-            $cache_time = get_pref('oui_instagram_cache_time');
-        }
-
-        // Prepare the cache file name.
-        $keyBase = md5($username.$limit.$type.$thing);
-        $hashKey = str_split(get_pref('oui_instagram_hash_key'));
-        $cacheKey='';
-        foreach ($hashKey as $hashSkip) {
-            $cacheKey .= $keyBase[$hashSkip];
-        }
-        $cacheFile = find_temp_dir().DS.'oui_instagram_data_'.$cacheKey;
-        $cacheExists = file_exists($cacheFile);
-        $cacheSet = get_pref('oui_instagram_cache_set');
-
-        // Main cache conditioning variable.
-        $needQuery = (!$cacheExists || (time() - $cacheSet) > ($cache_time *  60)) ? true : false;
-
-        if ($needQuery) {
-            $class = 'Oui\Instagram\Main';
-            $obj = new $class;
-            $obj->access_token = $access_token;
-            $obj->user_id = $user_id;
-            $obj->username = $username;
-            $obj->limit = $limit;
-
-            // Check the query result.
-            if ($thing === null) {
-                $out = $obj->getGallery($type, $link);
-            } else {
-                $shots = $obj->getShots();
+        // Check the query result.
+        if ($thing || $form) {
+            $shots = $obj->getFeed();
+            if ($shots) {
                 foreach ($shots as $shot) {
-                    $oui_instagram_obj = $obj;
                     $oui_instagram_shot = $shot;
-                    $out[] = parse($thing);
+                    $oui_instagram_type = $type;
+                    $out[] = $thing ? parse($thing) : parse_form($form);
                 }
                 unset(
-                    $GLOBALS['oui_instagram_obj'],
-                    $GLOBALS['oui_instagram_shot']
+                    $GLOBALS['oui_instagram_shot'],
+                    $GLOBALS['oui_instagram_type']
                 );
+            } else {
+                trigger_error('oui_instagram was not able to get your Instagram feed.');
+                return;
             }
-
-            $out = (($label) ? doLabel($label, $labeltag) : '') . \n
-                 . doWrap($out, $wraptag, $break, $class);
-
-            update_lastmod();
-
-            if ($cache_time > 0) {
-                // Cache file needed.
-                // Remove old cache files.
-                $oldCaches = glob($cacheFile);
-                if (!empty($oldCaches)) {
-                    foreach ($oldCaches as $toDelete) {
-                        unlink($toDelete);
-                    }
-                }
-                // Time stamp and write the new cache files and return.
-                set_pref('oui_instagram_cache_set', time());
-                $cache = fopen($cacheFile, 'w+');
-                fwrite($cache, $out);
-                fclose($cache);
-            }
-        }
-
-        if (!$needQuery && $cache_time > 0) {
-            // Return the cache content or the generated images.
-            $cacheOut = file_get_contents($cacheFile);
-            return $cacheOut;
         } else {
-            // …or the generated images.
-            return $out;
+            $images = $obj->getImages($type, $link);
+            if ($images) {
+                $out = $images;
+            } else {
+                trigger_error('oui_instagram was not able to get your Instagram images.');
+                return;
+            }
         }
+
+        $out = doLabel($label, $labeltag).doWrap($out, $wraptag, $break, $class);
+
+        update_lastmod();
+
+        return $out;
     }
 
     /**
@@ -137,16 +94,16 @@ namespace {
      */
     function oui_instagram_image($atts)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot, $oui_instagram_type;
 
         extract(lAtts(array(
             'link'    => 'auto',
-            'type'    => 'thumbnail',
+            'type'    => $oui_instagram_type,
             'class'   => '',
             'wraptag' => '',
         ), $atts));
 
-        $out = $oui_instagram_obj->getImage($oui_instagram_shot, $type, $link);
+        $out = Oui\Instagram\Main::getImage($oui_instagram_shot, $type, $link);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
@@ -156,7 +113,7 @@ namespace {
      */
     function oui_instagram_image_url($atts, $thing = null)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot;
 
         extract(lAtts(array(
             'type'    => 'instagram',
@@ -165,7 +122,7 @@ namespace {
             'link'    => 'auto',
         ), $atts));
 
-        $url = $oui_instagram_obj->getImageUrl($oui_instagram_shot, $type, $link);
+        $url = Oui\Instagram\Main::getImageUrl($oui_instagram_shot, $type, $link);
 
         $validLinks = array('auto', '1', '0');
 
@@ -189,18 +146,17 @@ namespace {
      */
     function oui_instagram_image_info($atts)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
             'class'   => '',
-            'break'   => '',
             'type'    => 'caption',
         ), $atts));
 
-        $out = $oui_instagram_obj->getImageInfo($oui_instagram_shot, $type);
+        $out = Oui\Instagram\Main::getImageInfo($oui_instagram_shot, $type);
 
-        return doWrap($out, $wraptag, $break, $class);
+        return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
 
     /**
@@ -208,7 +164,7 @@ namespace {
      */
     function oui_instagram_image_date($atts)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
@@ -216,7 +172,7 @@ namespace {
             'format'  => '',
         ), $atts));
 
-        $out = $oui_instagram_obj->getImageDate($oui_instagram_shot, $format);
+        $out = Oui\Instagram\Main::getImageDate($oui_instagram_shot, $format);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
@@ -226,16 +182,92 @@ namespace {
      */
     function oui_instagram_image_author($atts)
     {
-        global $oui_instagram_obj, $oui_instagram_shot;
+        global $oui_instagram_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
             'class'   => '',
             'link'    => 0,
-            'title'   => 1,
+            'type'   => 'username',
         ), $atts));
 
-        $out = $oui_instagram_obj->getImageAuthor($oui_instagram_shot, $title, $link);
+        $out = Oui\Instagram\Main::getImageAuthor($oui_instagram_shot, $type, $link);
+
+        return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
+    }
+
+    /**
+     * Main plugin function.
+     *
+     * Pull images if needed;
+     * parse and cache the gallery;
+     * display the content.
+     */
+    function oui_instagram_author($atts, $thing = null)
+    {
+        global $oui_instagram_profile;
+
+        extract(lAtts(array(
+            'access_token' => '',
+            'type'         => 'username',
+            'link'         => 'instagram',
+            'wraptag'      => 'p',
+            'form'         => '',
+            'class'        => '',
+            'break'        => 'br',
+            'label'        => '',
+            'labeltag'     => '',
+        ), $atts));
+
+        $access_token ?: $access_token = get_pref('oui_instagram_access_token');
+
+        $class = 'Oui\Instagram\Main';
+        $obj = new $class;
+        $obj->access_token = $access_token;
+
+        // Check the query result.
+        if ($thing || $form) {
+            $profile = $obj->getProfile();
+            if ($profile) {
+                $oui_instagram_profile = $profile;
+                $out[] = $thing ? parse($thing) : $parse_form($form);
+                unset($GLOBALS['oui_instagram_profile']);
+            } else {
+                trigger_error('oui_instagram was not able to get your Instagram feed.');
+                return;
+            }
+        } else {
+            $info = $obj->getAuthor($type, $link);
+            if ($info) {
+                $out[] = $info;
+            } else {
+                trigger_error('oui_instagram was not able to get your Instagram images.');
+                return;
+            }
+        }
+
+        $out = doLabel($label, $labeltag).doWrap($out, $wraptag, $break, $class);
+
+        update_lastmod();
+
+        return $out;
+    }
+
+    /**
+     * Display each image information in a oui_instagram_images context.
+     */
+    function oui_instagram_author_info($atts)
+    {
+        global $oui_instagram_profile;
+
+        extract(lAtts(array(
+            'wraptag' => '',
+            'class'   => '',
+            'type'    => 'username',
+            'link'    => 'instagram',
+        ), $atts));
+
+        $out = Oui\Instagram\Main::getAuthorInfo($oui_instagram_profile, $type, $link);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }

@@ -1,0 +1,24 @@
+notextile. <section id="oui_instagram_image_date" class="options_group">
+
+h2. oui_instagram_image_date
+
+Displays each image date in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_date />
+
+h3. attributes
+
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @format@ :=
+To adjust the display of the date to taste.
+*Default:* the Archive date format set in the preferences
+*Valid:* strftime() string values =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

@@ -1,0 +1,62 @@
+notextile. <section id="oui_instagram_images" class="options_group">
+
+h2. oui_instagram_images
+
+Displays a recent images list.
+Can be used as a single or a container tag.
+
+bc. <txp:oui_instagram_images />
+
+or
+
+bc. <txp:oui_instagram_images>
+[…]
+</txp:oui_instagram_images>
+
+h3. attributes
+
+p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v0.7.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
+
+- @access_token@ :=
+the access token provided via the plugin prefs.
+*Default:* none
+*Valid:* a different Instagram access token than the one provided via the plugin prefs =:
+- @break@ :=
+he HTML tag used around each generated image
+*Default:* @li@
+*Valid:* HTML self-closing tag without brakets =:
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @form@ :=
+A Textpattern form name if used to contain other plugin tags.
+*Default:* none
+*Valid:* string =:
+- @label@ :=
+The label used to entitled the generated content.
+*Default:* none
+*Valid:* string =:
+- @labeltag@ :=
+The HTML tag used around the value assigned to @label@.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+- @limit@ :=
+The number of images to display.
+If the @limit@ value is greater than _20_, several requests will be thrown to pull your images
+*Default:* @10@
+*Valid:* integer =:
+- @link@ :=
+To apply a link around each generated image to the standard_resolution image.
+*Default:* @auto@
+*Valid:* @auto@ (linked to the Instagram page), @1@ (linked to the image url), @0@ =:
+- @type@ :=
+The image type to display.
+*Default:* @thumbnail@
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* @ul@
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>
