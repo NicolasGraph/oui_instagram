@@ -22,7 +22,7 @@ bc. <txp:oui_instagram_images>
 […]
 </txp:oui_instagram_images>
 
-h4. attributes
+h4. Attributes
 
 p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v0.7.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
 

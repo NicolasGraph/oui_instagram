@@ -12,7 +12,7 @@ bc. <txp:oui_instagram_author>
 […]
 </txp:oui_instagram_author>
 
-h3. attributes
+h3. Attributes
 
 - @access_token@ :=
 the access token provided via the plugin prefs.

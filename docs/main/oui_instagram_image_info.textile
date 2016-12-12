@@ -6,7 +6,7 @@ Displays each image info in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image_info />
 
-h3. attributes
+h3. Attributes
 
 - @break@ :=
 The HTML tag used around each generated info.

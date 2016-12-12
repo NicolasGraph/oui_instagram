@@ -6,7 +6,7 @@ Displays each image in a @oui_instagram_images@ container tag.
 
 bc. <txp:oui_instagram_image />
 
-h3. attributes
+h3. Attributes
 
 - @class@ :=
 The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@
