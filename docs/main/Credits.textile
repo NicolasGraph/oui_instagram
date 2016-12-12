@@ -11,43 +11,46 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 h2. Changelog
 
-* *v1.0.0:*
+* *v1.0.0* (2016-12-12) :
 ** adds @<txp:oui_instagram_author />@ and @<txp:oui_instagram_author_info />@ tags;
 ** removes cache (an external cache system such "aks_cache":http://forum.textpattern.com/viewtopic.php?id=33460 should be used);
 ** restores the @access_token@ attribute and removes @username@ and @user_id@ whivh needs restricted Instagram registration;
-** introduces an attribute values inheritance in a container tag context.
-** changes @<txp:oui_instagram_image_author />@ @title@ attribute to @type@.
-** uses OOP.
-* *v0.6.8:*
+** introduces an attribute values inheritance in a container tag context;
+** changes @<txp:oui_instagram_image_author />@ @title@ attribute to @type@;
+** uses CURL to get the Instagram feed when enable;
+** uses OOP;
+** styles Help file.
+* *v0.6.8* (2016-05-23) :
 ** removes Username and user id preferences: access token related account used by default via self/media;
 ** adds pop helps (Txp4.6 only);
 ** Improves multiple requests with Instagram pagination.
-* *v0.6.7:*
+* *v0.6.7* (2016-05-13) :
 ** fixes multiple galleries support;
 ** improves user id request;
 ** automatically fills user id in plugin prefs.
-* *v0.6.6:*
+* *v0.6.6* (2016-05-12) :
 ** changes Cache time from seconds to minutes (5 by default);
 ** hides the hash key pref (not really useful to show it and may be confusing);
 ** fixes prefs order;
 ** improves cache conditioning;
 ** adds @update_lastmod()@ after each Instagram query;
 ** improves code comments.
-* *v0.6.5:*
+* *v0.6.5* (2016-04-30) :
 ** adds Instagram feed pagination support.
-* *v0.6.4:*
+* *v0.6.4:* (2016-04-27) :
 ** adds username, user_id and cache_time default values via plugin prefs;
 ** replaces @hash_key@ by a random plugin pref value;
 ** updates the help file.
-* *v0.6.3:*
+* *v0.6.3:* (2016-04-20) :
 ** code rework;
 ** manages Instagram access token via plugin prefs;
 ** adds a @user_id@ attribute (faster than username);
 ** improves error messages;
 ** fixes bugs.
-* *v0.5.9:*
+* *v0.5.9* (2016-03-22) :
 ** adds @access_token@ attribute;
 ** uses a shorter cache file key with @hash_key@ attribute;
 ** updates the help file.
+* *Initial release* (2016-03-11) :
 
 notextile. </section>

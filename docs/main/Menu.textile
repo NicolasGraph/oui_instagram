@@ -16,12 +16,12 @@ notextile. <div role="group">
 * "oui_instagram_image_date":#oui_instagram_image_date
 * "oui_instagram_image_author":#oui_instagram_image_author
 * "Examples":#examples
-* "For developpers":#for-developers
 * "Credits":#credits
 
 notextile. </div>
 </section>
 
-"(navlink)See on GitHub":https://github.com/NicolasGraph/oui_instagram "(navlink)Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
+"(navlink)Contribute":https://github.com/NicolasGraph/oui_instagram "(navlink)Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN "(navlink)Tweet":https://twitter.com/intent/tweet?text=%23oui_instagram%20plays%20nicely%20with%20%23Textpattern%20%23CMS%20to%20%23embed%20%23Instagram%20galleries%20on%20my%20website!%20%40NicolasGraph%20https://github.com/NicolasGraph/oui_instagram
+
 
 notextile. </div>

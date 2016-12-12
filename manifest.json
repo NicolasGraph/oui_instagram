@@ -1,7 +1,7 @@
 {
     "name"        : "oui_instagram",
     "description" : "Recent Instagram images gallery",
-    "version"     : "1.0.0-dev",
+    "version"     : "1.0.0-beta",
     "type"        : 1,
     "author"      : "Nicolas Morand",
     "author_uri"  : "http://github.com/NicolasGraph",
@@ -25,7 +25,6 @@
         "./docs/main/oui_instagram_image_date.textile",
         "./docs/main/oui_instagram_image_author.textile",
         "./docs/main/Examples.textile",
-        "./docs/main/Extend.textile",
         "./docs/main/Credits.textile",
         "./docs/misc/_text_bottom.textile",
         "./docs/misc/_bottom.textile"

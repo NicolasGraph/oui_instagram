@@ -15,7 +15,7 @@ bc. <txp:oui_instagram_images>
 
 h3. attributes
 
-p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v0.7.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
+p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v1.0.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
 
 - @access_token@ :=
 the access token provided via the plugin prefs.
