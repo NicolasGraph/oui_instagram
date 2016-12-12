@@ -6,6 +6,4 @@ h2. Preferences/options
 
 p(alert-block information). %(ui-icon ui-icon-info).% you can easily get an access token from Instagram or by using a webservice like "Pixel Union":http://instagram.pixelunion.net/.
 
-* *Default cache time* — _Default: 15_ - Duration of the cache in minutes.
-
 notextile. </section>
