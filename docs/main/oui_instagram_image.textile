@@ -1,0 +1,24 @@
+notextile. <section id="oui_instagram_image" class="options_group">
+
+h2. oui_instagram_image
+
+Displays each image in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image />
+
+h3. Attributes
+
+- @class@ :=
+The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@
+*Default:* none
+*Valid:* string =:
+- @type@ :=
+The image type to display.
+*Default:* value of the @type@ attribute of the container tag.
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

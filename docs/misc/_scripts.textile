@@ -1,0 +1,8 @@
+notextile. <script>
+  $( function() {
+    $( "#tabs" ).tabs().removeClass('ui-widget ui-widget-content ui-corner-all').addClass( "ui-tabs-vertical" );
+    $('.switcher-list').removeClass('ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all');
+    $('.switcher-list li').removeClass('ui-state-default ui-corner-top');
+    $('.options_group').removeClass('ui-widget-content ui-corner-bottom');
+  } );
+</script>

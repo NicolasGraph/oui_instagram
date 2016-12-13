@@ -1,0 +1,189 @@
+notextile. <section id="tags" class="options_group">
+
+h2. tags
+
+* "oui_instagram_images":#oui_instagram_images
+* "oui_instagram_image":#oui_instagram_image
+* "oui_instagram_image_info":#oui_instagram_image_info
+* "oui_instagram_image_url":#oui_instagram_image_url
+* "oui_instagram_image_date":#oui_instagram_image_date
+* "oui_instagram_image_author":#oui_instagram_image_author
+
+h3(#oui_instagram_images). oui_instagram_images
+
+Displays a recent images list.
+Can be used as a single or a container tag.
+
+bc. <txp:oui_instagram_images />
+
+or
+
+bc. <txp:oui_instagram_images>
+[…]
+</txp:oui_instagram_images>
+
+h4. Attributes
+
+p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v0.7.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
+
+- @access_token@ :=
+the access token provided via the plugin prefs.
+*Default:* none
+*Valid:* a different Instagram access token than the one provided via the plugin prefs =:
+- @break@ :=
+he HTML tag used around each generated image
+*Default:* @li@
+*Valid:* HTML self-closing tag without brakets =:
+- @cache_time@ :=
+Duration of the cache in minutes
+*Default:* @5@
+*Valid:* integer =:
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @label@ :=
+The label used to entitled the generated content.
+*Default:* none
+*Valid:* string =:
+- @labeltag@ :=
+The HTML tag used around the value assigned to @label@.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+- @limit@ :=
+The number of images to display.
+If the @limit@ value is greater than _20_, several requests will be thrown to pull your images
+*Default:* @10@
+*Valid:* integer =:
+- @link@ :=
+To apply a link around each generated image to the standard_resolution image.
+*Default:* @auto@
+*Valid:* @auto@ (linked to the Instagram page), @1@ (linked to the image url), @0@ =:
+- @type@ :=
+The image type to display.
+Should be set in the @<txp:oui_instagram_image />@ tag if @<txp:oui_instagram_images />@ is used as a container
+*Default:* @thumbnail@
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* @ul@
+*Valid:* HTML container tag without brakets =:
+
+h3(#oui_instagram_image). oui_instagram_image
+
+Displays each image in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image />
+
+h4. attributes
+
+- @class@ :=
+The css class to apply to the @img@ HTML tag or to the HTML tag assigned to @wraptag@
+*Default:* none
+*Valid:* string =:
+- @type@ :=
+The image type to display.
+*Default:* value of the @type@ attribute of the container tag.
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+h3(#oui_instagram_image_info). oui_instagram_image_info
+
+Displays each image info in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_info />
+
+h4. attributes
+
+- @break@ :=
+The HTML tag used around each generated info.
+*Default:* none
+*Valid:* HTML self-closing tag without brakets =:
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @type@ :=
+The information type to display.
+*Default:* @caption@
+*Valid:* @caption@, @likes@, @comments@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+h3(#oui_instagram_image_url). oui_instagram_image_url
+
+Uses each image url/link in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_url />
+
+h4. attributes
+
+- @class@ :=
+The css class to apply to the @a@ HTML tag if link is defined or to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @link@ :=
+To apply a link to the standard_resolution image.
+*Default:* @auto@
+*Valid:* @auto@ (link container tag only), @1@, @0@ =:
+- @type@ :=
+The url type to use.
+*Default:* @instagram@
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@, @instagram@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+h3(#oui_instagram_image_date). oui_instagram_image_date
+
+Displays each image date in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_date />
+
+h4. attributes
+
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @format@ :=
+To adjust the display of the date to taste.
+*Default:* the Archive date format set in the preferences
+*Valid:* strftime() string values =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+h3(#oui_instagram_image_author). oui_instagram_image_author
+
+Displays each image author in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_author />
+
+h4. attributes
+
+- @class@ :=
+The css class to apply to the @a@ HTML tag assigned by @link="1"@ or to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @link@ :=
+To apply a link around the generated content.
+*Default:* @0@
+*Valid:* @0@ or @1@ =:
+- @title@ :=
+To show the full name (1) or the username (0).
+*Default:* @1@
+*Valid:* @0@ or @1@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

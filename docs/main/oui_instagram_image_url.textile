@@ -1,0 +1,26 @@
+notextile. <section id="oui_instagram_image_url" class="options_group">
+
+h2. oui_instagram_image_url
+
+bc. <txp:oui_instagram_image_url />
+
+h3. Attributes
+
+- @class@ :=
+The css class to apply to the @a@ HTML tag if link is defined or to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @link@ :=
+To apply a link to the standard_resolution image.
+*Default:* @auto@
+*Valid:* @auto@ (link container tag only), @1@, @0@ =:
+- @type@ :=
+The url type to use.
+*Default:* @instagram@
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@, @instagram@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

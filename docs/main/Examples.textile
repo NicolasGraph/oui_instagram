@@ -1,0 +1,17 @@
+notextile. <section id="examples" class="options_group">
+
+h2. Examples
+
+h3(#single_tag). Example 1: single tag use
+
+bc(language-markup). <txp:oui_instagram_images />
+
+h3(#container_tag). Example 2: container tag use
+
+bc(language-markup).. <txp:oui_instagram_images>
+    <txp:oui_instagram_image_url><txp:oui_instagram_image /></txp:oui_instagram_image_url>
+    <txp:oui_instagram_image_info />
+    <txp:oui_instagram_image_author />, <txp:oui_instagram_image_date />
+</txp:oui_instagram_images>
+
+notextile. </section>

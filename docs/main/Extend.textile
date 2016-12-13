@@ -1,0 +1,95 @@
+notextile. <section id="for-developers" class="options_group">
+
+h2. For Developpers
+
+h3. Using plugin classes and methods
+
+This plugin also allow developers to easily embed configurable players directly via PHP.
+For more informations, these two main plugin classes should be considered: Oui\Player\Main and Oui\Player\Provider.
+
+h3. Txp tags use vs PHP examples
+
+h4. Single tag use
+
+bc(language-markup). <txp:oui_instagram_user />
+
+p. This can be achieve with the following PHP code.
+
+bc(language-php).. $class = 'Oui\Instagram\Main';
+$obj = new $class;
+$obj->access_token = '867567567.786UY8S798798.98';
+
+echo $obj->getUser();
+
+h4. Single tag use
+
+bc(language-markup).. <txp:oui_instagram_user>
+    <txp:oui_instagram_user_info />
+    <txp:oui_instagram_user_count />
+</txp:oui_instagram_user>
+
+p. This can be achieve with the following PHP code.
+
+bc(language-php).. $class = 'Oui\Instagram\Main';
+$obj = new $class;
+$obj->access_token = '867567567.786UY8S798798.98';
+
+$user = $obj->getProfile();
+
+echo $obj->getUserInfo($user) . $obj->getUserCount($user);
+
+h4. Single tag use
+
+bc(language-markup). <txp:oui_instagram_images />
+
+p. This can be achieve with the following PHP code.
+
+bc(language-php).. $class = 'Oui\Instagram\Main';
+$obj = new $class;
+$obj->access_token = '867567567.786UY8S798798.98';
+
+$images = $obj->getImages();
+
+echo '<ul>';
+
+foreach ($images ad $image) {
+    echo '<li>' . $image . '</li>';
+}
+
+echo '</ul>';
+
+h4. Container tag use
+
+bc(language-markup).. <txp:oui_instagram_images limit="5">
+    <txp:oui_instagram_image />
+    <txp:oui_instagram_image_url />
+    <txp:oui_instagram_image_info />
+    <txp:oui_instagram_image_author />
+    <txp:oui_instagram_image_date />
+</txp:oui_instagram_images>
+
+p. The tag above can be replaced by the few following lines of PHP.
+
+bc(language-php).. $class = 'Oui\Instagram\Main';
+$obj = new $class;
+$obj->access_token = '867567567.786UY8S798798.98';
+$obj->limit = '5';
+
+$images = $obj->getFeed();
+
+echo '<ul>';
+
+foreach ($images ad $image) {
+    echo '<li>' .
+        $obj->getImage($image) .
+        $obj->getImageUrl($image) .
+        $obj->getImageInfo($image) .
+        $obj->getImageDate($image) .
+        $obj->getImageAuthor($image) .
+    '</li>';
+}
+
+echo '</ul>';
+
+
+notextile. </section>

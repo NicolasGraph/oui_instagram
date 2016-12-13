@@ -1,0 +1,28 @@
+notextile. <section id="oui_instagram_image_info" class="options_group">
+
+h2. oui_instagram_image_info
+
+Displays each image info in a @oui_instagram_images@ container tag.
+
+bc. <txp:oui_instagram_image_info />
+
+h3. Attributes
+
+- @break@ :=
+The HTML tag used around each generated info.
+*Default:* none
+*Valid:* HTML self-closing tag without brakets =:
+- @class@ :=
+The css class to apply to the HTML tag assigned to @wraptag@.
+*Default:* none
+*Valid:* string =:
+- @type@ :=
+The information type to display.
+*Default:* @caption@
+*Valid:* @caption@, @comments_count@ (@comments@ is now deprecated), @likes_count@ (@likes@ is now deprecated), @w@, @h@, @low_w@, @low_h@, @thumb_w@, @thumb_h@, @location@, @address@, @latitude@, @longitude@, @id, @type@, @date@ =:
+- @wraptag@ :=
+The HTML tag to use around the generated content.
+*Default:* none
+*Valid:* HTML container tag without brakets =:
+
+notextile. </section>

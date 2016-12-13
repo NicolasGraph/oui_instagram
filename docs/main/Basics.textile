@@ -1,0 +1,34 @@
+notextile. <section id="basics" class="options_group">
+
+h2. Basics
+
+Easily display recent images from an Instagram account.
+
+h2. Plugin requirements
+
+oui_instagram’s minimum requirements:
+
+* Textpattern 4.6+
+
+h2. Installation
+
+# "Download":https://github.com/NicolasGraph/oui_instagram/releases the compiled plugin file.
+# Paste the content of the plugin file under the *Admin > Plugins* and click the _Upload_ button.
+# Confirm the plugin install by clicking the _Install_ button on the plugin preview page.
+# Enable the plugin and click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
+
+h2. Update
+
+Unless contrary instructions, proceed as follow:
+
+# Follow the installation instruction above.
+# Disable and re-enable the plugin to update its preferences while keeping existing values untouched.
+
+h2. Uninstall
+
+# Check the box on the left of the plugin row under the *Admin > Plugins*.
+# open the select list at the bottom of the plugins tables and choose _Delete_.
+# confirm the plugin deletion.
+
+
+notextile. </section>
