@@ -16,7 +16,7 @@ Easily display Instagram recent images galleries.
 
 ## Documentation
 
-Check the embed Help file or the [wiki](https://github.com/NicolasGraph/oui_instagram/wiki) for more informations.
+Check the embedded Help file or the [wiki](https://github.com/NicolasGraph/oui_instagram/wiki) for more informations.
 
 ## Author
 
