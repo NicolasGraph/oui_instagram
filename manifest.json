@@ -1,7 +1,7 @@
 {
     "name"        : "oui_instagram",
     "description" : "Recent Instagram images gallery",
-    "version"     : "1.0.0-beta",
+    "version"     : "1.0.0-beta-2",
     "type"        : 1,
     "author"      : "Nicolas Morand",
     "author_uri"  : "http://github.com/NicolasGraph",

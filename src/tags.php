@@ -50,8 +50,8 @@ namespace {
             'labeltag'     => '',
         ), $atts));
 
-        $class = 'Oui\Instagram\Main';
-        $obj = new $class;
+        $php_class = 'Oui\Instagram\Main';
+        $obj = new $php_class;
         $obj->access_token = $access_token;
         $obj->limit = $limit;
 
@@ -221,8 +221,8 @@ namespace {
 
         $access_token ?: $access_token = get_pref('oui_instagram_access_token');
 
-        $class = 'Oui\Instagram\Main';
-        $obj = new $class;
+        $php_class = 'Oui\Instagram\Main';
+        $obj = new $php_class;
         $obj->access_token = $access_token;
 
         // Check the query result.
