@@ -2,25 +2,25 @@ notextile. <section id="tags" class="options_group">
 
 h2. tags
 
-* "oui_instagram_images":#oui_instagram_images
-* "oui_instagram_image":#oui_instagram_image
-* "oui_instagram_image_info":#oui_instagram_image_info
-* "oui_instagram_image_url":#oui_instagram_image_url
-* "oui_instagram_image_date":#oui_instagram_image_date
-* "oui_instagram_image_author":#oui_instagram_image_author
+* "oui_insta_images":#oui_insta_images
+* "oui_insta_image":#oui_insta_image
+* "oui_insta_image_info":#oui_insta_image_info
+* "oui_insta_image_url":#oui_insta_image_url
+* "oui_insta_image_date":#oui_insta_image_date
+* "oui_insta_image_author":#oui_insta_image_author
 
-h3(#oui_instagram_images). oui_instagram_images
+h3(#oui_insta_images). oui_insta_images
 
 Displays a recent images list.
 Can be used as a single or a container tag.
 
-bc. <txp:oui_instagram_images />
+bc. <txp:oui_insta_images />
 
 or
 
-bc. <txp:oui_instagram_images>
+bc. <txp:oui_insta_images>
 […]
-</txp:oui_instagram_images>
+</txp:oui_insta_images>
 
 h4. Attributes
 
@@ -61,7 +61,7 @@ To apply a link around each generated image to the standard_resolution image.
 *Valid:* @auto@ (linked to the Instagram page), @1@ (linked to the image url), @0@ =:
 - @type@ :=
 The image type to display.
-Should be set in the @<txp:oui_instagram_image />@ tag if @<txp:oui_instagram_images />@ is used as a container
+Should be set in the @<txp:oui_insta_image />@ tag if @<txp:oui_insta_images />@ is used as a container
 *Default:* @thumbnail@
 *Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
 - @wraptag@ :=
@@ -69,11 +69,11 @@ The HTML tag to use around the generated content.
 *Default:* @ul@
 *Valid:* HTML container tag without brakets =:
 
-h3(#oui_instagram_image). oui_instagram_image
+h3(#oui_insta_image). oui_insta_image
 
-Displays each image in a @oui_instagram_images@ container tag.
+Displays each image in a @oui_insta_images@ container tag.
 
-bc. <txp:oui_instagram_image />
+bc. <txp:oui_insta_image />
 
 h4. attributes
 
@@ -90,11 +90,11 @@ The HTML tag to use around the generated content
 *Default:* none
 *Valid:* HTML container tag without brakets =:
 
-h3(#oui_instagram_image_info). oui_instagram_image_info
+h3(#oui_insta_image_info). oui_insta_image_info
 
-Displays each image info in a @oui_instagram_images@ container tag.
+Displays each image info in a @oui_insta_images@ container tag.
 
-bc. <txp:oui_instagram_image_info />
+bc. <txp:oui_insta_image_info />
 
 h4. attributes
 
@@ -115,11 +115,11 @@ The HTML tag to use around the generated content.
 *Default:* none
 *Valid:* HTML container tag without brakets =:
 
-h3(#oui_instagram_image_url). oui_instagram_image_url
+h3(#oui_insta_image_url). oui_insta_image_url
 
-Uses each image url/link in a @oui_instagram_images@ container tag.
+Uses each image url/link in a @oui_insta_images@ container tag.
 
-bc. <txp:oui_instagram_image_url />
+bc. <txp:oui_insta_image_url />
 
 h4. attributes
 
@@ -140,11 +140,11 @@ The HTML tag to use around the generated content.
 *Default:* none
 *Valid:* HTML container tag without brakets =:
 
-h3(#oui_instagram_image_date). oui_instagram_image_date
+h3(#oui_insta_image_date). oui_insta_image_date
 
-Displays each image date in a @oui_instagram_images@ container tag.
+Displays each image date in a @oui_insta_images@ container tag.
 
-bc. <txp:oui_instagram_image_date />
+bc. <txp:oui_insta_image_date />
 
 h4. attributes
 
@@ -161,11 +161,11 @@ The HTML tag to use around the generated content.
 *Default:* none
 *Valid:* HTML container tag without brakets =:
 
-h3(#oui_instagram_image_author). oui_instagram_image_author
+h3(#oui_insta_image_author). oui_insta_image_author
 
-Displays each image author in a @oui_instagram_images@ container tag.
+Displays each image author in a @oui_insta_images@ container tag.
 
-bc. <txp:oui_instagram_image_author />
+bc. <txp:oui_insta_image_author />
 
 h4. attributes
 

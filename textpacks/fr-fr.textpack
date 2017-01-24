@@ -1,7 +1,4 @@
 #@admin
 #@language fr-fr
-oui_instagram => Galerie Instagram (oui_instagram)
-oui_instagram_access_token => Access token
-oui_instagram_cache_time => Durée du cache par défaut en minutes
-oui_instagram_user_id_placeholder => Renseigné après sauvegarde si un nom d'utilisateur est fournit.
-oui_instagram_username_placeholder => Optionnel
+oui_insta => Galerie Instagram (oui_insta)
+oui_insta_access_token => Access token

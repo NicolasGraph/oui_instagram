@@ -1,18 +1,23 @@
-notextile. <section id="oui_instagram_author" class="options_group">
+notextile. <section id="oui_insta_images" class="options_group">
 
-h2. oui_instagram_author
+h2. oui_insta_images
 
-Displays an Instagram user related info as a single tag, or several ones as a container tag.
+p(alert-block warning). %(ui-icon ui-icon-alert).% @oui_instagram_images@ tag is now deprecated.
 
-bc. <txp:oui_instagram_author />
+Displays a recent images list.
+Can be used as a single or a container tag.
+
+bc. <txp:oui_insta_images />
 
 or
 
-bc. <txp:oui_instagram_author>
+bc. <txp:oui_insta_images>
 […]
-</txp:oui_instagram_author>
+</txp:oui_insta_images>
 
 h3. Attributes
+
+p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v1.0.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
 
 - @access_token@ :=
 the access token provided via the plugin prefs.
@@ -20,7 +25,7 @@ the access token provided via the plugin prefs.
 *Valid:* a different Instagram access token than the one provided via the plugin prefs =:
 - @break@ :=
 he HTML tag used around each generated image
-*Default:* @br@
+*Default:* @li@
 *Valid:* HTML self-closing tag without brakets =:
 - @class@ :=
 The css class to apply to the HTML tag assigned to @wraptag@.
@@ -38,17 +43,22 @@ The label used to entitled the generated content.
 The HTML tag used around the value assigned to @label@.
 *Default:* none
 *Valid:* HTML container tag without brakets =:
+- @limit@ :=
+The number of images to display.
+If the @limit@ value is greater than _20_, several requests will be thrown to pull your images
+*Default:* @10@
+*Valid:* integer =:
 - @link@ :=
 To apply a link around each generated image to the standard_resolution image.
 *Default:* @auto@
 *Valid:* @auto@ (linked to the Instagram page), @1@ (linked to the image url), @0@ =:
 - @type@ :=
-The author info to display.
-*Default:* @username@
-*Valid:* @username@, @full_name@, @profile_picture@ =:
+The image type to display.
+*Default:* @thumbnail@
+*Valid:* @thumbnail@, @low_resolution@, @standard_resolution@ =:
 - @wraptag@ :=
 The HTML tag to use around the generated content.
-*Default:* @span@
+*Default:* @ul@
 *Valid:* HTML container tag without brakets =:
 
 notextile. </section>

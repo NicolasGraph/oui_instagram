@@ -11,7 +11,7 @@ h3. Txp tags use vs PHP examples
 
 h4. Single tag use
 
-bc(language-markup). <txp:oui_instagram_user />
+bc(language-markup). <txp:oui_insta_user />
 
 p. This can be achieve with the following PHP code.
 
@@ -23,10 +23,10 @@ echo $obj->getUser();
 
 h4. Single tag use
 
-bc(language-markup).. <txp:oui_instagram_user>
-    <txp:oui_instagram_user_info />
-    <txp:oui_instagram_user_count />
-</txp:oui_instagram_user>
+bc(language-markup).. <txp:oui_insta_user>
+    <txp:oui_insta_user_info />
+    <txp:oui_insta_user_count />
+</txp:oui_insta_user>
 
 p. This can be achieve with the following PHP code.
 
@@ -40,7 +40,7 @@ echo $obj->getUserInfo($user) . $obj->getUserCount($user);
 
 h4. Single tag use
 
-bc(language-markup). <txp:oui_instagram_images />
+bc(language-markup). <txp:oui_insta_images />
 
 p. This can be achieve with the following PHP code.
 
@@ -60,13 +60,13 @@ echo '</ul>';
 
 h4. Container tag use
 
-bc(language-markup).. <txp:oui_instagram_images limit="5">
-    <txp:oui_instagram_image />
-    <txp:oui_instagram_image_url />
-    <txp:oui_instagram_image_info />
-    <txp:oui_instagram_image_author />
-    <txp:oui_instagram_image_date />
-</txp:oui_instagram_images>
+bc(language-markup).. <txp:oui_insta_images limit="5">
+    <txp:oui_insta_image />
+    <txp:oui_insta_image_url />
+    <txp:oui_insta_image_info />
+    <txp:oui_insta_image_author />
+    <txp:oui_insta_image_date />
+</txp:oui_insta_images>
 
 p. The tag above can be replaced by the few following lines of PHP.
 

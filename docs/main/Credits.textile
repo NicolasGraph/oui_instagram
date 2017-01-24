@@ -11,12 +11,14 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 h2. Changelog
 
-* *v1.0.0* (2016-12-12) :
-** adds @<txp:oui_instagram_author />@ and @<txp:oui_instagram_author_info />@ tags;
+* *v1.0.0* (2016-01-24) :
+** Plugin, prefs and tags rename;
+** deprecates @oui_instagram_@ tags in favour of @oui_insta_@ to shorter tags;
+** adds @<txp:oui_insta_author />@ and @<txp:oui_insta_author_info />@ tags;
 ** removes cache (an external cache system such "aks_cache":http://forum.textpattern.com/viewtopic.php?id=33460 should be used);
 ** restores the @access_token@ attribute and removes @username@ and @user_id@ which needs restricted Instagram registration;
 ** introduces an attribute values inheritance in a container tag context;
-** changes @<txp:oui_instagram_image_author />@ @title@ attribute to @type@;
+** changes @<txp:oui_insta_image_author />@ @title@ attribute to @type@;
 ** uses CURL to get the Instagram feed when enable;
 ** uses OOP;
 ** styles Help file.

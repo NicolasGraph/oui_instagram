@@ -1,8 +1,10 @@
-notextile. <section id="oui_instagram_image_url" class="options_group">
+notextile. <section id="oui_insta_image_url" class="options_group">
 
-h2. oui_instagram_image_url
+h2. oui_insta_image_url
 
-bc. <txp:oui_instagram_image_url />
+p(alert-block warning). %(ui-icon ui-icon-alert).% @oui_instagram_image_url@ tag is now deprecated.
+
+bc. <txp:oui_insta_image_url />
 
 h3. Attributes
 

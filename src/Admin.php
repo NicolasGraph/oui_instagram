@@ -1,13 +1,13 @@
 <?php
 
 /*
- * oui_instagram - Easily display recent images from an Instagram account.
+ * oui_insta - Easily display recent images from an Instagram account.
  *
- * https://github.com/NicolasGraph/oui_instagram
+ * https://github.com/NicolasGraph/oui_insta
  *
  * Copyright (C) 2016 Nicolas Morand
  *
- * This file is part of oui_instagram.
+ * This file is part of oui_insta.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,25 +35,25 @@ namespace Oui\Instagram {
              * Register callbacks.
              */
             if (txpinterface === 'admin') {
-                add_privs('prefs.oui_instagram', '1');
-                add_privs('plugin_prefs.oui_instagram', '1');
+                add_privs('prefs.oui_insta', '1');
+                add_privs('plugin_prefs.oui_insta', '1');
 
-                register_callback(array($this, 'lifeCycle'), 'plugin_lifecycle.oui_instagram');
+                register_callback(array($this, 'lifeCycle'), 'plugin_lifecycle.oui_insta');
                 register_callback(array($this, 'setPrefs'), 'prefs', null, 1);
-                register_callback(array($this, 'options'), 'plugin_prefs.oui_instagram', null, 1);
+                register_callback(array($this, 'options'), 'plugin_prefs.oui_insta', null, 1);
             } else {
                 /**
                  * Register tags.
                  */
                 \Txp::get('\Textpattern\Tag\Registry')
-                    ->register('oui_instagram_author')
-                    ->register('oui_instagram_author_info')
-                    ->register('oui_instagram_images')
-                    ->register('oui_instagram_image')
-                    ->register('oui_instagram_image_info')
-                    ->register('oui_instagram_image_url')
-                    ->register('oui_instagram_image_date')
-                    ->register('oui_instagram_image_author');
+                    ->register('oui_insta_author')
+                    ->register('oui_insta_author_info')
+                    ->register('oui_insta_images')
+                    ->register('oui_insta_image')
+                    ->register('oui_insta_image_info')
+                    ->register('oui_insta_image_url')
+                    ->register('oui_insta_image_date')
+                    ->register('oui_insta_image_author');
             }
         }
 
@@ -70,7 +70,7 @@ namespace Oui\Instagram {
                     $this->setPrefs();
                     break;
                 case 'deleted':
-                    remove_pref(null, 'oui_instagram');
+                    remove_pref(null, 'oui_insta');
                     safe_delete('txp_lang', "owner LIKE 'oui\_instagram'");
                     break;
             }
@@ -81,7 +81,7 @@ namespace Oui\Instagram {
          */
         public function options()
         {
-            $url = '?event=prefs#prefs_group_oui_instagram';
+            $url = '?event=prefs#prefs_group_oui_insta';
             header('Location: ' . $url);
         }
 
@@ -92,7 +92,7 @@ namespace Oui\Instagram {
         public function getPrefs()
         {
             $prefList = array(
-                'oui_instagram_access_token' => array(
+                'oui_insta_access_token' => array(
                     'value'      => '',
                     'visibility' => PREF_PLUGIN,
                     'widget'     => 'text_input',
@@ -112,7 +112,7 @@ namespace Oui\Instagram {
                     set_pref(
                         $pref,
                         $options['value'],
-                        'oui_instagram',
+                        'oui_insta',
                         $options['visibility'],
                         $options['widget'],
                         $position
