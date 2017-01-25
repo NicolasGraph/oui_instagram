@@ -39,7 +39,7 @@ namespace Oui\Instagram {
                 add_privs('plugin_prefs.oui_instagram', '1');
 
                 register_callback(array($this, 'lifeCycle'), 'plugin_lifecycle.oui_instagram');
-                register_callback(array($this, 'setPrefs'), 'prefs', null, 1);
+                register_callback(array($this, 'setPref'), 'prefs', null, 1);
                 register_callback(array($this, 'options'), 'plugin_prefs.oui_instagram', null, 1);
             } else {
                 /**
@@ -67,7 +67,7 @@ namespace Oui\Instagram {
         {
             switch ($stp) {
                 case 'enabled':
-                    $this->setPrefs();
+                    $this->setPref();
                     break;
                 case 'deleted':
                     remove_pref(null, 'oui_instagram');
@@ -86,39 +86,13 @@ namespace Oui\Instagram {
         }
 
         /**
-         * Set prefs through:
-         *
+         * Set the access token pref.
          */
-        public function getPrefs()
+        public function setPref()
         {
-            $prefList = array(
-                'oui_instagram_access_token' => array(
-                    'value'      => '',
-                    'visibility' => PREF_PLUGIN,
-                    'widget'     => 'text_input',
-                ),
-            );
-            return $prefList;
-        }
-
-
-        public function setPrefs()
-        {
-            $prefList = $this->getPrefs();
-
-            foreach ($prefList as $pref => $options) {
-                $position = 250;
-                if (get_pref($pref, null) === null) {
-                    set_pref(
-                        $pref,
-                        $options['value'],
-                        'oui_instagram',
-                        $options['visibility'],
-                        $options['widget'],
-                        $position
-                    );
-                }
-                $position++;
+            $pref = 'oui_instagram_access_token';
+            if (get_pref($pref, null) === null) {
+                set_pref($pref, '', 'oui_instagram', PREF_PLUGIN, 'text_input');
             }
         }
     }
