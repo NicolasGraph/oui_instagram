@@ -196,19 +196,19 @@ namespace Oui\Instagram {
          */
         public static function getImage($shot, $type = 'thumbnail', $link = 'auto')
         {
-            $src = 'src="' . $shot->{'images'}->{$type}->{'url'}.'"';
-            $width = 'width="' . $shot->{'images'}->{$type}->{'width'}.'"';
-            $height = 'height="' . $shot->{'images'}->{$type}->{'height'}.'"';
+            $src = 'src="' . $shot->{'images'}->{$type}->{'url'}.'" ';
+            $width = 'width="' . $shot->{'images'}->{$type}->{'width'}.'" ';
+            $height = 'height="' . $shot->{'images'}->{$type}->{'height'}.'" ';
 
             if (isset($shot->{'caption'}->{'text'})) {
-                $alt = 'title="' . $shot->{'caption'}->{'text'}.'"';
+                $alt = 'title="' . $shot->{'caption'}->{'text'}.'" ';
             } else {
-                $alt = '';
+                $alt = ' ';
             }
 
             $title = $alt;
             $url = ($link === 'auto') ? $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
-            $img = '<img ' . $src . $alt . $width . $height . ' />';
+            $img = '<img ' . $src . $alt . $width . $height . '/>';
 
             return $link ? href($img, $url, $title) : $img;
         }
