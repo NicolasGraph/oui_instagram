@@ -26,7 +26,7 @@ the access token provided via the plugin prefs.
 - @break@ :=
 he HTML tag used around each generated image
 *Default:* @li@
-*Valid:* HTML self-closing tag without brakets =:
+*Valid:* HTML tag without brakets =:
 - @class@ :=
 The css class to apply to the HTML tag assigned to @wraptag@.
 *Default:* none
