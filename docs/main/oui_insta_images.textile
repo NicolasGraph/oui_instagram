@@ -20,8 +20,8 @@ h3. Attributes
 p(alert-block warning). %(ui-icon ui-icon-alert).% @user_id@ and @username@ attributes has been removed from v1.0.0, you can now use the @access_token@ attribute as an alternative to generate Instagram galleries from different accounts.
 
 - @access_token@ :=
-the access token provided via the plugin prefs.
-*Default:* none
+Instagram access token.
+*Default:* the access token provided via the plugin prefs.
 *Valid:* a different Instagram access token than the one provided via the plugin prefs =:
 - @break@ :=
 he HTML tag used around each generated image

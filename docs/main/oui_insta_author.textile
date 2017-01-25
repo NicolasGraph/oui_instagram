@@ -17,8 +17,8 @@ bc. <txp:oui_insta_author>
 h3. Attributes
 
 - @access_token@ :=
-the access token provided via the plugin prefs.
-*Default:* none
+Instagram access token.
+*Default:* the access token provided via the plugin prefs.
 *Valid:* a different Instagram access token than the one provided via the plugin prefs =:
 - @break@ :=
 he HTML tag used around each generated image
