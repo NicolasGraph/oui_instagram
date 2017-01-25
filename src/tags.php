@@ -92,7 +92,7 @@ namespace {
     // Deprecated
     function oui_instagram_images($atts, $thing = null)
     {
-        return oui_insta_images($atts, $thing = null);
+        return oui_insta_images($atts, $thing);
     }
 
     /**
@@ -156,7 +156,7 @@ namespace {
     // Deprecated
     function oui_instagram_image_url($atts, $thing = null)
     {
-        return oui_insta_image_url($atts, $thing = null);
+        return oui_insta_image_url($atts, $thing);
     }
 
     /**
@@ -292,7 +292,7 @@ namespace {
     // Deprecated
     function oui_instagram_author($atts, $thing = null)
     {
-        return oui_insta_author($atts, $thing = null);
+        return oui_insta_author($atts, $thing);
     }
 
     /**
@@ -317,6 +317,6 @@ namespace {
     // Deprecated
     function oui_instagram_author_info($atts, $thing = null)
     {
-        return oui_insta_author_info($atts, $thing = null);
+        return oui_insta_author_info($atts, $thing);
     }
 }
