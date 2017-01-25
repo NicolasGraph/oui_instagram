@@ -2,7 +2,7 @@ notextile. <section id="basics" class="options_group">
 
 h2. Basics
 
-Easily display recent images from an Instagram account.
+Display Instagram user infos and recent images.
 
 h2. Plugin requirements
 

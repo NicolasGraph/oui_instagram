@@ -1,10 +1,12 @@
-notextile. <section id="oui_instagram_image_date" class="options_group">
+notextile. <section id="oui_insta_image_date" class="options_group">
 
-h2. oui_instagram_image_date
+h2. oui_insta_image_date
 
-Displays each image date in a @oui_instagram_images@ container tag.
+p(alert-block warning). %(ui-icon ui-icon-alert).% @oui_instagram_images_date@ tag is now deprecated.
 
-bc. <txp:oui_instagram_image_date />
+Displays each image date in a @oui_insta_images@ container tag.
+
+bc. <txp:oui_insta_image_date />
 
 h3. Attributes
 

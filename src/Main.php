@@ -1,13 +1,13 @@
 <?php
 
 /*
- * oui_instagram - Easily display recent images from an Instagram account.
+ * oui_insta - Easily display recent images from an Instagram account.
  *
- * https://github.com/NicolasGraph/oui_instagram
+ * https://github.com/NicolasGraph/oui_insta
  *
  * Copyright (C) 2016 Nicolas Morand
  *
- * This file is part of oui_instagram.
+ * This file is part of oui_insta.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,11 +56,11 @@ namespace Oui\Instagram {
                 if ($result->meta->code=='200') {
                     return $result->data;
                 } else {
-                    trigger_error('oui_instagram was not able to get your profile.');
+                    trigger_error('oui_insta was not able to get your profile.');
                     return;
                 }
             } else {
-                trigger_error('oui_instagram is missing an Instagram access token.');
+                trigger_error('oui_insta is missing an Instagram access token.');
                 return;
             }
         }
@@ -150,14 +150,14 @@ namespace Oui\Instagram {
                         $shots = array_merge($shots, $results->data);
                     } else {
                         trigger_error(
-                            'oui_instagram was not able to get your ' . $this->limit . ' last shots. '
+                            'oui_insta was not able to get your ' . $this->limit . ' last shots. '
                             . $results->meta->error_message
                         );
                     }
                 }
                 return $shots;
             } else {
-                trigger_error('oui_instagram is missing an Instagram access token.');
+                trigger_error('oui_insta is missing an Instagram access token.');
                 return;
             }
         }
@@ -177,12 +177,12 @@ namespace Oui\Instagram {
                         $out[] = self::getImage($shot, $type, $link);
                     }
                 } else {
-                    trigger_error('oui_instagram was not able to get your Instagram feed.');
+                    trigger_error('oui_insta was not able to get your Instagram feed.');
                     return;
                 }
                 return $out;
             } else {
-                trigger_error('oui_instagram is missing an Instagram access token.');
+                trigger_error('oui_insta is missing an Instagram access token.');
                 return;
             }
         }
@@ -196,19 +196,19 @@ namespace Oui\Instagram {
          */
         public static function getImage($shot, $type = 'thumbnail', $link = 'auto')
         {
-            $src = 'src="' . $shot->{'images'}->{$type}->{'url'}.'"';
-            $width = 'width="' . $shot->{'images'}->{$type}->{'width'}.'"';
-            $height = 'height="' . $shot->{'images'}->{$type}->{'height'}.'"';
+            $src = 'src="' . $shot->{'images'}->{$type}->{'url'}.'" ';
+            $width = 'width="' . $shot->{'images'}->{$type}->{'width'}.'" ';
+            $height = 'height="' . $shot->{'images'}->{$type}->{'height'}.'" ';
 
             if (isset($shot->{'caption'}->{'text'})) {
-                $alt = 'title="' . $shot->{'caption'}->{'text'}.'"';
+                $alt = 'title="' . $shot->{'caption'}->{'text'}.'" ';
             } else {
-                $alt = '';
+                $alt = ' ';
             }
 
             $title = $alt;
             $url = ($link === 'auto') ? $shot->{'link'} : $shot->{'images'}->{$type}->{'url'};
-            $img = '<img ' . $src . $alt . $width . $height . ' />';
+            $img = '<img ' . $src . $alt . $width . $height . '/>';
 
             return $link ? href($img, $url, $title) : $img;
         }
@@ -229,7 +229,7 @@ namespace Oui\Instagram {
             } else {
                 trigger_error(
                     "unknown attribute value;
-                    oui_instagram_image_url type attribute accepts the following values:
+                    oui_insta_image_url type attribute accepts the following values:
                     instagram, thumbnail, low_resolution, standard_resolution"
                 );
                 return;

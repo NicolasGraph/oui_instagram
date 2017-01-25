@@ -1,13 +1,13 @@
 <?php
 
 /*
- * oui_instagram - Easily display recent images from an Instagram account.
+ * oui_insta - Easily display recent images from an Instagram account.
  *
- * https://github.com/NicolasGraph/oui_instagram
+ * https://github.com/NicolasGraph/oui_insta
  *
  * Copyright (C) 2016 Nicolas Morand
  *
- * This file is part of oui_instagram.
+ * This file is part of oui_insta.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,9 +33,9 @@ namespace {
      * parse and cache the gallery;
      * display the content.
      */
-    function oui_instagram_images($atts, $thing = null)
+    function oui_insta_images($atts, $thing = null)
     {
-        global $oui_instagram_shot, $oui_instagram_type;
+        global $oui_insta_shot, $oui_insta_type;
 
         extract(lAtts(array(
             'access_token' => get_pref('oui_instagram_access_token'),
@@ -50,8 +50,8 @@ namespace {
             'labeltag'     => '',
         ), $atts));
 
-        $php_class = 'Oui\Instagram\Main';
-        $obj = new $php_class;
+        $insta = 'Oui\Instagram\Main';
+        $obj = new $insta;
         $obj->access_token = $access_token;
         $obj->limit = $limit;
 
@@ -60,16 +60,16 @@ namespace {
             $shots = $obj->getFeed();
             if ($shots) {
                 foreach ($shots as $shot) {
-                    $oui_instagram_shot = $shot;
-                    $oui_instagram_type = $type;
+                    $oui_insta_shot = $shot;
+                    $oui_insta_type = $type;
                     $out[] = $thing ? parse($thing) : parse_form($form);
                 }
                 unset(
-                    $GLOBALS['oui_instagram_shot'],
-                    $GLOBALS['oui_instagram_type']
+                    $GLOBALS['oui_insta_shot'],
+                    $GLOBALS['oui_insta_type']
                 );
             } else {
-                trigger_error('oui_instagram was not able to get your Instagram feed.');
+                trigger_error('oui_insta was not able to get your Instagram feed.');
                 return;
             }
         } else {
@@ -77,7 +77,7 @@ namespace {
             if ($images) {
                 $out = $images;
             } else {
-                trigger_error('oui_instagram was not able to get your Instagram images.');
+                trigger_error('oui_insta was not able to get your Instagram images.');
                 return;
             }
         }
@@ -89,31 +89,43 @@ namespace {
         return $out;
     }
 
-    /**
-     * Display each image in a oui_instagram_images context.
-     */
-    function oui_instagram_image($atts)
+    // Deprecated
+    function oui_instagram_images($atts, $thing = null)
     {
-        global $oui_instagram_shot, $oui_instagram_type;
+        return oui_insta_images($atts, $thing);
+    }
+
+    /**
+     * Display each image in a oui_insta_images context.
+     */
+    function oui_insta_image($atts)
+    {
+        global $oui_insta_shot, $oui_insta_type;
 
         extract(lAtts(array(
             'link'    => 'auto',
-            'type'    => $oui_instagram_type,
+            'type'    => $oui_insta_type,
             'class'   => '',
             'wraptag' => '',
         ), $atts));
 
-        $out = Oui\Instagram\Main::getImage($oui_instagram_shot, $type, $link);
+        $out = Oui\Instagram\Main::getImage($oui_insta_shot, $type, $link);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
 
-    /**
-     * Display each image url in a oui_instagram_images context.
-     */
-    function oui_instagram_image_url($atts, $thing = null)
+    // Deprecated
+    function oui_instagram_image($atts)
     {
-        global $oui_instagram_shot;
+        return oui_insta_image($atts);
+    }
+
+    /**
+     * Display each image url in a oui_insta_images context.
+     */
+    function oui_insta_image_url($atts, $thing = null)
+    {
+        global $oui_insta_shot;
 
         extract(lAtts(array(
             'type'    => 'instagram',
@@ -122,7 +134,7 @@ namespace {
             'link'    => 'auto',
         ), $atts));
 
-        $url = Oui\Instagram\Main::getImageUrl($oui_instagram_shot, $type, $link);
+        $url = Oui\Instagram\Main::getImageUrl($oui_insta_shot, $type, $link);
 
         $validLinks = array('auto', '1', '0');
 
@@ -133,7 +145,7 @@ namespace {
         } else {
             trigger_error(
                 "unknown attribute value;
-                oui_instagram_image_url link attribute accepts the following values:
+                oui_insta_image_url link attribute accepts the following values:
                 auto, 1, 0"
             );
         }
@@ -141,12 +153,18 @@ namespace {
         return $out ? doTag($out, $wraptag, $class) : '';
     }
 
-    /**
-     * Display each image information in a oui_instagram_images context.
-     */
-    function oui_instagram_image_info($atts)
+    // Deprecated
+    function oui_instagram_image_url($atts, $thing = null)
     {
-        global $oui_instagram_shot;
+        return oui_insta_image_url($atts, $thing);
+    }
+
+    /**
+     * Display each image information in a oui_insta_images context.
+     */
+    function oui_insta_image_info($atts)
+    {
+        global $oui_insta_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
@@ -154,17 +172,23 @@ namespace {
             'type'    => 'caption',
         ), $atts));
 
-        $out = Oui\Instagram\Main::getImageInfo($oui_instagram_shot, $type);
+        $out = Oui\Instagram\Main::getImageInfo($oui_insta_shot, $type);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
 
-    /**
-     * Display each image date in a oui_instagram_images context.
-     */
-    function oui_instagram_image_date($atts)
+    // Deprecated
+    function oui_instagram_image_info($atts)
     {
-        global $oui_instagram_shot;
+        return oui_insta_image_info($atts);
+    }
+
+    /**
+     * Display each image date in a oui_insta_images context.
+     */
+    function oui_insta_image_date($atts)
+    {
+        global $oui_insta_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
@@ -172,17 +196,23 @@ namespace {
             'format'  => '',
         ), $atts));
 
-        $out = Oui\Instagram\Main::getImageDate($oui_instagram_shot, $format);
+        $out = Oui\Instagram\Main::getImageDate($oui_insta_shot, $format);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
     }
 
-    /**
-     * Display each image author in a oui_instagram_images context.
-     */
-    function oui_instagram_image_author($atts)
+    // Deprecated
+    function oui_instagram_image_date($atts)
     {
-        global $oui_instagram_shot;
+        return oui_insta_image_date($atts);
+    }
+
+    /**
+     * Display each image author in a oui_insta_images context.
+     */
+    function oui_insta_image_author($atts)
+    {
+        global $oui_insta_shot;
 
         extract(lAtts(array(
             'wraptag' => '',
@@ -191,9 +221,15 @@ namespace {
             'type'   => 'username',
         ), $atts));
 
-        $out = Oui\Instagram\Main::getImageAuthor($oui_instagram_shot, $type, $link);
+        $out = Oui\Instagram\Main::getImageAuthor($oui_insta_shot, $type, $link);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
+    }
+
+    // Deprecated
+    function oui_instagram_image_author($atts)
+    {
+        return oui_insta_image_author($atts);
     }
 
     /**
@@ -203,9 +239,9 @@ namespace {
      * parse and cache the gallery;
      * display the content.
      */
-    function oui_instagram_author($atts, $thing = null)
+    function oui_insta_author($atts, $thing = null)
     {
-        global $oui_instagram_profile;
+        global $oui_insta_profile;
 
         extract(lAtts(array(
             'access_token' => '',
@@ -221,19 +257,19 @@ namespace {
 
         $access_token ?: $access_token = get_pref('oui_instagram_access_token');
 
-        $php_class = 'Oui\Instagram\Main';
-        $obj = new $php_class;
+        $insta = 'Oui\Instagram\Main';
+        $obj = new $insta;
         $obj->access_token = $access_token;
 
         // Check the query result.
         if ($thing || $form) {
             $profile = $obj->getProfile();
             if ($profile) {
-                $oui_instagram_profile = $profile;
+                $oui_insta_profile = $profile;
                 $out[] = $thing ? parse($thing) : $parse_form($form);
-                unset($GLOBALS['oui_instagram_profile']);
+                unset($GLOBALS['oui_insta_profile']);
             } else {
-                trigger_error('oui_instagram was not able to get your Instagram feed.');
+                trigger_error('oui_insta was not able to get your Instagram feed.');
                 return;
             }
         } else {
@@ -241,7 +277,7 @@ namespace {
             if ($info) {
                 $out[] = $info;
             } else {
-                trigger_error('oui_instagram was not able to get your Instagram images.');
+                trigger_error('oui_insta was not able to get your Instagram images.');
                 return;
             }
         }
@@ -253,12 +289,18 @@ namespace {
         return $out;
     }
 
-    /**
-     * Display each image information in a oui_instagram_images context.
-     */
-    function oui_instagram_author_info($atts)
+    // Deprecated
+    function oui_instagram_author($atts, $thing = null)
     {
-        global $oui_instagram_profile;
+        return oui_insta_author($atts, $thing);
+    }
+
+    /**
+     * Display each image information in a oui_insta_images context.
+     */
+    function oui_insta_author_info($atts)
+    {
+        global $oui_insta_profile;
 
         extract(lAtts(array(
             'wraptag' => '',
@@ -267,8 +309,14 @@ namespace {
             'link'    => 'instagram',
         ), $atts));
 
-        $out = Oui\Instagram\Main::getAuthorInfo($oui_instagram_profile, $type, $link);
+        $out = Oui\Instagram\Main::getAuthorInfo($oui_insta_profile, $type, $link);
 
         return ($wraptag) ? doTag($out, $wraptag, $class) : $out;
+    }
+
+    // Deprecated
+    function oui_instagram_author_info($atts, $thing = null)
+    {
+        return oui_insta_author_info($atts, $thing);
     }
 }
