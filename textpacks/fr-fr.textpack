@@ -1,4 +1,4 @@
 #@admin
 #@language fr-fr
-oui_insta => Instagram (oui_insta)
-oui_insta_access_token => Access token
+oui_instagram => Instagram (oui_instagram)
+oui_instagram_access_token => Access token

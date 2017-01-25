@@ -38,7 +38,7 @@ namespace {
         global $oui_insta_shot, $oui_insta_type;
 
         extract(lAtts(array(
-            'access_token' => get_pref('oui_insta_access_token'),
+            'access_token' => get_pref('oui_instagram_access_token'),
             'limit'        => '10',
             'form'         => '',
             'type'         => 'thumbnail',
@@ -255,7 +255,7 @@ namespace {
             'labeltag'     => '',
         ), $atts));
 
-        $access_token ?: $access_token = get_pref('oui_insta_access_token');
+        $access_token ?: $access_token = get_pref('oui_instagram_access_token');
 
         $insta = 'Oui\Instagram\Main';
         $obj = new $insta;

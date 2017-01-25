@@ -35,12 +35,12 @@ namespace Oui\Instagram {
              * Register callbacks.
              */
             if (txpinterface === 'admin') {
-                add_privs('prefs.oui_insta', '1');
-                add_privs('plugin_prefs.oui_insta', '1');
+                add_privs('prefs.oui_instagram', '1');
+                add_privs('plugin_prefs.oui_instagram', '1');
 
-                register_callback(array($this, 'lifeCycle'), 'plugin_lifecycle.oui_insta');
+                register_callback(array($this, 'lifeCycle'), 'plugin_lifecycle.oui_instagram');
                 register_callback(array($this, 'setPrefs'), 'prefs', null, 1);
-                register_callback(array($this, 'options'), 'plugin_prefs.oui_insta', null, 1);
+                register_callback(array($this, 'options'), 'plugin_prefs.oui_instagram', null, 1);
             } else {
                 /**
                  * Register tags.
@@ -70,7 +70,7 @@ namespace Oui\Instagram {
                     $this->setPrefs();
                     break;
                 case 'deleted':
-                    remove_pref(null, 'oui_insta');
+                    remove_pref(null, 'oui_instagram');
                     safe_delete('txp_lang', "owner LIKE 'oui\_instagram'");
                     break;
             }
@@ -81,7 +81,7 @@ namespace Oui\Instagram {
          */
         public function options()
         {
-            $url = '?event=prefs#prefs_group_oui_insta';
+            $url = '?event=prefs#prefs_group_oui_instagram';
             header('Location: ' . $url);
         }
 
@@ -92,7 +92,7 @@ namespace Oui\Instagram {
         public function getPrefs()
         {
             $prefList = array(
-                'oui_insta_access_token' => array(
+                'oui_instagram_access_token' => array(
                     'value'      => '',
                     'visibility' => PREF_PLUGIN,
                     'widget'     => 'text_input',
@@ -112,7 +112,7 @@ namespace Oui\Instagram {
                     set_pref(
                         $pref,
                         $options['value'],
-                        'oui_insta',
+                        'oui_instagram',
                         $options['visibility'],
                         $options['widget'],
                         $position

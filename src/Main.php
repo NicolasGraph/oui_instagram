@@ -35,7 +35,7 @@ namespace Oui\Instagram {
 
         public function __construct()
         {
-            $this->access_token = get_pref('oui_insta_access_token');
+            $this->access_token = get_pref('oui_instagram_access_token');
         }
         /**
          * Get the Instagram recent feed
