@@ -11,7 +11,7 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 h2. Changelog
 
-* *v1.0.0-beta-3* (2016-01-25) :
+* *v1.0.0* (2017-01-30) :
 ** deprecates @oui_instagram_@ tags in favour of shorter @oui_insta_@ tags;
 ** adds missing spaces in @img@ tags;
 ** adds @<txp:oui_insta_author />@ and @<txp:oui_insta_author_info />@ tags;

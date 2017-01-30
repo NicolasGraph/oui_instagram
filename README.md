@@ -16,7 +16,36 @@ Easily display Instagram recent images galleries.
 
 ## Documentation
 
-Check the embedded Help file or the [wiki](https://github.com/NicolasGraph/oui_instagram/wiki) for more informations.
+Check the embedded Help file for more informations.
+
+## Examples
+
+### Single tag use
+
+```html
+// Instagram username as a link to the related account.
+<txp:oui_insta_user />
+
+// List of recent Instagram images linked to their related Instagram pages.
+<txp:oui_insta_images />
+```
+
+### Container tag use
+
+```html
+// Instagram avatar as a link to the related account.
+<txp:oui_insta_user>
+    <txp:oui_insta_user_info type="avatar" link="Instagram" />
+<txp:oui_insta_user>
+
+// List of recent Instagram images linked to their related Instagram pages.
+// Each image is folowed by its caption, its author and its post date.
+<txp:oui_insta_images>
+    <txp:oui_insta_image_url><txp:oui_insta_image /></txp:oui_insta_image_url>
+    <txp:oui_insta_image_info />
+    <txp:oui_insta_image_author />, <txp:oui_insta_image_date />
+</txp:oui_insta_images>
+```
 
 ## Author
 
