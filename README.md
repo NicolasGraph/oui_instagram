@@ -22,7 +22,7 @@ Check the embedded Help file for more informations.
 
 ### Single tag use
 
-```html
+```xml
 // Instagram username as a link to the related account.
 <txp:oui_insta_user />
 
@@ -32,7 +32,7 @@ Check the embedded Help file for more informations.
 
 ### Container tag use
 
-```html
+```xml
 // Instagram avatar as a link to the related account.
 <txp:oui_insta_user>
     <txp:oui_insta_user_info type="avatar" link="Instagram" />
