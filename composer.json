@@ -1,7 +1,7 @@
 {
     "name": "oui/oui_instagram",
-    "description": "Display Instagram user infos and recent images.",
-    "keywords": ["textpattern", "plugin"],
+    "description": "Instagram user infos and recent images embedding plugin for Textpattern CMS",
+    "keywords": ["textpattern", "plugin", "instagram", "api"],
     "homepage": "https://github.com/NicolasGraph/oui_instagram",
     "license": "GPL-2.0",
     "type": "textpattern-plugin",
