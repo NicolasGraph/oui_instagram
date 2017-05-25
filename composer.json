@@ -16,9 +16,6 @@
         "issues": "https://github.com/NicolasGraph/oui_instagram/issues",
         "source": "https://github.com/NicolasGraph/oui_instagram"
     },
-    "autoload": {
-        "files": []
-    },
     "require": {
         "textpattern/lock": "4.6.*",
         "textpattern/installer": "*"
