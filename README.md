@@ -9,10 +9,24 @@ Easily display Instagram recent images galleries.
 
 ## Installation
 
-1. [Download](https://github.com/NicolasGraph/oui_instagram/releases) the compiled plugin file.
-1. Paste the content of the plugin file under the *Admin > Plugins* and click the _Upload_ button.
-1. Confirm the plugin install by clicking the _Install_ button on the plugin preview page.
-1. Enable the plugin and click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
+### From the admin interface
+
+1. [Download](https://github.com/NicolasGraph/oui_instagram/releases) the compiled plugin file or the source to compile a customized file.
+2. Paste the content of the compiled plugin file under the "Admin > Plugins":?event=plugin tab and click the _Upload_ button.
+3. Confirm the plugin install by clicking the _Install_ button on the plugin preview page.
+4. Enable the plugin and click _Options_ or visit your *Admin > Preferences* tab to fill the plugin prefs.
+
+### Via Composer
+
+After [installing Composer](https://getcomposer.org/doc/00-intro.md)…
+
+1. Target your project directory:
+`$ cd /path/to/your/textpattern/installation/dir`
+2. If it's not already done, lock your version of Txp:
+`$ composer require textpattern/lock:4.6.2`, where `4.6.2` is the Txp version in use.
+3. Install oui_instagram:
+`$ composer require oui/oui_instagram`
+4. Connect to the Txp admin interface and click _Options_ or visit your *Admin > Preferences* tab to fill the plugin prefs.
 
 ## Documentation
 
