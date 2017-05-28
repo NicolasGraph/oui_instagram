@@ -11,8 +11,9 @@ This plugin is distributed under "GPLv2":http://www.gnu.org/licenses/gpl-2.0.fr.
 
 h2. Changelog
 
-* *1.0.1* (2017-05-25) :
+* *1.1.0-beta* (2017-05-28) :
 ** Adds "Composer":https://getcomposer.org/ support for "textpattern/installer":https://packagist.org/packages/textpattern/installer;
+** fixes duplicated @alt@ attribute in user avatar @img@;
 ** Set/updates prefs on install.
 * *1.0.0* (2017-01-30) :
 ** deprecates @oui_instagram_@ tags in favour of shorter @oui_insta_@ tags;
