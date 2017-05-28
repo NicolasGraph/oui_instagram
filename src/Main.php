@@ -309,7 +309,7 @@ namespace Oui\Instagram {
 
             if ($type === 'avatar') {
                 $alt = $shot->{'user'}->{'username'};
-                $author = '<img src="' . $author . '" width="150" height="150" alt=" alt="' . $alt . '" />';
+                $author = '<img src="' . $author . '" width="150" height="150" alt="' . $alt . '" />';
             }
 
             if ($author) {

@@ -1,7 +1,7 @@
 {
     "name"        : "oui_instagram",
     "description" : "Display Instagram user infos and recent images.",
-    "version"     : "1.0.0",
+    "version"     : "1.1.0-beta",
     "type"        : 1,
     "author"      : "Nicolas Morand",
     "author_uri"  : "http://github.com/NicolasGraph",

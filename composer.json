@@ -1,0 +1,23 @@
+{
+    "name": "oui/oui_instagram",
+    "description": "Instagram user infos and recent images embedding plugin for Textpattern CMS",
+    "keywords": ["textpattern", "plugin", "instagram", "api"],
+    "homepage": "https://github.com/NicolasGraph/oui_instagram",
+    "license": "GPL-2.0",
+    "type": "textpattern-plugin",
+    "authors": [
+        {
+            "name": "Nicolas Morand",
+            "homepage": "https://github.com/NicolasGraph",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/NicolasGraph/oui_instagram/issues",
+        "source": "https://github.com/NicolasGraph/oui_instagram"
+    },
+    "require": {
+        "textpattern/lock": "4.6.*",
+        "textpattern/installer": "*"
+    }
+}

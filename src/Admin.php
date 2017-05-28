@@ -66,7 +66,7 @@ namespace Oui\Instagram {
         public function lifeCycle($evt, $stp)
         {
             switch ($stp) {
-                case 'enabled':
+                case 'installed':
                     $this->setPref();
                     break;
                 case 'deleted':

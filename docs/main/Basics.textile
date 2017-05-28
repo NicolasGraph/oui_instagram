@@ -12,23 +12,41 @@ oui_instagram’s minimum requirements:
 
 h2. Installation
 
-# "Download":https://github.com/NicolasGraph/oui_instagram/releases the compiled plugin file.
-# Paste the content of the plugin file under the *Admin > Plugins* and click the _Upload_ button.
+h3. From the admin interface
+
+# "Download":https://github.com/NicolasGraph/oui_instagram/releases the compiled plugin file or the source to compile a customized file.
+# Paste the content of the compiled plugin file under the "Admin > Plugins":?event=plugin tab and click the _Upload_ button.
 # Confirm the plugin install by clicking the _Install_ button on the plugin preview page.
-# Enable the plugin and click _Options_ or visit your *Admin>Preferences* tab to fill the plugin prefs.
+# Enable the plugin and click _Options_ or visit your "Admin > Preferences":?event=prefs#prefs_group_oui_instagram tab to fill the plugin prefs.
+
+h3. Via Composer
+
+After "installing Composer":https://getcomposer.org/doc/00-intro.md…
+
+# Target your project directory:
+@$ cd /path/to/your/textpattern/installation/dir@
+# If it's not already done, lock your version of Txp:
+@$ composer require textpattern/lock:4.6.2@, where @4.6.2@ is the Txp version in use.
+# Install oui_instagram:
+@$ composer require oui/oui_instagram@
+# Connect to the Txp admin interface and click _Options_ or visit your "Admin > Preferences":?event=prefs#prefs_group_oui_instagram tab to fill the plugin prefs.
 
 h2. Update
 
-Unless contrary instructions, proceed as follow:
+h3. From the admin interface
 
 # Follow the installation instruction above.
-# Disable and re-enable the plugin to update its preferences while keeping existing values untouched.
+
+h3. Via Composer
+
+bc. $ composer update oui/oui_instagram
 
 h2. Uninstall
 
-# Check the box on the left of the plugin row under the *Admin > Plugins*.
-# open the select list at the bottom of the plugins tables and choose _Delete_.
-# confirm the plugin deletion.
+h3. From the admin interface
 
+# Check the box on the left of the plugin row under the "Admin > Plugins":?event=plugin.
+# open the select list at the bottom of the plugins table and choose _Delete_.
+# confirm the plugin deletion.
 
 notextile. </section>
